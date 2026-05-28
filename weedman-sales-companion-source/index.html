@@ -1,0 +1,2219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#141210">
+<link rel="manifest" href="/manifest.json">
+<title>Weedman Sales Companion</title>
+
+<style>
+:root {
+  --green:#6B8E23;--green-l:#8BA946;--green-d:#4a6218;
+  --gold:#C9A876;--gold-d:#9a7d55;
+  --red:#C0504A;--red-s:rgba(192,80,74,0.15);
+  --bg:#141210;--s1:#1C1A17;--s2:#242119;--s3:#2E2B24;--s4:#38342C;
+  --bd:rgba(255,255,255,0.07);--bd2:rgba(201,168,118,0.15);--bd3:rgba(107,142,35,0.25);
+  --t1:#F2EDE6;--t2:#9A9080;--t3:#5A5248;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;--mono:'SF Mono','Fira Code','Consolas',monospace;
+  --rad:14px;--rads:9px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--font);font-size:15px;overflow:hidden;}
+
+/* ── SCREENS ── */
+.screen{position:absolute;top:0;left:0;right:0;bottom:62px;display:none;flex-direction:column;animation:fadeUp .3s ease both;overflow:hidden;}
+.screen.on{display:flex;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── HOME SCREEN ── */
+#s-home{padding:0;background:linear-gradient(160deg,var(--bg) 0%,#1a1712 100%);}
+.home-top{padding:32px 24px 20px;position:relative;}
+.home-logo{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--green-l);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.home-logo::before{content:'';width:20px;height:2px;background:var(--green-l);}
+.home-title{font-size:32px;font-weight:800;color:var(--t1);line-height:1.1;margin-bottom:8px;}
+.home-title span{color:var(--gold);}
+.home-sub{font-size:13px;color:var(--t2);line-height:1.6;}
+.home-weather{display:flex;align-items:center;gap:10px;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rads);padding:10px 14px;margin-top:16px;}
+.hw-icon{font-size:20px;}
+.hw-temp{font-size:18px;font-weight:800;color:var(--gold);}
+.hw-msg{font-size:11px;color:var(--t2);flex:1;line-height:1.4;}
+
+/* ── SEASONAL SERVICES ── */
+.seasonal-wrap{padding:0 24px;margin-bottom:16px;}
+.seasonal-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--green-l);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.seasonal-title::before{content:'';width:14px;height:2px;background:var(--green-l);}
+.svc-card{background:var(--s2);border:1px solid var(--bd);border-left:3px solid var(--green);border-radius:var(--rads);padding:11px 13px;margin-bottom:7px;cursor:pointer;transition:all .2s;}
+.svc-card:active{transform:scale(.98);}
+.svc-card.urgent{border-left-color:var(--gold);}
+.svc-card.pest{border-left-color:#e07070;}
+.svc-header{display:flex;align-items:center;justify-content:space-between;}
+.svc-name{font-size:12px;font-weight:700;color:var(--t1);}
+.svc-tag{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:2px 7px;border-radius:10px;background:rgba(107,142,35,0.15);color:var(--green-l);}
+.svc-tag.hot{background:rgba(201,168,118,0.15);color:var(--gold);}
+.svc-tag.pest-tag{background:rgba(224,112,112,0.15);color:#e07070;}
+.svc-pitch{font-size:11px;color:var(--t2);line-height:1.5;margin-top:5px;display:none;}
+.svc-card.open .svc-pitch{display:block;}
+
+/* ── PROGRAMS SELLING TOOL ── */
+.prog-modal .modal{border-top-color:var(--green);max-height:85vh;}
+.prog-tier{background:var(--s3);border:1.5px solid var(--bd);border-radius:var(--rad);padding:16px;margin-bottom:10px;transition:all .2s;}
+.prog-tier.recommended{border-color:var(--green);background:linear-gradient(135deg,rgba(107,142,35,0.08),rgba(107,142,35,0.02));}
+.prog-tier-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.prog-tier-name{font-size:16px;font-weight:800;color:var(--t1);}
+.prog-tier-badge{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:10px;background:var(--green);color:#fff;}
+.prog-tier-visits{font-size:11px;color:var(--gold);font-weight:700;margin-bottom:8px;}
+.prog-svc-list{list-style:none;padding:0;}
+.prog-svc-list li{font-size:11px;color:var(--t2);padding:3px 0;display:flex;align-items:flex-start;gap:6px;line-height:1.4;}
+.prog-svc-list li::before{content:'✓';color:var(--green-l);font-weight:700;flex-shrink:0;margin-top:1px;}
+.prog-svc-list li.missing::before{content:'—';color:var(--t3);}
+.prog-svc-list li.missing{color:var(--t3);}
+.prog-value-line{font-size:11px;color:var(--gold);font-weight:700;margin-top:10px;padding-top:8px;border-top:1px solid var(--bd);}
+.prog-objection{background:rgba(201,168,118,0.06);border:1px solid rgba(201,168,118,0.15);border-radius:var(--rads);padding:12px;margin-top:8px;}
+.prog-obj-q{font-size:12px;font-weight:700;color:var(--gold);font-style:italic;margin-bottom:6px;}
+.prog-obj-a{font-size:12px;color:var(--t2);line-height:1.6;font-style:italic;border-left:2px solid var(--green);padding-left:10px;}
+.home-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 24px;margin-bottom:20px;}
+.stat{background:var(--s2);border:1px solid var(--bd);border-radius:var(--rads);padding:14px 12px;text-align:center;cursor:pointer;transition:all .2s;}
+.stat:hover{border-color:var(--bd2);}
+.stat-n{font-size:28px;font-weight:800;color:var(--green-l);font-family:var(--mono);}
+.stat-l{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-top:3px;}
+.home-actions{padding:0 24px;display:flex;flex-direction:column;gap:10px;}
+.btn-primary{padding:18px;background:linear-gradient(135deg,var(--green-d),var(--green),var(--green-l));border:none;border-radius:var(--rad);color:#fff;font-size:15px;font-weight:800;cursor:pointer;font-family:var(--font);letter-spacing:.04em;box-shadow:0 8px 24px rgba(107,142,35,0.3);transition:all .2s;position:relative;overflow:hidden;}
+.btn-primary::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:rgba(255,255,255,0.12);transform:skewX(-15deg);animation:shim 3s ease infinite;}
+@keyframes shim{0%{left:-100%}100%{left:180%}}
+.btn-primary:active{transform:scale(.98);}
+.btn-secondary{padding:14px;background:var(--s2);border:1px solid var(--bd2);border-radius:var(--rad);color:var(--gold);font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);transition:all .2s;}
+.btn-secondary:active{transform:scale(.98);}
+.home-insights{padding:16px 24px 0;flex:1;}
+.insight-card{background:var(--s2);border:1px solid var(--bd);border-left:3px solid var(--green);border-radius:var(--rads);padding:12px 14px;margin-bottom:8px;}
+.ic-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--green-l);margin-bottom:4px;}
+.ic-text{font-size:12px;color:var(--t2);line-height:1.55;}
+.ic-text strong{color:var(--t1);}
+
+/* ── CALL SCREEN ── */
+#s-call{background:var(--bg);}
+.call-top{background:var(--s1);border-bottom:1px solid var(--bd);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.call-name{font-size:16px;font-weight:800;color:var(--t1);}
+.call-timer-wrap{display:flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--bd);border-radius:20px;padding:6px 14px;}
+.timer-dot{width:7px;height:7px;border-radius:50%;background:var(--green-l);box-shadow:0 0 6px var(--green);animation:blink 1s ease infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.timer-val{font-size:15px;font-weight:700;font-family:var(--mono);color:var(--green-l);}
+.stage-bar{display:flex;padding:10px 18px;gap:4px;background:var(--s1);flex-shrink:0;}
+.sb-item{flex:1;padding:6px 4px;text-align:center;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;border-radius:5px;cursor:pointer;transition:all .2s;color:var(--t3);border:1px solid transparent;}
+.sb-item.on{background:var(--green-d);color:#fff;border-color:var(--green);}
+.sb-item.done{color:var(--green-l);border-color:var(--bd3);}
+.call-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 18px;}
+.stage-panel{display:none;animation:fadeUp .25s ease both;}
+.stage-panel.on{display:block;}
+.stage-hero{background:linear-gradient(135deg,rgba(107,142,35,0.12),rgba(107,142,35,0.04));border:1px solid var(--bd3);border-radius:var(--rad);padding:14px;margin-bottom:12px;}
+.sh-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--green-l);margin-bottom:4px;}
+.sh-goal{font-size:12px;color:var(--t2);line-height:1.55;}
+.script-block{background:var(--s2);border:1px solid var(--bd);border-radius:var(--rads);padding:13px 14px;margin-bottom:8px;transition:border-color .2s;}
+.script-block:hover{border-color:var(--bd2);}
+.sb-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:6px;}
+.sb-text{font-size:13px;color:var(--t2);line-height:1.7;font-style:italic;}
+.key-tip{background:rgba(201,168,118,0.08);border:1px solid rgba(201,168,118,0.2);border-radius:var(--rads);padding:11px 13px;margin:10px 0;}
+.kt-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin-bottom:4px;}
+.kt-text{font-size:12px;color:rgba(201,168,118,0.8);line-height:1.6;}
+.call-nav{display:flex;gap:8px;padding:14px 18px;flex-shrink:0;background:var(--s1);border-top:1px solid var(--bd);}
+.cn-btn{flex:1;padding:13px;border-radius:var(--rads);font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);transition:all .15s;}
+.cn-btn:active{transform:scale(.97);}
+.cn-prev{background:var(--s3);border:1px solid var(--bd);color:var(--t2);}
+.cn-next{background:linear-gradient(135deg,var(--green-d),var(--green-l));border:none;color:#fff;box-shadow:0 4px 14px rgba(107,142,35,0.25);}
+.cn-obj{background:rgba(192,80,74,0.12);border:1px solid rgba(192,80,74,0.3);color:#e07070;flex:0.8;}
+.cn-vm{background:rgba(201,168,118,0.1);border:1px solid rgba(201,168,118,0.25);color:var(--gold);flex:0.8;}
+
+/* ── OBJECTION MODAL ── */
+.modal-overlay{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,0.88);backdrop-filter:blur(8px);display:flex;align-items:flex-end;padding:16px;animation:fadeIn .2s ease both;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:var(--s2);border:1px solid var(--bd2);border-top:3px solid var(--red);border-radius:var(--rad) var(--rad) var(--rads) var(--rads);width:100%;max-height:80vh;overflow-y:auto;padding:18px;animation:slideUp .25s cubic-bezier(.4,0,.2,1) both;}
+@keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-title{font-size:14px;font-weight:800;color:var(--t1);margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;}
+.modal-close{font-size:22px;color:var(--t3);cursor:pointer;line-height:1;}
+.obj-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:14px;}
+.obj-btn{background:var(--s3);border:1px solid var(--bd);border-radius:var(--rads);padding:11px 10px;cursor:pointer;font-size:11px;font-weight:700;color:var(--t2);transition:all .18s;text-align:center;line-height:1.3;}
+.obj-btn:hover{border-color:var(--red);color:var(--t1);}
+.obj-btn:active{transform:scale(.96);}
+.obj-result{background:var(--s3);border:1px solid var(--bd2);border-radius:var(--rads);padding:14px;animation:fadeUp .2s ease both;}
+.or-q{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:10px;font-style:italic;}
+.or-response{font-size:13px;color:var(--t2);line-height:1.7;font-style:italic;margin-bottom:10px;border-left:2px solid var(--green);padding-left:10px;}
+.or-analogy{background:rgba(107,142,35,0.08);border:1px solid rgba(107,142,35,0.18);border-radius:var(--rads);padding:10px 12px;margin-bottom:8px;}
+.ora-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--green-l);margin-bottom:4px;}
+.ora-text{font-size:12px;color:var(--green-l);line-height:1.6;font-style:italic;}
+.or-insight{background:rgba(201,168,118,0.08);border:1px solid rgba(201,168,118,0.18);border-radius:var(--rads);padding:10px 12px;}
+.ori-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin-bottom:4px;}
+.ori-text{font-size:12px;color:rgba(201,168,118,0.8);line-height:1.6;}
+.obj-back{margin-top:12px;width:100%;padding:11px;background:var(--s4);border:1px solid var(--bd);border-radius:var(--rads);color:var(--t2);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);}
+
+/* ── LOG SCREEN ── */
+#s-log{}
+.log-title{font-size:22px;font-weight:800;color:var(--t1);margin-bottom:6px;}
+.log-sub{font-size:13px;color:var(--t2);margin-bottom:22px;line-height:1.5;}
+.log-section{margin-bottom:20px;}
+.log-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--green-l);margin-bottom:10px;display:block;}
+.log-options{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.log-opt{background:var(--s2);border:1.5px solid var(--bd);border-radius:var(--rads);padding:12px;cursor:pointer;font-size:12px;font-weight:700;color:var(--t2);text-align:center;transition:all .18s;}
+.log-opt.sel{background:rgba(107,142,35,0.12);border-color:var(--green);color:var(--green-l);}
+.log-opt:active{transform:scale(.96);}
+.log-notes{width:100%;background:var(--s2);border:1.5px solid var(--bd);border-radius:var(--rads);padding:12px;color:var(--t1);font-size:13px;font-family:var(--font);resize:none;outline:none;line-height:1.6;}
+.log-notes:focus{border-color:var(--bd2);}
+.log-notes::placeholder{color:var(--t3);}
+
+/* ── DASHBOARD SCREEN ── */
+#s-dash{padding:20px;overflow-y:auto;}
+.dash-title{font-size:22px;font-weight:800;color:var(--t1);margin-bottom:18px;}
+.dash-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px;}
+.dash-stat{background:var(--s2);border:1px solid var(--bd);border-radius:var(--rad);padding:16px;text-align:center;}
+.ds-num{font-size:36px;font-weight:800;color:var(--green-l);font-family:var(--mono);}
+.ds-label{font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;}
+.ds-pct{font-size:12px;color:var(--gold);margin-top:3px;font-weight:700;}
+.dash-section{margin-bottom:18px;}
+.dash-slbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--green-l);margin-bottom:10px;}
+.obj-bar-wrap{margin-bottom:8px;}
+.ob-label{font-size:12px;color:var(--t2);margin-bottom:4px;display:flex;justify-content:space-between;}
+.ob-label span{color:var(--gold);font-weight:700;font-family:var(--mono);}
+.ob-track{height:6px;background:var(--s3);border-radius:3px;overflow:hidden;}
+.ob-fill{height:100%;background:linear-gradient(90deg,var(--green-d),var(--green-l));border-radius:3px;transition:width .8s ease;}
+.recommend-card{background:linear-gradient(135deg,rgba(107,142,35,0.12),rgba(107,142,35,0.04));border:1px solid var(--bd3);border-radius:var(--rad);padding:14px;}
+.rc-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--green-l);margin-bottom:6px;}
+.rc-text{font-size:13px;color:var(--t2);line-height:1.65;}
+.rc-text strong{color:var(--t1);}
+.history-item{background:var(--s2);border:1px solid var(--bd);border-radius:var(--rads);padding:12px 14px;margin-bottom:7px;display:flex;align-items:center;gap:12px;}
+.hi-outcome{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.hi-outcome.win{background:var(--green-l);box-shadow:0 0 6px var(--green);}
+.hi-outcome.loss{background:var(--red);box-shadow:0 0 6px var(--red);}
+.hi-outcome.maybe{background:var(--gold);box-shadow:0 0 6px var(--gold);}
+.hi-info{flex:1;}
+.hi-name{font-size:13px;font-weight:700;color:var(--t1);}
+.hi-detail{font-size:11px;color:var(--t3);margin-top:2px;}
+.hi-time{font-size:11px;color:var(--t3);font-family:var(--mono);}
+
+/* ── CELEBRATE ── */
+.celebrate-overlay{position:fixed;inset:0;z-index:200;pointer-events:none;display:flex;align-items:center;justify-content:center;}
+.win-card{background:linear-gradient(135deg,var(--green-d),var(--green));border-radius:20px;padding:32px 40px;text-align:center;animation:popIn .4s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes popIn{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
+.win-icon{font-size:56px;margin-bottom:12px;}
+.win-title{font-size:28px;font-weight:900;color:#fff;margin-bottom:6px;}
+.win-sub{font-size:14px;color:rgba(255,255,255,.8);}
+.confetti{position:absolute;width:8px;height:8px;border-radius:2px;animation:fall 1.6s ease-out forwards;}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg) translateX(var(--dx));opacity:0}}
+
+/* ── NAV BAR ── */
+.nav-bar{display:flex;background:var(--s1);border-top:1px solid var(--bd);flex-shrink:0;height:62px;position:fixed;bottom:0;left:0;right:0;z-index:50;padding-bottom:env(safe-area-inset-bottom);}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:10px 4px 8px;cursor:pointer;transition:all .15s;}
+.ni:active{opacity:.7;}
+.ni-icon{font-size:20px;filter:grayscale(1) opacity(.35);transition:all .2s;}
+.ni-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);transition:all .2s;}
+.ni.on .ni-icon{filter:none;}
+.ni.on .ni-label{color:var(--green-l);}
+
+/* ── LEAD NAME INPUT ── */
+.lead-input-wrap{padding:0 24px;margin-bottom:10px;display:none;}
+.lead-name-row{display:flex;gap:8px;}
+.lead-input{flex:1;background:var(--s2);border:1.5px solid var(--bd2);border-radius:var(--rads);padding:14px;color:var(--t1);font-size:14px;font-family:var(--font);outline:none;text-align:center;}
+.lead-input:focus{border-color:var(--green);}
+.lead-input::placeholder{color:var(--t3);}
+
+/* ── GOALS ── */
+.goals-wrap{padding:0 24px;margin-bottom:16px;}
+.goal-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.goal-bar-outer{flex:1;height:8px;background:var(--s3);border-radius:4px;overflow:hidden;}
+.goal-bar-fill{height:100%;border-radius:4px;transition:width .5s ease;}
+.goal-label{font-size:11px;color:var(--t2);min-width:90px;}
+.goal-count{font-size:12px;font-weight:700;font-family:var(--mono);color:var(--green-l);min-width:44px;text-align:right;}
+.goal-edit-btn{font-size:10px;color:var(--gold);cursor:pointer;text-transform:uppercase;letter-spacing:.08em;font-weight:700;background:none;border:none;font-family:var(--font);padding:2px 0;}
+
+/* ── GOAL SETTINGS MODAL ── */
+.goal-setting{margin-bottom:14px;}
+.goal-setting label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t2);margin-bottom:6px;}
+.goal-setting input{width:100%;background:var(--s3);border:1.5px solid var(--bd);border-radius:var(--rads);padding:10px 12px;color:var(--t1);font-size:16px;font-weight:700;font-family:var(--mono);outline:none;text-align:center;}
+.goal-setting input:focus{border-color:var(--green);}
+
+/* ── CUSTOM NOTES PER STAGE ── */
+.my-notes-wrap{margin-top:10px;}
+.my-notes-toggle{font-size:11px;font-weight:700;color:var(--gold);cursor:pointer;background:none;border:none;font-family:var(--font);letter-spacing:.04em;padding:6px 0;}
+.my-notes-area{width:100%;background:var(--s2);border:1.5px solid rgba(201,168,118,0.2);border-radius:var(--rads);padding:10px 12px;color:var(--t1);font-size:12px;font-family:var(--font);resize:none;outline:none;line-height:1.6;margin-top:6px;}
+.my-notes-area:focus{border-color:var(--gold);}
+.my-notes-area::placeholder{color:var(--t3);}
+
+/* ── TIME ANALYTICS ── */
+.analytics-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:6px;}
+.analytics-cell{aspect-ratio:1;border-radius:3px;position:relative;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;font-family:var(--mono);color:transparent;transition:all .2s;}
+.analytics-cell:hover{color:var(--t1);}
+.analytics-day-labels{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:4px;}
+.analytics-day-labels span{text-align:center;font-size:9px;color:var(--t3);font-weight:700;text-transform:uppercase;}
+.hour-bars{display:flex;flex-direction:column;gap:3px;}
+.hour-bar-row{display:flex;align-items:center;gap:6px;}
+.hour-bar-label{font-size:9px;color:var(--t3);min-width:36px;text-align:right;font-family:var(--mono);}
+.hour-bar-track{flex:1;height:14px;background:var(--s3);border-radius:3px;overflow:hidden;position:relative;}
+.hour-bar-fill{height:100%;border-radius:3px;transition:width .5s ease;}
+.hour-bar-count{position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:9px;font-weight:700;color:var(--t1);font-family:var(--mono);}
+
+/* ── SEARCH / FILTER ── */
+.filter-bar{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;}
+.filter-btn{background:var(--s3);border:1px solid var(--bd);border-radius:16px;padding:5px 12px;font-size:10px;font-weight:700;color:var(--t3);cursor:pointer;font-family:var(--font);transition:all .15s;text-transform:uppercase;letter-spacing:.04em;}
+.filter-btn.active{background:rgba(107,142,35,0.12);border-color:var(--green);color:var(--green-l);}
+.filter-btn:active{transform:scale(.96);}
+.search-input{width:100%;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rads);padding:9px 12px;color:var(--t1);font-size:12px;font-family:var(--font);outline:none;margin-bottom:10px;}
+.search-input:focus{border-color:var(--bd2);}
+.search-input::placeholder{color:var(--t3);}
+
+/* ── STREAKS ── */
+.streak-wrap{display:flex;gap:8px;padding:0 24px;margin-bottom:16px;}
+.streak-card{flex:1;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rads);padding:12px 10px;text-align:center;}
+.streak-icon{font-size:20px;margin-bottom:4px;}
+.streak-num{font-size:22px;font-weight:800;font-family:var(--mono);color:var(--gold);}
+.streak-label{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-top:2px;}
+</style>
+</head>
+<body>
+
+<!-- ── AUTH MODAL ── -->
+<div class="modal-overlay" id="authModal" style="display:none;">
+  <div class="modal" style="border-top-color:var(--green);">
+    <div class="modal-title">
+      <span id="authModalTitle">Sign In</span>
+      <span class="modal-close" onclick="closeAuthModal()">×</span>
+    </div>
+    <div id="authContent"></div>
+  </div>
+</div>
+
+<!-- ── CELEBRATE OVERLAY ── -->
+<div class="celebrate-overlay" id="celebOv" style="display:none;">
+  <div class="win-card">
+    <div class="win-icon">🏆</div>
+    <div class="win-title">SALE CLOSED.</div>
+    <div class="win-sub">Log it. Next call.</div>
+  </div>
+</div>
+
+
+<!-- ── OBJECTION MODAL ── -->
+<div class="modal-overlay" id="objModal" style="display:none;">
+  <div class="modal">
+    <div class="modal-title">
+      <span>Objection Handler</span>
+      <span class="modal-close" onclick="closeObjModal()">×</span>
+    </div>
+    <div id="objContent"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     HOME SCREEN
+══════════════════════════════════ -->
+<div class="screen on" id="s-home" style="display:flex;">
+  <div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;">
+    <div class="home-top">
+      <div class="home-logo">Weedman Sales</div>
+      <div class="home-title">Ready to<br><span>close.</span></div>
+      <div class="home-sub">Billings & Bozeman · Your personal call companion</div>
+      <div class="home-weather" id="weatherRow">
+        <div class="hw-icon" id="wIcon">⟳</div>
+        <div class="hw-temp" id="wTemp">...</div>
+        <div class="hw-msg" id="wMsg">Loading conditions...</div>
+      </div>
+    </div>
+    <!-- Seasonal service recommendations -->
+    <div class="seasonal-wrap" id="seasonalWrap"></div>
+    <div class="home-stats">
+      <div class="stat"><div class="stat-n" id="hCalls">0</div><div class="stat-l">Calls</div></div>
+      <div class="stat"><div class="stat-n" id="hCloses">0</div><div class="stat-l">Closes</div></div>
+      <div class="stat"><div class="stat-n" id="hRate">0%</div><div class="stat-l">Rate</div></div>
+    </div>
+    <!-- Streak cards -->
+    <div class="streak-wrap" id="streakWrap"></div>
+    <!-- Goals progress -->
+    <div class="goals-wrap" id="goalsWrap"></div>
+    <!-- Lead name input (shown on demand) -->
+    <div class="lead-input-wrap" id="leadInputWrap">
+      <div class="lead-name-row">
+        <input type="text" class="lead-input" id="leadFirstInput" placeholder="First name" maxlength="30" onkeydown="if(event.key==='Enter'){document.getElementById('leadLastInput').focus();}">
+        <input type="text" class="lead-input" id="leadLastInput" placeholder="Last name" maxlength="30" onkeydown="if(event.key==='Enter'){launchCall();}">
+      </div>
+    </div>
+    <div class="home-actions">
+      <button class="btn-primary" id="startCallBtn" onclick="startCall()">▶ Start Call</button>
+      <button class="btn-secondary" style="color:var(--green-l);border-color:var(--bd3);" onclick="openProgramsModal()">🌿 Programs — Sell the Value</button>
+      <button class="btn-secondary" onclick="goScreen('dash')">View Dashboard →</button>
+      <button class="btn-secondary" style="color:var(--t2);border-color:var(--bd);" onclick="window.open('/science.html','_blank')">🔬 Science & Biology Training</button>
+      <button class="btn-secondary" style="color:var(--red);border-color:rgba(192,80,74,0.3);" onclick="openUndoModal()">↩ Undo Last Close</button>
+      <button class="btn-secondary" style="color:var(--gold);border-color:rgba(201,168,118,0.3);" id="dataBtn" onclick="window.openClearModal()">⚙ Data</button>
+      <button class="btn-secondary" id="authBtn" onclick="openAuthModal()" style="border-color:var(--bd2);color:var(--gold);">🔑 Sign In — Save Your Data</button>
+    </div>
+    <div class="home-insights" id="homeInsights"></div>
+    <div style="height:24px;"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     CALL SCREEN
+══════════════════════════════════ -->
+<div class="screen" id="s-call" style="display:none;flex-direction:column;">
+  <div class="call-top">
+    <div>
+      <div class="call-name" id="callName">New Lead</div>
+      <div style="font-size:11px;color:var(--t3);margin-top:2px;" id="stageLabel">Stage 1 of 6</div>
+    </div>
+    <div class="call-timer-wrap">
+      <div class="timer-dot"></div>
+      <div class="timer-val" id="timerVal">0:00</div>
+    </div>
+  </div>
+  <div class="stage-bar" id="stageBar"></div>
+  <div class="call-body" id="callBody"></div>
+  <div class="call-nav">
+    <button class="cn-btn cn-prev" onclick="prevStage()">← Back</button>
+    <button class="cn-btn cn-vm" onclick="openVMModal()">📨 VM</button>
+    <button class="cn-btn cn-obj" onclick="openObjModal()">⚡ Obj</button>
+    <button class="cn-btn cn-next" id="nextBtn" onclick="nextStage()">Next →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     LOG SCREEN
+══════════════════════════════════ -->
+<div class="screen" id="s-log" style="overflow-y:auto;-webkit-overflow-scrolling:touch;padding:20px 20px 80px;">
+  <div class="log-title">Log this call</div>
+  <div class="log-sub">60 seconds. This data makes you better over time.</div>
+
+  <div class="log-section">
+    <span class="log-label">Lead name</span>
+    <div class="lead-name-row">
+      <input type="text" class="lead-input" id="logFirstName" placeholder="First name" maxlength="30" style="margin-bottom:0;text-align:left;padding:10px 12px;font-size:13px;">
+      <input type="text" class="lead-input" id="logLastName" placeholder="Last name" maxlength="30" style="margin-bottom:0;text-align:left;padding:10px 12px;font-size:13px;">
+    </div>
+  </div>
+
+  <div class="log-section">
+    <span class="log-label">Outcome</span>
+    <div class="log-options">
+      <div class="log-opt" onclick="selectLog('outcome','closed')" id="lo-closed">✓ Closed</div>
+      <div class="log-opt" onclick="selectLog('outcome','think')" id="lo-think">Think about it</div>
+      <div class="log-opt" onclick="selectLog('outcome','no')" id="lo-no">Hard no</div>
+      <div class="log-opt" onclick="selectLog('outcome','nocontact')" id="lo-nocontact">No contact</div>
+      <div class="log-opt" onclick="selectLog('outcome','voicemail')" id="lo-voicemail">📨 Voicemail left</div>
+      <div class="log-opt" onclick="selectLog('outcome','callback')" id="lo-callback">📞 Call back later</div>
+      <div class="log-opt" onclick="selectLog('outcome','blocked')" id="lo-blocked">🚫 Blocked / Bad #</div>
+      <div class="log-opt" onclick="selectLog('outcome','fullvm')" id="lo-fullvm">📭 Full voicemail</div>
+    </div>
+  </div>
+
+  <div class="log-section">
+    <span class="log-label">Stage reached</span>
+    <div class="log-options">
+      <div class="log-opt" onclick="selectLog('stage','opening')" id="ls-opening">Opening</div>
+      <div class="log-opt" onclick="selectLog('stage','discovery')" id="ls-discovery">Discovery</div>
+      <div class="log-opt" onclick="selectLog('stage','implication')" id="ls-implication">Implication</div>
+      <div class="log-opt" onclick="selectLog('stage','pitch')" id="ls-pitch">Pitch</div>
+      <div class="log-opt" onclick="selectLog('stage','objection')" id="ls-objection">Objection</div>
+      <div class="log-opt" onclick="selectLog('stage','close')" id="ls-close">Close</div>
+    </div>
+  </div>
+
+  <div class="log-section">
+    <span class="log-label">Objection hit (if any)</span>
+    <div class="log-options">
+      <div class="log-opt" onclick="selectLog('obj','price')" id="lob-price">Too expensive</div>
+      <div class="log-opt" onclick="selectLog('obj','diy')" id="lob-diy">Do it myself</div>
+      <div class="log-opt" onclick="selectLog('obj','think')" id="lob-think">Need to think</div>
+      <div class="log-opt" onclick="selectLog('obj','spouse')" id="lob-spouse">Ask spouse</div>
+      <div class="log-opt" onclick="selectLog('obj','competitor')" id="lob-competitor">Have someone</div>
+      <div class="log-opt" onclick="selectLog('obj','none')" id="lob-none">None</div>
+    </div>
+  </div>
+
+  <div class="log-section">
+    <span class="log-label">Notes (optional)</span>
+    <textarea class="log-notes" id="logNotes" rows="3" placeholder="Anything worth remembering..."></textarea>
+  </div>
+
+  <button class="btn-primary" onclick="saveLog()">Save & Back to Home</button>
+</div>
+
+<!-- ══════════════════════════════════
+     UNDO MODAL
+══════════════════════════════════ -->
+<div class="modal-overlay" id="undoModal" style="display:none;">
+  <div class="modal" style="border-top-color:var(--red);">
+    <div class="modal-title">
+      <span>🗑 Remove Last Close</span>
+      <span class="modal-close" onclick="closeUndoModal()">×</span>
+    </div>
+    <div id="undoContent"></div>
+  </div>
+</div>
+
+<!-- ── DATA MODAL ── -->
+<div class="modal-overlay" id="dataModal" style="display:none;">
+  <div class="modal" style="border-top-color:var(--gold);">
+    <div class="modal-title">
+      <span>⚙ Manage Data</span>
+      <span class="modal-close" onclick="closeDataModal()">×</span>
+    </div>
+    <div id="dataContent"></div>
+  </div>
+</div>
+
+<!-- ── VOICEMAIL MODAL ── -->
+<div class="modal-overlay" id="vmModal" style="display:none;">
+  <div class="modal" style="border-top-color:var(--gold);">
+    <div class="modal-title">
+      <span>📨 Voicemail Scripts</span>
+      <span class="modal-close" onclick="closeVMModal()">×</span>
+    </div>
+    <div id="vmContent"></div>
+  </div>
+</div>
+
+<!-- ── GOAL SETTINGS MODAL ── -->
+<div class="modal-overlay" id="goalModal" style="display:none;">
+  <div class="modal" style="border-top-color:var(--green);">
+    <div class="modal-title">
+      <span>🎯 Call Goals</span>
+      <span class="modal-close" onclick="closeGoalModal()">×</span>
+    </div>
+    <div id="goalContent">
+      <div style="font-size:12px;color:var(--t2);margin-bottom:14px;line-height:1.6;">Set personal targets to stay on track throughout the day and week.</div>
+      <div class="goal-setting">
+        <label>Daily call target</label>
+        <input type="number" id="goalDailyInput" min="1" max="200" value="40">
+      </div>
+      <div class="goal-setting">
+        <label>Weekly close target</label>
+        <input type="number" id="goalWeeklyInput" min="1" max="100" value="8">
+      </div>
+      <button class="btn-primary" style="width:100%;margin-top:8px;" onclick="saveGoals()">Save Goals</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     DASHBOARD SCREEN
+══════════════════════════════════ -->
+<div class="screen" id="s-dash" style="overflow-y:auto;-webkit-overflow-scrolling:touch;padding:20px 20px 80px;">
+  <div class="dash-title">Your Performance</div>
+  <div class="dash-grid" id="dashStats"></div>
+  <div class="dash-section">
+    <div class="dash-slbl">Top objections this week</div>
+    <div id="objBars"></div>
+  </div>
+  <div class="dash-section">
+    <div class="dash-slbl">Calls by day of week</div>
+    <div id="dayAnalytics"></div>
+  </div>
+  <div class="dash-section">
+    <div class="dash-slbl">Calls by time of day</div>
+    <div id="hourAnalytics"></div>
+  </div>
+  <div class="dash-section">
+    <div class="dash-slbl">Coach's recommendation</div>
+    <div class="recommend-card"><div class="rc-label">Focus area</div><div class="rc-text" id="recommend"></div></div>
+  </div>
+  <div class="dash-section">
+    <div class="dash-slbl">Call history</div>
+    <input type="text" class="search-input" id="historySearch" placeholder="Search by name or notes..." oninput="renderHistory()">
+    <div class="filter-bar" id="filterBar"></div>
+    <div id="callHistory"></div>
+  </div>
+</div>
+
+<!-- ── PROGRAMS SELLING MODAL ── -->
+<div class="modal-overlay prog-modal" id="progModal" style="display:none;">
+  <div class="modal" style="border-top-color:var(--green);">
+    <div class="modal-title">
+      <span>🌿 Program Comparison</span>
+      <span class="modal-close" onclick="closeProgModal()">×</span>
+    </div>
+    <div id="progContent"></div>
+  </div>
+</div>
+
+<!-- ── SEASONAL SERVICE DETAIL MODAL ── -->
+<div class="modal-overlay" id="svcModal" style="display:none;">
+  <div class="modal" style="border-top-color:var(--green);">
+    <div class="modal-title">
+      <span id="svcModalTitle">Service Detail</span>
+      <span class="modal-close" onclick="closeSvcModal()">×</span>
+    </div>
+    <div id="svcModalContent"></div>
+  </div>
+</div>
+
+<!-- ── NAV BAR ── -->
+<div class="nav-bar">
+  <div class="ni on" id="ni-home" onclick="goScreen('home')">
+    <div class="ni-icon">🏠</div>
+    <div class="ni-label">Home</div>
+  </div>
+  <div class="ni" id="ni-call" onclick="goScreen('call')">
+    <div class="ni-icon">📞</div>
+    <div class="ni-label">Call</div>
+  </div>
+  <div class="ni" id="ni-log" onclick="goScreen('log')">
+    <div class="ni-icon">✏️</div>
+    <div class="ni-label">Log</div>
+  </div>
+  <div class="ni" id="ni-dash" onclick="goScreen('dash')">
+    <div class="ni-icon">📊</div>
+    <div class="ni-label">Stats</div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════
+const STAGES = [
+  {
+    id:'opening', name:'Opening', short:'Open',
+    goal:'Establish rapport. One question. Then stop. Silence is intentional.',
+    scripts:[
+      {label:'New lead', text:'"Hey [Name], this is [Your Name] with Weed Man the Lawn Care Company — recorded line. We service homes right in your area and I have one quick question — what are you dealing with out there on the lawn this season?"'},
+      {label:'Previous customer', text:'"Hey [Name], this is [Your Name] with Weed Man — recorded line. You have been with us before and I wanted to personally reach out. Honest question — how did the lawn come out of winter?"'},
+      {label:'Was interested before', text:'"Hey [Name], this is [Your Name] with Weed Man — recorded line. You reached out to us a while back — whatever was going on with the lawn then, did you ever get it figured out or is it still giving you trouble?"'},
+    ],
+    tip:'One question then full stop. The silence is intentional. They fill it or they do not — either way you learn something.',
+    siol:'I have one quick question about your lawn this season — what are you dealing with out there?'
+  },
+  {
+    id:'discovery', name:'Discovery', short:'Discover',
+    goal:'Understand their actual situation. Ask, listen, write their exact words down.',
+    scripts:[
+      {label:'Lawn condition', text:'"What does the lawn actually look like right now — weeds, thin spots, dry patches, or all of it?"'},
+      {label:'Past attempts', text:'"What have you tried to fix it? How did that work out for you?"'},
+      {label:'The goal', text:'"If the lawn looked exactly the way you wanted it this summer — what would that look like?"'},
+    ],
+    tip:'Write down their EXACT words. You will use them at close. Do not offer solutions yet.',
+    siol:'What does the lawn look like right now? And if it looked exactly the way you wanted — what would that look like for you?'
+  },
+  {
+    id:'implication', name:'Implication', short:'Imply',
+    goal:'Help them feel the cost of doing nothing. Not pressure — honest reflection.',
+    scripts:[
+      {label:'Cost of waiting', text:'"If nothing changes this season, what does the lawn look like by fall?"'},
+      {label:'Montana root reality', text:'"Here is something most people do not think about — roots take two to three seasons to build in Montana clay. They regress fast. Every season you wait, you are not just maintaining — you are starting further back."'},
+      {label:'Spring urgency', text:'"Crabgrass germinates when soil temps hit 55 degrees. Dimension pre-emergent has to go down before that window closes. Miss it and we are chasing weeds all summer instead of preventing them."'},
+    ],
+    tip:'Let it land. Do not rush to the solution. The implication has to register first.',
+    siol:'Roots take two to three seasons to build in Montana clay. Every season you wait you are not just maintaining — you are starting further back.'
+  },
+  {
+    id:'pitch', name:'Pitch', short:'Pitch',
+    goal:'Connect their problem to ONE program. Use their exact words from discovery.',
+    scripts:[
+      {label:'Bridge to pitch', text:'"Based on everything you just told me — [their exact words] — that is exactly the kind of problem our program is designed to fix."'},
+      {label:'The differentiator', text:'"Most companies use fast-release fertilizer that greens up quick and is gone in weeks. We use slow-release granular that feeds your roots continuously for months. Deeper roots, thicker grass, weeds crowded out naturally."'},
+      {label:'The guarantee', text:'"And any time something pops up between visits — you call us and we are back out within 48 hours at no charge. We keep coming back until you are 100% satisfied."'},
+      {label:'Small yes', text:'"Based on what you told me — does this sound like what you have been looking for?"'},
+    ],
+    tip:'Get a small yes before presenting price. Confirm relevance before cost comes up.',
+    siol:'Our slow-release granular feeds roots continuously for months. Deeper roots, thicker grass, weeds crowded out naturally. And we come back within 48 hours at no charge until you are 100% satisfied. Zero risk.'
+  },
+  {
+    id:'close', name:'Close', short:'Close',
+    goal:'Move from conversation to decision. Choices not pressure.',
+    scripts:[
+      {label:'Easy Pay — always lead with this', text:'"For your property it works out to $[X] per application. No upfront cost on Easy Pay — we charge your card 24 hours after each completed visit. Which works better for you?"'},
+      {label:'Ask 2', text:'"Does that clear it up? Can we get you on the schedule?"'},
+      {label:'Ask 3', text:'"What would it take to make this work today?"'},
+      {label:'Ask 4 — use their words', text:'"You told me [their exact words]. That is exactly what we fix. Zero risk. What is holding you back?"'},
+      {label:'Ask 5 — straight up', text:'"I am going to be straight with you — I genuinely think this is the right move for your lawn. Give me one shot. If the first visit is not what you expected, we will talk. Fair?"'},
+    ],
+    tip:'After every ask — stop. First one to speak either buys or gives you the real objection.',
+    siol:'Which works better — prepay to save on the season or Easy Pay where we charge after each visit with no upfront cost today?'
+  },
+  {
+    id:'confirm', name:'Confirm', short:'Confirm',
+    goal:'They said yes. Run this exactly. Do not skip any step.',
+    scripts:[
+      {label:'Payment', text:'"May I have your card number, expiration date, security code, and name on card?"'},
+      {label:'Tech notes', text:'"Do you have any special instructions — locked gate, sprinkler system, dog fence, or dogs? Or is it pretty straightforward?"'},
+      {label:'Recorded confirmation', text:'"For quality control purposes this portion will be recorded. Thank you very much for your business, Mr/Mrs [Last Name]. Your address is [address]. I am entering your order of [Program] for the 2026 season at $[amount] on [Easy Pay / prepay]. Do we have your permission to get started?"'},
+      {label:'Referral — always', text:'"One last thing — for every person you refer who becomes a new customer we take $50 off your next application and $50 off theirs. No limit. Just have them call and mention your name."'},
+    ],
+    tip:'Mention the referral on every single close. Every one.',
+    siol:'Thank you for your business. I am entering your order. Do we have your permission to get started? And for every person you refer who becomes a customer we take $50 off your next application.'
+  },
+];
+
+// ═══════════════════════════════════════════════════
+// SEASONAL SERVICE RECOMMENDATIONS
+// ═══════════════════════════════════════════════════
+const SEASONAL_SERVICES = [
+  {
+    id:'preemergent', name:'Pre-Emergent (Crabgrass Prevention)',
+    months:[3,4,5], tempMin:40, tempMax:65, priority:'urgent',
+    tag:'Window closing', type:'lawn',
+    pitch:'Dimension pre-emergent must go down before soil temps hit 55°F. Once crabgrass germinates, you are chasing it all season instead of preventing it. This is the single most time-sensitive application of the year.',
+    objection:'I did not have crabgrass last year.',
+    response:'"That means your pre-emergent worked. Skip it this year and you will see why you needed it. Crabgrass seeds survive in soil for years — they are just waiting for the barrier to drop."',
+    sellLine:'This is included in both Elite and Elite Plus. If they are not on a program, this alone is worth the conversation.'
+  },
+  {
+    id:'grub', name:'Grub Prevention (Acelepryn)',
+    months:[5,6,7], tempMin:60, tempMax:95, priority:'urgent',
+    tag:'Push now', type:'lawn',
+    pitch:'Acelepryn goes down preventively — it stops grub damage before it starts. By the time you see brown patches from grubs in August, it is too late. This is the application most DIYers miss entirely.',
+    objection:'I have never had grubs.',
+    response:'"Most people do not know they have grubs until they have $2,000 in lawn damage. Acelepryn is preventive — like insurance for your root system. By the time you see the damage, the grubs already ate through your roots."',
+    sellLine:'Included in Elite Plus. Major upsell opportunity from Elite to Elite Plus.'
+  },
+  {
+    id:'fleatick', name:'Flea & Tick Yard Treatment',
+    months:[4,5,6,7,8,9], tempMin:50, tempMax:100, priority:'pest',
+    tag:'Pest season', type:'pest',
+    pitch:'Fleas and ticks are active once temps stay above 50°F. Most people treat their pets but not the yard — that is where the problem starts. A perimeter and lawn treatment breaks the breeding cycle at the source.',
+    objection:'I already use Frontline on my dog.',
+    response:'"That protects your dog. But the eggs and larvae live in your yard — tall grass, shaded areas, leaf litter. Every time your pet goes out, they are walking through the source. Treating the yard means they bring back fewer, and your family is protected too."',
+    sellLine:'Add-on service. Great upsell for pet owners. Ask every lead: do you have pets?'
+  },
+  {
+    id:'mosquito', name:'Mosquito Barrier Treatment',
+    months:[5,6,7,8,9], tempMin:60, tempMax:100, priority:'pest',
+    tag:'Active now', type:'pest',
+    pitch:'Mosquitoes breed in any standing water and rest in shaded foliage. Our barrier treatment targets the areas where they live and breed — around the house, fence lines, shrubs, and low-hanging branches. One treatment lasts 3-4 weeks.',
+    objection:'Mosquitoes are just part of summer.',
+    response:'"They do not have to be. After a barrier treatment, most customers say they can actually use their backyard again in the evening. If they are not enjoying their patio, this is the fix."',
+    sellLine:'Add-on service. Ask: can you sit on your patio in the evening without getting eaten alive?'
+  },
+  {
+    id:'soil', name:'Soil Management / pH Correction',
+    months:[4,5,6,9,10], tempMin:40, tempMax:85, priority:'normal',
+    tag:'Foundation', type:'lawn',
+    pitch:'Montana soil runs 7.5 to 8.5 pH — alkaline. That locks out iron, nitrogen, and phosphorus even when fertilizer is applied correctly. Soil management lowers pH and unlocks the nutrients that are already in your soil. Without it, you are wasting half the fertilizer you put down.',
+    objection:'I do not need soil management, just fertilizer.',
+    response:'"Here is the thing — in alkaline soil, fertilizer cannot reach the roots efficiently. It is like pouring water into a cup with a lid on it. Soil management takes the lid off so every application actually works. That is why some lawns respond slowly to treatment — it is not the product, it is the soil."',
+    sellLine:'Included in Elite Plus. The #1 reason to upgrade from Elite. Without it, every other application works harder than it should.'
+  },
+  {
+    id:'aeration', name:'Core Aeration',
+    months:[8,9,10], tempMin:45, tempMax:80, priority:'urgent',
+    tag:'Peak window', type:'lawn',
+    pitch:'Fall aeration is the single best thing you can do for a Montana lawn. Compacted clay soil suffocates roots. Aeration punches cores that let water, air, and nutrients reach the root zone. Combine with overseeding and you fill in thin spots before winter.',
+    objection:'I aerated last year.',
+    response:'"Clay compacts every year. One pass does not fix compaction permanently — it is maintenance, like an oil change for your soil. Annual aeration is what separates good lawns from great ones in our climate."',
+    sellLine:'Included in Elite Plus. Major differentiator. Most customers see visible results within 3 weeks.'
+  },
+  {
+    id:'overseed', name:'Overseeding',
+    months:[8,9,10], tempMin:50, tempMax:75, priority:'normal',
+    tag:'Fall window', type:'lawn',
+    pitch:'Pair with aeration for best results. New seed drops into the aeration cores where it has direct soil contact, moisture retention, and protection from birds. Fall seeding establishes before winter dormancy and comes back thick in spring.',
+    objection:'I tried seeding last spring and it did not work.',
+    response:'"Spring seeding competes with crabgrass and heat stress — the odds are against it. Fall is the right window because cool nights and warm soil give seed the best germination conditions. And paired with aeration, the contact rate is dramatically better than broadcast seeding."',
+    sellLine:'Often paired with aeration in Elite Plus. Great for thin lawns that need density.'
+  },
+  {
+    id:'winterizer', name:'Winterizer Application',
+    months:[10,11], tempMin:25, tempMax:50, priority:'urgent',
+    tag:'Last chance', type:'lawn',
+    pitch:'The winterizer is the most important fertilizer application of the year. It feeds roots during dormancy so the lawn stores energy all winter and comes out thick and green in spring. Skip it and you start spring behind.',
+    objection:'The lawn is brown, why fertilize now?',
+    response:'"The grass looks dormant but the roots are still active. This application feeds the root system through winter. Think of it as loading up the battery before a long trip — your lawn comes out of winter with stored energy instead of running on empty."',
+    sellLine:'Included in both Elite and Elite Plus. Easy sell because the result shows clearly in spring.'
+  },
+  {
+    id:'earlyspring', name:'Early Spring Weed Control',
+    months:[3,4], tempMin:35, tempMax:55, priority:'normal',
+    tag:'Season opener', type:'lawn',
+    pitch:'First application of the season targets early broadleaf weeds — dandelions, clover, thistle — before they establish deep root systems. Early treatment is 3x more effective than waiting until weeds are mature.',
+    objection:'I only have a few weeds.',
+    response:'"That is the perfect time to treat. A few weeds now become a few hundred by July. Each dandelion produces 15,000 seeds. Getting them now while they are small and before they seed is the most efficient use of your money."',
+    sellLine:'Included in both Elite and Elite Plus. The visible result builds trust for the rest of the season.'
+  }
+];
+
+// ═══════════════════════════════════════════════════
+// PROGRAM TIERS (Lawn Care)
+// ═══════════════════════════════════════════════════
+const LAWN_PROGRAMS = [
+  {
+    id:'essentials', name:'Essentials', badge:'Entry Point', tier:1,
+    desc:'The foundation lawn care program. Core fertilization and weed control applications timed to Montana\'s agronomic schedule.',
+    billings:['Spring Fertilization','Spring Weed Control','Summer Weed Control','Summer Fertilization','Fall Weed Control','Fall Fertilization'],
+    bozeman:['Spring Fertilization','Spring Weed Control','Summer Fertilization','Summer Weed Control','Fall Fertilization'],
+    addOns:[]
+  },
+  {
+    id:'enhanced', name:'Enhanced', badge:'', tier:2,
+    desc:'Everything in Essentials plus Fall Aeration to break up Montana clay compaction and let roots breathe.',
+    extras:['Fall Aeration'],
+    addOns:['Fall Aeration']
+  },
+  {
+    id:'elite', name:'Elite', badge:'Popular', tier:3,
+    desc:'Enhanced plus Grub Control Preventative. Like insurance for your lawn — if we see grubs, we treat at no cost until they are gone. If we walk the lawn and miss them, we replace the damage.',
+    extras:['Fall Aeration','Grub Control Preventative'],
+    addOns:['Fall Aeration','Grub Control Preventative'],
+    guarantee:'If you see grubs we will treat at no cost until they are gone. If we walk the lawn and miss them we will replace the affected area.'
+  },
+  {
+    id:'elitePlus', name:'Elite Plus', badge:'Best Value', tier:4,
+    desc:'The complete package. Everything in Elite plus Soil Management Spring and Soil Rejuvenator Fall. Maximum root health, maximum results.',
+    extras:['Fall Aeration','Grub Control Preventative','Soil Management Spring','Soil Rejuvenator Fall'],
+    addOns:['Fall Aeration','Grub Control Preventative','Soil Management Spring','Soil Rejuvenator Fall']
+  }
+];
+
+// ═══════════════════════════════════════════════════
+// SPECIALTY PROGRAMS
+// ═══════════════════════════════════════════════════
+const SPECIALTY_PROGRAMS = [
+  {
+    id:'rockbed', name:'Rock Bed Control / Veg', badge:'6 Visits',
+    desc:'Non-selective weed control — kills anything green. We work around bushes, flowers, and other ornamentals. 6 total visits because weeds do not follow a 2-week schedule. Slotted availability — we stop selling when we hit capacity.',
+    details:['Non-selective herbicide (kills all green growth)','We carefully work around bushes, flowers, and ornamentals','6 visits per season','Weeds do not follow a schedule — visits timed to growth'],
+    note:'This is a standalone program. Capacity is limited and we stop selling when slots are full.'
+  },
+  {
+    id:'pest', name:'Premier Pest Control', badge:'Creepy Crawlies',
+    desc:'We spray 3 feet up and 3 feet out around the perimeter of the property. Helps with spiders, box elders, and any bugs that creep and crawl.',
+    details:['3 feet up and 3 feet out around the property perimeter','Targets spiders, box elders, and creeping/crawling insects','Does NOT help with bees, ants, or grasshoppers','Multiple visits through the active season'],
+    note:'Does NOT cover bees, ants, or grasshoppers.'
+  },
+  {
+    id:'mosquito', name:'Mosquito Control', badge:'BTI Program',
+    desc:'We use BTI and attack the breeding site. 1 station per 5,000 sq ft depending on the property — technician will assess and some properties need more stations based on breeding site locations. 6 total visits plus a mist application at the last visit.',
+    details:['BTI-based — targets breeding sites directly','1 station per 5,000 sq ft (adjusted by technician assessment)','6 visits total','Mist application at the final visit','We prefer not to spray/vapor as it is less effective — BTI targets the source'],
+    note:'We do not like to spray or vapor because it is not as effective. BTI attacks the breeding cycle at the source.'
+  },
+  {
+    id:'tickflea', name:'Tick & Flea Control', badge:'4 Visits',
+    desc:'Sprays grass blades to target ticks and fleas in your yard. 4 visits through the active season. Also helps with other bugs in the grass.',
+    details:['Grass blade spray application','4 visits per season','Targets ticks, fleas, and other grass-dwelling insects','Does NOT help with grasshoppers'],
+    note:'Does NOT cover grasshoppers.'
+  },
+  {
+    id:'disease', name:'Disease Control', badge:'Suppression',
+    desc:'Helps suppress lawn diseases. Truthfully a 50/50 on most diseases. For necrotic ring specifically — we do NOT have a cure. It may help suppress it, but more than likely the affected area needs to be ripped up and re-sodded.',
+    details:['Suppresses common lawn diseases','Honest 50/50 effectiveness on most lawn diseases','Necrotic ring: NO guaranteed fix — suppression only','If disease persists, affected area may need new sod'],
+    note:'Be upfront: disease control is suppression, not a cure. Necrotic ring specifically — there is no guaranteed solution.'
+  }
+];
+
+// ═══════════════════════════════════════════════════
+// ADD-ON SINGLE SERVICES
+// ═══════════════════════════════════════════════════
+const ADDON_SERVICES = [
+  {id:'grubPrev', name:'Grub Control Preventative', season:'spring/summer', desc:'Preventative application before grubs hatch.'},
+  {id:'grubCure', name:'Grub Control Curative', season:'summer/fall', desc:'Curative treatment for active grub infestations.'},
+  {id:'soilFall', name:'Soil Management Fall', season:'fall', desc:'Fall soil amendment to correct pH and unlock nutrients.'},
+  {id:'soilSpring', name:'Soil Management Spring', season:'spring', desc:'Spring soil amendment for the growing season.'},
+  {id:'aerationFall', name:'Fall Aeration', season:'fall', desc:'Core aeration to break up clay compaction.'},
+  {id:'aerationSpring', name:'Spring Aeration', season:'spring', desc:'Spring core aeration for root development.'},
+  {id:'lawnAnalysis', name:'Lawn Analysis', season:'any', desc:'Senior technician walks the property and generates a detailed report. $75 — credited toward services if you move forward.', price:'$75 (credited toward services)'},
+  {id:'aerationOverseed', name:'Aeration & OverSeed', season:'fall', desc:'Fall aeration combined with overseeding for maximum lawn density. Fall only.'}
+];
+
+const ADDON_RULE = 'To get any add-on service, you MUST have at least one program: Essentials (or higher lawn program), Premier Pest Control, Mosquito Control, Tick & Flea Control, or Rock Bed Control.';
+
+// ═══════════════════════════════════════════════════
+// WHAT WE DO NOT DO
+// ═══════════════════════════════════════════════════
+const DO_NOT_DO = [
+  'Watering, trimming, mowing, or any landscaping',
+  'Digging up or removing anything',
+  'Roundup or any non-selective herbicide on lawns',
+  'We are lawn care and pest control — not landscaping'
+];
+
+const PROGRAM_OBJECTIONS = [
+  {
+    q:'"I do not need all of those visits."',
+    a:'"I hear you. Here is the thing — each application is timed to a specific biological window. Pre-emergent has to go down before soil hits 55 degrees. Grub prevention has to happen before eggs hatch. Winterizer has to go down before the first hard freeze. You cannot compress the science into fewer visits any more than you can take all your vitamins on Monday and skip the rest of the week."'
+  },
+  {
+    q:'"I do not need soil management / grub prevention / aeration."',
+    a:'"That is the most common thing I hear. And I get it — it sounds like extra stuff. But here is what happens without soil management: Montana soil at 7.5 to 8.5 pH locks out half the nutrients we put down. Without aeration, clay compaction suffocates roots. Without grub prevention, one bad season can destroy what took years to build. These are not upsells — they are the reason some lawns look amazing and some look average on the same street."'
+  },
+  {
+    q:'"Why can I not pick and choose which services I want?"',
+    a:'"Totally fair question. The reason is that lawn care is a system — each piece supports the others. Pre-emergent prevents weeds so fertilizer feeds grass instead of competition. Soil management unlocks nutrients so fertilizer actually works. Aeration gives roots room to grow deeper. Pull one piece out and the others have to work harder to compensate. It is like asking your mechanic to change the oil but skip the filter — technically you can, but the result suffers."'
+  },
+  {
+    q:'"Your competitor only does 4 visits."',
+    a:'"They might. And here is what that usually means: they are skipping the preventive applications — grub control, soil correction, aeration. Those are the ones that make the difference between a lawn that looks okay and a lawn that looks great. Four visits covers the basics. Eight visits covers the foundation. You are not paying for extra visits — you are paying for the applications that actually move the needle."'
+  },
+  {
+    q:'"I am an expert — I know lawns."',
+    a:'"That is great, honestly. People who know lawns are actually our best customers because they see the value immediately. The difference is access to commercial-grade products. Our slow-release XCU is not available retail. Our liquid broadleaf penetrates waxy coatings that store granular slides off of. And our soil amendments are calibrated to Montana clay specifically. You know what good looks like — let us give you the products that actually get there."'
+  },
+  {
+    q:'"What is the difference between the lawn programs?"',
+    a:'"Essentials covers your core fertilization and weed control — the foundation. Enhanced adds fall aeration to break up compacted clay. Elite adds grub prevention on top of that — like insurance for your root system. Elite Plus is the full package with soil management spring and fall to unlock every nutrient we put down. Each tier builds on the last."'
+  }
+];
+
+const OBJECTIONS = [
+  {
+    id:'price', label:'Too expensive',
+    q:'"It is too expensive."',
+    response:'"I totally understand. Can I ask — is it the actual number, or are you not sure the results justify it? Because if it is value, I can show you exactly why our products are fundamentally different from anything you can buy at a store."',
+    analogy:'Our slow-release XCU granular feeds roots for 120 days. Store products burn out in 4 to 6 weeks. Deep roots mean the lawn survives Billings heat, Chinook winds, and drought that turns untreated lawns to straw.',
+    insight:'Narrow the objection before responding. Budget and not-seeing-value are completely different objections. Ask which it is.'
+  },
+  {
+    id:'diy', label:'Do it myself',
+    q:'"I can do it myself at Home Depot for less."',
+    response:'"That is fair on price. But here is what most people do not know — dandelions and thistle have a waxy coating on their leaves. Store granular slides right off. Our professional liquid is specifically formulated to penetrate that coating. You are not doing it wrong — the product available at the store literally cannot do what ours does."',
+    analogy:'Those weeds wear a raincoat. Store granular hits the raincoat and slides off. Our professional liquid is like a special soap that dissolves the raincoat so the product gets inside and kills the root.',
+    insight:'Lead with the waxy coating. It is specific, it is chemistry, and most people genuinely do not know this. It immediately separates you from any store product.'
+  },
+  {
+    id:'think', label:'Need to think about it',
+    q:'"I need to think about it."',
+    response:'"Of course. Can I ask — what specifically do you want to think over? I would rather answer it right now than have you hang up with a question I could have resolved."',
+    analogy:'Thinking about it is usually a specific concern in disguise. Your job is to surface the real one. Never accept "think about it" as a final answer — always ask what specifically.',
+    insight:'The follow-up question is the close. Silence after asking. Do not fill it.'
+  },
+  {
+    id:'spouse', label:'Ask spouse first',
+    q:'"I need to talk to my spouse first."',
+    response:'"Of course. Is there a specific question I can answer right now that would help with that conversation? Sometimes there is a concern I can clear up before you go."',
+    analogy:'Asking the spouse is often not about the spouse. It is a delay tactic for a concern they have not voiced. The follow-up question surfaces the real objection without pressure.',
+    insight:'Ask "Is there a specific question..." — not "Can I call back?" You want to identify and resolve the real concern now.'
+  },
+  {
+    id:'competitor', label:'Already have someone',
+    q:'"I already have a lawn care company."',
+    response:'"I understand. Can I ask — do they guarantee unlimited free reapplications all season at no charge if weeds come back? Because we do. And when something goes wrong with a national company you are calling a 1-800 number. When something goes wrong with us someone is on your lawn within 48 hours."',
+    analogy:'The guarantee is where we win. No national company offers unlimited free retreats. That is not a sales line — it is a genuinely different service model.',
+    insight:'Do not attack their current company. Highlight what we offer that others do not. The unlimited retreat guarantee is real and most competitors cannot match it.'
+  },
+  {
+    id:'nosprinkler', label:'No sprinkler system',
+    q:'"I do not have a sprinkler system."',
+    response:'"That is more common than you think and our slow-release formula is more forgiving than store products. Even Monday, Wednesday, Friday with a garden hose — 20 minutes per section — makes a real difference. Weed control also works completely independent of irrigation."',
+    analogy:'Deep infrequent watering beats shallow daily watering every time. Forces roots down where it stays cool and moist. No sprinkler system needed for a good result.',
+    insight:'Do not let no irrigation be a disqualifier. Educate on minimum viable watering and move on.'
+  },
+  {
+    id:'results', label:'Have not seen results',
+    q:'"I paid for it before and did not see results."',
+    response:'"I really want to understand what happened before I say anything. What were you expecting to see and what did not happen? Fertilization shows in one to two weeks. If there is a soil pH issue underneath it takes longer because we are fixing the foundation first."',
+    analogy:'Montana alkaline soil at 7.5 to 8.5 pH can lock nutrients out even when fertilizer is applied correctly. If pH is the culprit, fixing it unlocks everything. That is not a broken product — that is a soil issue.',
+    insight:'Ask what they expected before explaining anything. Their answer tells you exactly what to address.'
+  },
+];
+
+// ═══════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════
+let currentScreen = 'home';
+let currentStage = 0;
+let timerInterval = null;
+let timerSeconds = 0;
+let logData = { outcome:'', stage:'', obj:'', notes:'', name:'' };
+let data = JSON.parse(localStorage.getItem('wm_sales') || '{"calls":[],"totalCalls":0,"totalCloses":0}');
+let goals = JSON.parse(localStorage.getItem('wm_goals') || '{"dailyCalls":40,"weeklyCloses":8}');
+let stageNotes = JSON.parse(localStorage.getItem('wm_stage_notes') || '{}');
+let activeFilter = 'all';
+let leadNameForCall = '';
+
+function saveData() { try { localStorage.setItem('wm_sales', JSON.stringify(data)); } catch(e) {} }
+function saveGoalsData() { try { localStorage.setItem('wm_goals', JSON.stringify(goals)); } catch(e) {} }
+function saveStageNotes() { try { localStorage.setItem('wm_stage_notes', JSON.stringify(stageNotes)); } catch(e) {} }
+
+// ═══════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════
+function goScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('on');
+    s.style.display = 'none';
+  });
+  document.querySelectorAll('.ni').forEach(n => n.classList.remove('on'));
+  const screen = document.getElementById('s-'+id);
+  screen.classList.add('on');
+  screen.style.display = 'flex';
+  const ni = document.getElementById('ni-'+id);
+  if(ni) ni.classList.add('on');
+  currentScreen = id;
+  if(id === 'dash') renderDash();
+  if(id === 'home') { renderHomeInsights(); hideLeadInput(); }
+  if(id === 'log') resetLog();
+}
+
+// ═══════════════════════════════════════════════════
+// WEATHER
+// ═══════════════════════════════════════════════════
+async function loadWeather() {
+  try {
+    let lat = 45.78, lon = -108.50;
+    try {
+      const pos = await new Promise((res,rej) => navigator.geolocation.getCurrentPosition(res,rej,{timeout:4000}));
+      lat = pos.coords.latitude; lon = pos.coords.longitude;
+    } catch(e){}
+    const d = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weathercode&temperature_unit=fahrenheit&timezone=auto`).then(r=>r.json());
+    const temp = Math.round(d.current.temperature_2m);
+    const icons = {0:'☀',1:'🌤',2:'⛅',3:'☁',45:'🌫',51:'🌦',61:'🌧',71:'🌨',80:'🌦',95:'⛈'};
+    const code = d.current.weathercode;
+    const icon = icons[code] || (code<=3?'⛅':code<=48?'🌫':code<=67?'🌧':code<=77?'🌨':'⛈');
+    document.getElementById('wIcon').textContent = icon;
+    document.getElementById('wTemp').textContent = temp+'°F';
+    const month = new Date().getMonth()+1;
+    let msg = '';
+    if(temp>=90) msg='Dormancy conversations. Lead with brown = not dead.';
+    else if(temp>=75) msg='Grub control window. Push Acelepryn on every call.';
+    else if(temp>=55&&month>=3&&month<=5) msg='PRE-EMERGENT WINDOW OPEN. Every day counts.';
+    else if(month>=9&&month<=10) msg='Peak fall. Push aeration on every call.';
+    else if(temp<35) msg='Winter sign-ups = first on spring schedule.';
+    else msg='Good conditions. Build value on every call.';
+    document.getElementById('wMsg').textContent = msg;
+    renderSeasonalServices(temp);
+  } catch(e){
+    document.getElementById('wIcon').textContent = '🌤';
+    document.getElementById('wTemp').textContent = 'MT';
+    document.getElementById('wMsg').textContent = 'Billings & Bozeman';
+    renderSeasonalServices(null);
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// HOME
+// ═══════════════════════════════════════════════════
+function renderHomeInsights() {
+  document.getElementById('hCalls').textContent = data.totalCalls;
+  document.getElementById('hCloses').textContent = data.totalCloses;
+  const rate = data.totalCalls > 0 ? Math.round((data.totalCloses/data.totalCalls)*100) : 0;
+  document.getElementById('hRate').textContent = rate+'%';
+
+  renderGoals();
+  renderStreaks();
+
+  const recent = data.calls.slice(-3).reverse();
+  const objCount = {};
+  data.calls.forEach(c => { if(c.obj && c.obj !== 'none') objCount[c.obj] = (objCount[c.obj]||0)+1; });
+  const topObj = Object.entries(objCount).sort((a,b)=>b[1]-a[1])[0];
+
+  let html = '';
+  if(topObj) {
+    const objNames = {price:'Too expensive',diy:'DIY objection',think:'Think about it',spouse:'Ask spouse',competitor:'Have someone',nosprinkler:'No sprinkler',results:'No results seen'};
+    html += `<div class="insight-card"><div class="ic-label">Your toughest objection</div><div class="ic-text"><strong>${objNames[topObj[0]]||topObj[0]}</strong> — hit ${topObj[1]} time${topObj[1]>1?'s':''} this week. Practice that response today.</div></div>`;
+  }
+  if(rate > 0 && rate < 20) html += `<div class="insight-card"><div class="ic-label">Focus area</div><div class="ic-text">Close rate at <strong>${rate}%</strong>. Most reps lose at implication — are you letting the cost of waiting land before pitching?</div></div>`;
+  else if(rate >= 20) html += `<div class="insight-card"><div class="ic-label">On track</div><div class="ic-text"><strong>${rate}% close rate</strong> this week. Keep logging every call — the data will show you where to push harder.</div></div>`;
+  else html += `<div class="insight-card"><div class="ic-label">Getting started</div><div class="ic-text">Log your calls after each one. In two weeks the data shows you <strong>exactly</strong> where to improve — not guessing, knowing.</div></div>`;
+
+  document.getElementById('homeInsights').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════
+// GOALS
+// ═══════════════════════════════════════════════════
+function renderGoals() {
+  const today = new Date();
+  const todayStr = today.toDateString();
+  const weekStart = new Date(today);
+  weekStart.setDate(today.getDate() - today.getDay());
+  weekStart.setHours(0,0,0,0);
+
+  const todayCalls = data.calls.filter(c => new Date(c.time).toDateString() === todayStr).length;
+  const weekCloses = data.calls.filter(c => c.time >= weekStart.getTime() && c.closed).length;
+
+  const dailyPct = Math.min(100, Math.round((todayCalls / goals.dailyCalls) * 100));
+  const weeklyPct = Math.min(100, Math.round((weekCloses / goals.weeklyCloses) * 100));
+
+  document.getElementById('goalsWrap').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--green-l);">Today's progress</span>
+      <button class="goal-edit-btn" onclick="openGoalModal()">Edit goals</button>
+    </div>
+    <div class="goal-row">
+      <span class="goal-label">Daily calls</span>
+      <div class="goal-bar-outer">
+        <div class="goal-bar-fill" style="width:${dailyPct}%;background:linear-gradient(90deg,var(--green-d),var(--green-l));"></div>
+      </div>
+      <span class="goal-count">${todayCalls}/${goals.dailyCalls}</span>
+    </div>
+    <div class="goal-row">
+      <span class="goal-label">Weekly closes</span>
+      <div class="goal-bar-outer">
+        <div class="goal-bar-fill" style="width:${weeklyPct}%;background:linear-gradient(90deg,var(--gold-d),var(--gold));"></div>
+      </div>
+      <span class="goal-count">${weekCloses}/${goals.weeklyCloses}</span>
+    </div>`;
+}
+
+function openGoalModal() {
+  document.getElementById('goalDailyInput').value = goals.dailyCalls;
+  document.getElementById('goalWeeklyInput').value = goals.weeklyCloses;
+  document.getElementById('goalModal').style.display = 'flex';
+}
+
+function closeGoalModal() {
+  document.getElementById('goalModal').style.display = 'none';
+}
+
+function saveGoals() {
+  const d = parseInt(document.getElementById('goalDailyInput').value) || 40;
+  const w = parseInt(document.getElementById('goalWeeklyInput').value) || 8;
+  goals.dailyCalls = Math.max(1, Math.min(200, d));
+  goals.weeklyCloses = Math.max(1, Math.min(100, w));
+  saveGoalsData();
+  renderGoals();
+  closeGoalModal();
+}
+
+// ═══════════════════════════════════════════════════
+// STREAKS
+// ═══════════════════════════════════════════════════
+function renderStreaks() {
+  const calls = data.calls;
+  if (!calls.length) {
+    document.getElementById('streakWrap').innerHTML = '';
+    return;
+  }
+
+  const daySet = new Set();
+  calls.forEach(c => daySet.add(new Date(c.time).toDateString()));
+  const sortedDays = [...daySet].map(d => new Date(d)).sort((a,b) => b-a);
+
+  let streak = 0;
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  let check = new Date(today);
+  if (sortedDays[0] >= today) {
+    for (let i = 0; i < sortedDays.length; i++) {
+      const d = new Date(sortedDays[i]);
+      d.setHours(0,0,0,0);
+      if (d.getTime() === check.getTime()) {
+        streak++;
+        check.setDate(check.getDate() - 1);
+      } else if (d < check) {
+        break;
+      }
+    }
+  }
+
+  let closeStreak = 0;
+  const recentCalls = [...calls].reverse();
+  for (const c of recentCalls) {
+    if (c.closed) closeStreak++;
+    else break;
+  }
+
+  const todayStr = today.toDateString();
+  const todayCalls = calls.filter(c => new Date(c.time).toDateString() === todayStr).length;
+
+  document.getElementById('streakWrap').innerHTML = `
+    <div class="streak-card">
+      <div class="streak-icon">🔥</div>
+      <div class="streak-num">${streak}</div>
+      <div class="streak-label">${streak===1?'Day':'Days'} streak</div>
+    </div>
+    <div class="streak-card">
+      <div class="streak-icon">🏆</div>
+      <div class="streak-num">${closeStreak}</div>
+      <div class="streak-label">Close streak</div>
+    </div>
+    <div class="streak-card">
+      <div class="streak-icon">📞</div>
+      <div class="streak-num">${todayCalls}</div>
+      <div class="streak-label">Today</div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════
+// CALL
+// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
+// LEAD NAME INPUT
+// ═══════════════════════════════════════════════════
+function hideLeadInput() {
+  document.getElementById('leadInputWrap').style.display = 'none';
+  document.getElementById('startCallBtn').textContent = '▶ Start Call';
+  document.getElementById('startCallBtn').onclick = startCall;
+}
+
+function startCall() {
+  const wrap = document.getElementById('leadInputWrap');
+  wrap.style.display = 'block';
+  document.getElementById('leadFirstInput').value = '';
+  document.getElementById('leadLastInput').value = '';
+  document.getElementById('leadFirstInput').focus();
+  document.getElementById('startCallBtn').textContent = '▶ Go';
+  document.getElementById('startCallBtn').onclick = launchCall;
+}
+
+function launchCall() {
+  const first = (document.getElementById('leadFirstInput').value || '').trim();
+  const last = (document.getElementById('leadLastInput').value || '').trim();
+  leadNameForCall = [first, last].filter(Boolean).join(' ');
+  hideLeadInput();
+  currentStage = 0;
+  timerSeconds = 0;
+  if(timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    timerSeconds++;
+    const m = Math.floor(timerSeconds/60), s = timerSeconds%60;
+    document.getElementById('timerVal').textContent = m+':'+(s<10?'0':'')+s;
+  }, 1000);
+  document.getElementById('callName').textContent = leadNameForCall || 'New Lead';
+  renderCallStage();
+  goScreen('call');
+}
+
+function renderCallStage() {
+  const stage = STAGES[currentStage];
+  document.getElementById('stageLabel').textContent = `Stage ${currentStage+1} of ${STAGES.length}`;
+  document.getElementById('nextBtn').textContent = currentStage === STAGES.length-1 ? 'Close 🏆' : 'Next →';
+
+  // Stage bar
+  document.getElementById('stageBar').innerHTML = STAGES.map((s,i) =>
+    `<div class="sb-item ${i===currentStage?'on':i<currentStage?'done':''}" onclick="jumpStage(${i})">${s.short}</div>`
+  ).join('');
+
+  const existingNote = stageNotes[stage.id] || '';
+
+  // Body
+  let html = `<div class="stage-panel on">
+    <div class="stage-hero">
+      <div class="sh-label">${stage.name}</div>
+      <div class="sh-goal">${stage.goal}</div>
+    </div>`;
+
+  stage.scripts.forEach((s,i) => {
+    html += `<div class="script-block" style="animation-delay:${i*0.06}s">
+      <div class="sb-lbl">${s.label}</div>
+      <div class="sb-text">${s.text}</div>
+    </div>`;
+  });
+
+  html += `<div class="key-tip">
+    <div class="kt-label">Key reminder</div>
+    <div class="kt-text">${stage.tip}</div>
+  </div>`;
+
+  html += `<div class="my-notes-wrap">
+    <button class="my-notes-toggle" onclick="toggleMyNotes(this)">📝 My notes ${existingNote ? '(saved)' : ''}</button>
+    <textarea class="my-notes-area" id="stageNote-${stage.id}" rows="3" placeholder="Your personal notes for ${stage.name}..." style="display:${existingNote?'block':'none'};" oninput="saveStageNote('${stage.id}', this.value)">${existingNote}</textarea>
+  </div>`;
+
+  html += `</div>`;
+
+  document.getElementById('callBody').innerHTML = html;
+  document.getElementById('callBody').scrollTop = 0;
+}
+
+function toggleMyNotes(btn) {
+  const area = btn.nextElementSibling;
+  area.style.display = area.style.display === 'none' ? 'block' : 'none';
+  if (area.style.display === 'block') area.focus();
+}
+
+function saveStageNote(stageId, val) {
+  stageNotes[stageId] = val;
+  saveStageNotes();
+}
+
+function nextStage() {
+  if(currentStage < STAGES.length-1) {
+    currentStage++;
+    renderCallStage();
+  } else {
+    clearInterval(timerInterval);
+    celebrate();
+    setTimeout(() => {
+      document.getElementById('celebOv').style.display = 'none';
+      selectLog('outcome', 'closed');
+      goScreen('log');
+    }, 2200);
+  }
+}
+
+function prevStage() {
+  if(currentStage > 0) { currentStage--; renderCallStage(); }
+}
+
+function jumpStage(i) { currentStage = i; renderCallStage(); }
+
+// ═══════════════════════════════════════════════════
+// OBJECTION MODAL
+// ═══════════════════════════════════════════════════
+function openObjModal() {
+  document.getElementById('objContent').innerHTML = `
+    <div class="obj-grid">${OBJECTIONS.map(o =>
+      `<div class="obj-btn" onclick="showObj('${o.id}')">${o.label}</div>`
+    ).join('')}</div>`;
+  document.getElementById('objModal').style.display = 'flex';
+}
+
+function showObj(id) {
+  const o = OBJECTIONS.find(x => x.id === id);
+  document.getElementById('objContent').innerHTML = `
+    <div class="obj-result">
+      <div class="or-q">${o.q}</div>
+      <div class="or-response">${o.response}</div>
+      <div class="or-analogy">
+        <div class="ora-label">Analogy</div>
+        <div class="ora-text">${o.analogy}</div>
+      </div>
+      <div class="or-insight">
+        <div class="ori-label">Key insight</div>
+        <div class="ori-text">${o.insight}</div>
+      </div>
+      <button class="obj-back" onclick="openObjModal()">← All objections</button>
+    </div>`;
+}
+
+function closeObjModal() {
+  document.getElementById('objModal').style.display = 'none';
+}
+
+// ═══════════════════════════════════════════════════
+// LOG CALL
+// ═══════════════════════════════════════════════════
+function resetLog() {
+  logData = { outcome:'', stage:'', obj:'', notes:'', name:'' };
+  const parts = (leadNameForCall || '').split(' ');
+  const firstInput = document.getElementById('logFirstName');
+  const lastInput = document.getElementById('logLastName');
+  if (firstInput) firstInput.value = parts[0] || '';
+  if (lastInput) lastInput.value = parts.slice(1).join(' ') || '';
+  document.getElementById('logNotes').value = '';
+  document.querySelectorAll('#s-log .log-opt').forEach(e => e.classList.remove('sel'));
+}
+
+function selectLog(type, val) {
+  const prefix = type==='outcome'?'lo':type==='stage'?'ls':'lob';
+  if (logData[type] === val) {
+    logData[type] = '';
+    document.getElementById(`${prefix}-${val}`).classList.remove('sel');
+    return;
+  }
+  logData[type] = val;
+  document.querySelectorAll(`[id^="${prefix}-"]`).forEach(e => e.classList.remove('sel'));
+  const el = document.getElementById(`${prefix}-${val}`);
+  if(el) el.classList.add('sel');
+}
+
+function saveLog() {
+  // overridden below in the auth/sync section
+}
+
+// ═══════════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════════
+function renderDash() {
+  const calls = data.calls;
+  const closes = calls.filter(c => c.closed).length;
+  const rate = calls.length > 0 ? Math.round((closes/calls.length)*100) : 0;
+
+  // Stats
+  document.getElementById('dashStats').innerHTML = `
+    <div class="dash-stat"><div class="ds-num">${data.totalCalls}</div><div class="ds-label">Total calls</div></div>
+    <div class="dash-stat"><div class="ds-num">${data.totalCloses}</div><div class="ds-label">Total closes</div><div class="ds-pct">${rate}% rate</div></div>
+    <div class="dash-stat"><div class="ds-num">${calls.filter(c=>c.outcome==='think').length}</div><div class="ds-label">Think about it</div></div>
+    <div class="dash-stat"><div class="ds-num">${calls.filter(c=>c.obj&&c.obj!=='none').length}</div><div class="ds-label">Objections hit</div></div>`;
+
+  // Objection bars
+  const objCount = {};
+  calls.forEach(c => { if(c.obj && c.obj !== 'none') objCount[c.obj] = (objCount[c.obj]||0)+1; });
+  const objNames = {price:'Too expensive',diy:'DIY objection',think:'Think about it',spouse:'Ask spouse',competitor:'Have someone',nosprinkler:'No sprinkler',results:'No results seen'};
+  const maxObj = Math.max(...Object.values(objCount), 1);
+  const sorted = Object.entries(objCount).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  document.getElementById('objBars').innerHTML = sorted.length ? sorted.map(([k,v]) => `
+    <div class="obj-bar-wrap">
+      <div class="ob-label"><span>${objNames[k]||k}</span><span>${v}x</span></div>
+      <div class="ob-track"><div class="ob-fill" style="width:${Math.round((v/maxObj)*100)}%"></div></div>
+    </div>`).join('') : '<div style="color:var(--t3);font-size:13px;">No objections logged yet.</div>';
+
+  // Day-of-week analytics
+  renderDayAnalytics(calls);
+
+  // Hour analytics
+  renderHourAnalytics(calls);
+
+  // Recommendation
+  const topObj = sorted[0];
+  const stageCount = {};
+  calls.forEach(c => { if(c.stage) stageCount[c.stage] = (stageCount[c.stage]||0)+1; });
+  const topLostStage = Object.entries(stageCount).filter(([k]) => k !== 'close' && k !== 'confirm').sort((a,b)=>b[1]-a[1])[0];
+
+  let rec = 'Keep logging calls. The data will show your patterns clearly after 10-15 calls.';
+  if(topObj) rec = `You are hitting <strong>${objNames[topObj[0]]||topObj[0]}</strong> the most. Open your training tool and practice that objection response until the analogy comes out naturally — not from memory, from understanding.`;
+  else if(topLostStage) rec = `Most of your calls end at <strong>${topLostStage[0]}</strong>. Focus your training on that stage. What are you saying there that is not landing?`;
+  document.getElementById('recommend').innerHTML = rec;
+
+  // Filter bar
+  renderFilterBar();
+
+  // History
+  renderHistory();
+}
+
+// ═══════════════════════════════════════════════════
+// TIME-OF-DAY ANALYTICS
+// ═══════════════════════════════════════════════════
+function renderDayAnalytics(calls) {
+  const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const dayCounts = [0,0,0,0,0,0,0];
+  const dayCloses = [0,0,0,0,0,0,0];
+  calls.forEach(c => {
+    const d = new Date(c.time).getDay();
+    dayCounts[d]++;
+    if (c.closed) dayCloses[d]++;
+  });
+  const maxDay = Math.max(...dayCounts, 1);
+
+  let html = '<div class="analytics-day-labels">' + dayNames.map(d => `<span>${d}</span>`).join('') + '</div>';
+  html += '<div class="analytics-grid">';
+  for (let i = 0; i < 7; i++) {
+    const intensity = dayCounts[i] / maxDay;
+    const bg = intensity === 0 ? 'var(--s3)' : `rgba(107,142,35,${0.15 + intensity * 0.65})`;
+    const closeRate = dayCounts[i] > 0 ? Math.round((dayCloses[i]/dayCounts[i])*100) : 0;
+    html += `<div class="analytics-cell" style="background:${bg};height:40px;border-radius:var(--rads);" title="${dayNames[i]}: ${dayCounts[i]} calls, ${closeRate}% close rate">${dayCounts[i] || ''}</div>`;
+  }
+  html += '</div>';
+  html += `<div style="font-size:10px;color:var(--t3);margin-top:4px;">Calls per day · darker = more calls</div>`;
+  document.getElementById('dayAnalytics').innerHTML = calls.length ? html : '<div style="color:var(--t3);font-size:13px;">Log calls to see day-of-week patterns.</div>';
+}
+
+function renderHourAnalytics(calls) {
+  const hourCounts = {};
+  calls.forEach(c => {
+    const h = new Date(c.time).getHours();
+    hourCounts[h] = (hourCounts[h] || 0) + 1;
+  });
+
+  const hours = Object.keys(hourCounts).map(Number).sort((a,b) => a-b);
+  if (!hours.length) {
+    document.getElementById('hourAnalytics').innerHTML = '<div style="color:var(--t3);font-size:13px;">Log calls to see time-of-day patterns.</div>';
+    return;
+  }
+
+  const minH = Math.min(...hours);
+  const maxH = Math.max(...hours);
+  const maxCount = Math.max(...Object.values(hourCounts), 1);
+
+  let html = '<div class="hour-bars">';
+  for (let h = minH; h <= maxH; h++) {
+    const count = hourCounts[h] || 0;
+    const pct = Math.round((count / maxCount) * 100);
+    const label = h === 0 ? '12am' : h < 12 ? h + 'am' : h === 12 ? '12pm' : (h-12) + 'pm';
+    html += `<div class="hour-bar-row">
+      <span class="hour-bar-label">${label}</span>
+      <div class="hour-bar-track">
+        <div class="hour-bar-fill" style="width:${pct}%;background:linear-gradient(90deg,rgba(201,168,118,0.4),var(--gold));"></div>
+        ${count ? `<span class="hour-bar-count">${count}</span>` : ''}
+      </div>
+    </div>`;
+  }
+  html += '</div>';
+  document.getElementById('hourAnalytics').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════
+// CALL HISTORY FILTER & SEARCH
+// ═══════════════════════════════════════════════════
+function renderFilterBar() {
+  const filters = [
+    {id:'all', label:'All'},
+    {id:'closed', label:'Closed'},
+    {id:'think', label:'Think'},
+    {id:'no', label:'Hard no'},
+    {id:'nocontact', label:'No contact'},
+    {id:'voicemail', label:'Voicemail'},
+    {id:'callback', label:'Callback'},
+  ];
+  document.getElementById('filterBar').innerHTML = filters.map(f =>
+    `<div class="filter-btn ${activeFilter===f.id?'active':''}" onclick="setFilter('${f.id}')">${f.label}</div>`
+  ).join('');
+}
+
+function setFilter(f) {
+  activeFilter = f;
+  renderFilterBar();
+  renderHistory();
+}
+
+function renderHistory() {
+  const calls = data.calls;
+  const searchTerm = (document.getElementById('historySearch')?.value || '').toLowerCase();
+  const outcomeLabels = {closed:'Closed',think:'Think about it',no:'Hard no',nocontact:'No contact',voicemail:'Voicemail left',fullvm:'Full voicemail',blocked:'Blocked / Bad #',callback:'Call back later',unknown:'Logged'};
+  const objNames = {price:'Too expensive',diy:'DIY objection',think:'Think about it',spouse:'Ask spouse',competitor:'Have someone',nosprinkler:'No sprinkler',results:'No results seen'};
+
+  let filtered = [...calls].reverse();
+
+  if (activeFilter !== 'all') {
+    filtered = filtered.filter(c => c.outcome === activeFilter);
+  }
+
+  if (searchTerm) {
+    filtered = filtered.filter(c =>
+      (c.name && c.name.toLowerCase().includes(searchTerm)) ||
+      (c.notes && c.notes.toLowerCase().includes(searchTerm)) ||
+      (outcomeLabels[c.outcome] || '').toLowerCase().includes(searchTerm)
+    );
+  }
+
+  const display = filtered.slice(0, 20);
+
+  document.getElementById('callHistory').innerHTML = display.length ? display.map(c => {
+    const d = new Date(c.time);
+    const timeStr = d.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+    const cls = c.closed?'win':c.outcome==='think'?'maybe':'loss';
+    const name = c.name || outcomeLabels[c.outcome] || c.outcome;
+    return `<div class="history-item">
+      <div class="hi-outcome ${cls}"></div>
+      <div class="hi-info">
+        <div class="hi-name">${name}</div>
+        <div class="hi-detail">${c.name ? (outcomeLabels[c.outcome]||c.outcome) + ' · ' : ''}Reached: ${c.stage||'—'} · Obj: ${objNames[c.obj]||c.obj||'none'}</div>
+      </div>
+      <div class="hi-time">${timeStr}</div>
+    </div>`;
+  }).join('') + (filtered.length > 20 ? `<div style="text-align:center;color:var(--t3);font-size:11px;padding:8px;">Showing 20 of ${filtered.length} calls</div>` : '') : '<div style="color:var(--t3);font-size:13px;">No calls match your filter.</div>';
+}
+
+// ═══════════════════════════════════════════════════
+// CELEBRATE
+// ═══════════════════════════════════════════════════
+function celebrate() {
+  const ov = document.getElementById('celebOv');
+  ov.style.display = 'flex';
+  const colors = ['#6B8E23','#8BA946','#C9A876','#fff','#9CCC65'];
+  for(let i=0;i<50;i++){
+    const p = document.createElement('div');
+    p.className = 'confetti';
+    p.style.cssText = `left:${Math.random()*100}%;top:-10px;background:${colors[Math.floor(Math.random()*colors.length)]};--dx:${(Math.random()-.5)*300}px;animation-delay:${Math.random()*.6}s;animation-duration:${1.2+Math.random()*1}s;`;
+    ov.appendChild(p);
+  }
+}
+
+
+// ═══════════════════════════════════════════════════
+// VOICEMAIL
+// ═══════════════════════════════════════════════════
+const VOICEMAILS = [
+  {
+    label: 'First attempt — curious & quick',
+    rule: 'Under 20 seconds. Curious not salesy. One question at the end.',
+    script: '"Hey [Name], this is [Your Name] with Weed Man the Lawn Care Company — recorded line. Just had one quick question about your lawn this season and wanted to connect. Give me a call back when you get a chance at [number]. Again that is [Your Name] at Weed Man — [number]. Thanks [Name]."',
+    tip: 'Do NOT say what you are selling. Do NOT say "I want to tell you about our programs." The question creates curiosity. That is the whole point.'
+  },
+  {
+    label: 'Second attempt — slightly more direct',
+    rule: 'Reference first call. Still no pitch. Different angle.',
+    script: '"Hey [Name], this is [Your Name] with Weed Man — recorded line. Tried you once before. We service a lot of homes right in your area and I just wanted to ask one quick question about your lawn before we get rolling in your neighborhood. Call me back at [number] when you get a chance. That is [Your Name] — [number]. Thanks."',
+    tip: 'Mention you have called before so you do not seem random. Still no pitch — still just a question. Keep it warm.'
+  },
+  {
+    label: 'Third attempt — create mild urgency',
+    rule: 'Final voicemail. Light urgency, genuine not manipulative.',
+    script: '"Hey [Name], [Your Name] with Weed Man — recorded line. Last time I will bug you, I promise. We are starting to schedule in your area and I wanted to make sure you had the chance to get on before spots fill up. Call me at [number] if you want more information. [number]. Take care [Name]."',
+    tip: 'Third voicemail is your last. Do not leave more than three. Say it is your last and mean it — respects their time and sounds human.'
+  },
+  {
+    label: 'Pre-emergent urgency — spring specific',
+    rule: 'Spring window only. Genuine science urgency.',
+    script: '"Hey [Name], this is [Your Name] with Weed Man — recorded line. Quick one — we are in the pre-emergent window right now and once soil temps hit 55 degrees that window closes for the whole season. Wanted to make sure you had the chance to get ahead of it. Call me at [number] if you want more info. [Your Name] — [number]."',
+    tip: 'Only use this in actual spring pre-emergent window. The urgency is real science, not manufactured. That is why it works.'
+  },
+  {
+    label: 'Previous customer — personal tone',
+    rule: 'Warmer, reference the relationship.',
+    script: '"Hey [Name], this is [Your Name] with Weed Man — recorded line. You have been a customer with us before and I wanted to personally reach out before we start scheduling in your area this season. Would love to reconnect and make sure everything is dialed in for your lawn. Call me at [number]. That is [Your Name] — [number]. Hope you are well."',
+    tip: 'Previous customers deserve a warmer tone. You have a relationship. The word personally matters here.'
+  },
+];
+
+function openVMModal() {
+  let html = '<div style="margin-bottom:10px;font-size:12px;color:var(--t2);line-height:1.55;">Pick the right script for your situation. Under 20 seconds every time.</div>';
+  html += VOICEMAILS.map((vm, i) => 
+    `<div class="obj-btn" style="text-align:left;padding:12px 13px;margin-bottom:7px;" onclick="showVM(${i})">${vm.label}</div>`
+  ).join('');
+  document.getElementById('vmContent').innerHTML = html;
+  document.getElementById('vmModal').style.display = 'flex';
+}
+
+function showVM(i) {
+  const vm = VOICEMAILS[i];
+  document.getElementById('vmContent').innerHTML = `
+    <div class="obj-result">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin-bottom:8px;">Rule: ${vm.rule}</div>
+      <div class="or-response" style="border-color:var(--gold);">${vm.script}</div>
+      <div class="or-insight" style="margin-top:10px;">
+        <div class="ori-label">Why this works</div>
+        <div class="ori-text">${vm.tip}</div>
+      </div>
+      <button class="obj-back" onclick="openVMModal()">← All voicemails</button>
+      <button class="obj-back" style="margin-top:6px;background:rgba(201,168,118,0.1);border-color:rgba(201,168,118,0.25);color:var(--gold);" onclick="logVoicemail()">Log as voicemail & close</button>
+    </div>`;
+}
+
+function logVoicemail() {
+  closeVMModal();
+  // Pre-select voicemail outcome in log
+  selectLog('outcome', 'voicemail');
+  goScreen('log');
+}
+
+function closeVMModal() {
+  document.getElementById('vmModal').style.display = 'none';
+}
+
+
+// ═══════════════════════════════════════════════════
+// UNDO CLOSE
+// ═══════════════════════════════════════════════════
+function openUndoModal() {
+  console.log('ALL CALLS:', JSON.stringify(data.calls));
+  const lastClose = [...data.calls].reverse().find(c => c.closed || c.outcome === 'closed');
+  if (!lastClose) {
+    document.getElementById('undoContent').innerHTML = '<div style="color:var(--t2);font-size:13px;padding:8px 0;">No closes to undo yet.</div>';
+  } else {
+    const d = new Date(lastClose.time);
+    const timeStr = d.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' at '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+    document.getElementById('undoContent').innerHTML = `
+      <div style="background:var(--s3);border:1px solid var(--bd);border-radius:var(--rads);padding:13px;margin-bottom:14px;">
+        <div style="font-size:11px;color:var(--t3);margin-bottom:4px;">Last close logged</div>
+        <div style="font-size:14px;font-weight:700;color:var(--t1);">Closed — ${timeStr}</div>
+        ${lastClose.notes ? `<div style="font-size:12px;color:var(--t2);margin-top:4px;">"${lastClose.notes}"</div>` : ''}
+      </div>
+      <div style="font-size:12px;color:var(--t2);margin-bottom:14px;line-height:1.6;">This will remove the close from your total and mark it as <strong style="color:var(--gold);">No Contact</strong> instead.</div>
+      <button class="btn-primary" style="background:linear-gradient(135deg,#8B2020,var(--red));box-shadow:0 8px 24px rgba(192,80,74,0.3);" onclick="confirmUndo()">Yes, Remove It</button>
+      <button class="btn-secondary" style="margin-top:8px;width:100%;" onclick="closeUndoModal()">Cancel</button>`;
+  }
+  document.getElementById('undoModal').style.display = 'flex';
+}
+
+function confirmUndo() {
+  const idx = [...data.calls].reverse().findIndex(c => c.closed || c.outcome === 'closed');
+  if (idx !== -1) {
+    const realIdx = data.calls.length - 1 - idx;
+    data.calls[realIdx].closed = false;
+    data.calls[realIdx].outcome = 'nocontact';
+    if (data.totalCloses > 0) data.totalCloses--;
+    if (data.totalCalls > 0) data.totalCalls--;
+    saveData();
+    renderHomeInsights();
+  }
+  closeUndoModal();
+}
+
+function closeUndoModal() {
+  document.getElementById('undoModal').style.display = 'none';
+}
+// ═══════════════════════════════════════════════════
+// DATA MANAGEMENT
+// ═══════════════════════════════════════════════════
+function openClearModal() {
+  const callCount = data.calls.length;
+  const lastHourCount = data.calls.filter(c => Date.now() - c.time < 3600000).length;
+  const last24hCount = data.calls.filter(c => Date.now() - c.time < 86400000).length;
+
+  let html = '<div style="margin-bottom:14px;">';
+
+  html += '<div style="font-size:12px;color:var(--t2);margin-bottom:14px;line-height:1.6;">Clear call data, export a backup, or import a previous backup.</div>';
+
+  html += '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:8px;">Clear data</div>';
+
+  html += `<button class="obj-btn" style="width:100%;margin-bottom:7px;text-align:left;padding:12px 13px;" onclick="clearData('hour')">Clear last hour <span style="color:var(--t3);font-weight:400;">(${lastHourCount} call${lastHourCount!==1?'s':''})</span></button>`;
+  html += `<button class="obj-btn" style="width:100%;margin-bottom:7px;text-align:left;padding:12px 13px;" onclick="clearData('day')">Clear last 24 hours <span style="color:var(--t3);font-weight:400;">(${last24hCount} call${last24hCount!==1?'s':''})</span></button>`;
+  html += `<button class="obj-btn" style="width:100%;margin-bottom:14px;text-align:left;padding:12px 13px;border-color:rgba(192,80,74,0.3);color:var(--red);" onclick="clearData('all')">Clear all data <span style="color:var(--t3);font-weight:400;">(${callCount} call${callCount!==1?'s':''})</span></button>`;
+
+  html += '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:8px;">Backup</div>';
+
+  html += '<button class="obj-btn" style="width:100%;margin-bottom:7px;text-align:left;padding:12px 13px;" onclick="exportData()">Export call logs as JSON</button>';
+  html += '<button class="obj-btn" style="width:100%;margin-bottom:7px;text-align:left;padding:12px 13px;" onclick="document.getElementById(\'importFile\').click()">Import backup from file</button>';
+  html += '<input type="file" id="importFile" accept=".json" style="display:none;" onchange="importData(event)">';
+
+  html += '</div>';
+
+  document.getElementById('dataContent').innerHTML = html;
+  document.getElementById('dataModal').style.display = 'flex';
+}
+
+function closeDataModal() {
+  document.getElementById('dataModal').style.display = 'none';
+}
+
+function clearData(range) {
+  let msg = '';
+  if (range === 'hour') {
+    const cutoff = Date.now() - 3600000;
+    const removed = data.calls.filter(c => c.time >= cutoff);
+    data.calls = data.calls.filter(c => c.time < cutoff);
+    removed.forEach(c => {
+      if (data.totalCalls > 0) data.totalCalls--;
+      if (c.closed && data.totalCloses > 0) data.totalCloses--;
+    });
+    msg = `Cleared ${removed.length} call${removed.length!==1?'s':''} from the last hour.`;
+  } else if (range === 'day') {
+    const cutoff = Date.now() - 86400000;
+    const removed = data.calls.filter(c => c.time >= cutoff);
+    data.calls = data.calls.filter(c => c.time < cutoff);
+    removed.forEach(c => {
+      if (data.totalCalls > 0) data.totalCalls--;
+      if (c.closed && data.totalCloses > 0) data.totalCloses--;
+    });
+    msg = `Cleared ${removed.length} call${removed.length!==1?'s':''} from the last 24 hours.`;
+  } else {
+    const count = data.calls.length;
+    data.calls = [];
+    data.totalCalls = 0;
+    data.totalCloses = 0;
+    msg = `Cleared all ${count} call${count!==1?'s':''}.`;
+  }
+  saveData();
+  renderHomeInsights();
+
+  document.getElementById('dataContent').innerHTML = `
+    <div style="text-align:center;padding:20px 0;">
+      <div style="font-size:28px;margin-bottom:8px;">✓</div>
+      <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:6px;">${msg}</div>
+      <button class="btn-secondary" style="margin-top:12px;width:100%;" onclick="closeDataModal()">Done</button>
+    </div>`;
+}
+
+function exportData() {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'weedman-sales-backup-' + new Date().toISOString().slice(0,10) + '.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  document.getElementById('dataContent').innerHTML = `
+    <div style="text-align:center;padding:20px 0;">
+      <div style="font-size:28px;margin-bottom:8px;">✓</div>
+      <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:6px;">Backup exported</div>
+      <div style="font-size:12px;color:var(--t2);">${data.calls.length} call${data.calls.length!==1?'s':''} saved to file.</div>
+      <button class="btn-secondary" style="margin-top:12px;width:100%;" onclick="closeDataModal()">Done</button>
+    </div>`;
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const imported = JSON.parse(e.target.result);
+      if (!imported.calls || !Array.isArray(imported.calls)) {
+        throw new Error('Invalid backup format');
+      }
+      data = imported;
+      if (typeof data.totalCalls !== 'number') data.totalCalls = data.calls.length;
+      if (typeof data.totalCloses !== 'number') data.totalCloses = data.calls.filter(c => c.closed).length;
+      saveData();
+      renderHomeInsights();
+
+      document.getElementById('dataContent').innerHTML = `
+        <div style="text-align:center;padding:20px 0;">
+          <div style="font-size:28px;margin-bottom:8px;">✓</div>
+          <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:6px;">Backup imported</div>
+          <div style="font-size:12px;color:var(--t2);">${data.calls.length} call${data.calls.length!==1?'s':''} restored.</div>
+          <button class="btn-secondary" style="margin-top:12px;width:100%;" onclick="closeDataModal()">Done</button>
+        </div>`;
+    } catch(err) {
+      document.getElementById('dataContent').innerHTML = `
+        <div style="text-align:center;padding:20px 0;">
+          <div style="font-size:28px;margin-bottom:8px;">⚠</div>
+          <div style="font-size:14px;font-weight:700;color:var(--red);margin-bottom:6px;">Import failed</div>
+          <div style="font-size:12px;color:var(--t2);">The file does not appear to be a valid backup.</div>
+          <button class="btn-secondary" style="margin-top:12px;width:100%;" onclick="openClearModal()">Back</button>
+        </div>`;
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+// ═══════════════════════════════════════════════════
+// SEASONAL SERVICE RECOMMENDATIONS
+// ═══════════════════════════════════════════════════
+function getActiveServices(temp, month) {
+  return SEASONAL_SERVICES.filter(s => {
+    const inMonth = s.months.includes(month);
+    const inTemp = (temp === null) || (temp >= s.tempMin && temp <= s.tempMax);
+    return inMonth && inTemp;
+  }).sort((a, b) => {
+    const pri = {urgent:0, pest:1, normal:2};
+    return (pri[a.priority]||2) - (pri[b.priority]||2);
+  });
+}
+
+let currentTemp = null;
+
+function renderSeasonalServices(temp) {
+  currentTemp = temp;
+  const month = new Date().getMonth() + 1;
+  const services = getActiveServices(temp, month);
+  const wrap = document.getElementById('seasonalWrap');
+
+  if (!services.length) {
+    wrap.innerHTML = '';
+    return;
+  }
+
+  let html = '<div class="seasonal-title">What to push today</div>';
+  services.forEach(s => {
+    const soldOut = isServiceSoldOut(s.id);
+    const cls = soldOut ? '' : (s.priority === 'urgent' ? 'urgent' : s.type === 'pest' ? 'pest' : '');
+    const tagCls = soldOut ? '' : (s.priority === 'urgent' ? 'hot' : s.type === 'pest' ? 'pest-tag' : '');
+    const tagText = soldOut ? 'Sold out' : s.tag;
+    html += `<div class="svc-card ${cls}" ${soldOut ? 'style="opacity:0.5;"' : ''} onclick="${soldOut ? '' : `openSvcDetail('${s.id}')`}">
+      <div class="svc-header">
+        <span class="svc-name">${s.name}</span>
+        <span class="svc-tag ${tagCls}" ${soldOut ? 'style="background:rgba(192,80,74,0.15);color:var(--red);"' : ''}>${tagText}</span>
+      </div>
+      <div class="svc-pitch" style="display:block;margin-top:5px;font-size:10px;color:var(--t3);line-height:1.4;">${soldOut ? 'This service is no longer available for this season.' : s.sellLine}</div>
+    </div>`;
+  });
+
+  wrap.innerHTML = html;
+}
+
+function openSvcDetail(id) {
+  const s = SEASONAL_SERVICES.find(x => x.id === id);
+  if (!s) return;
+  document.getElementById('svcModalTitle').textContent = s.name;
+  document.getElementById('svcModalContent').innerHTML = `
+    <div style="margin-bottom:14px;">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--green-l);margin-bottom:6px;">Why this matters right now</div>
+      <div style="font-size:13px;color:var(--t2);line-height:1.7;">${s.pitch}</div>
+    </div>
+    <div class="prog-objection">
+      <div class="prog-obj-q">"${s.objection}"</div>
+      <div class="prog-obj-a">${s.response}</div>
+    </div>
+    <div style="margin-top:12px;background:rgba(107,142,35,0.08);border:1px solid rgba(107,142,35,0.18);border-radius:var(--rads);padding:10px 12px;">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--green-l);margin-bottom:4px;">Selling tip</div>
+      <div style="font-size:12px;color:var(--green-l);line-height:1.6;">${s.sellLine}</div>
+    </div>
+    <button class="obj-back" onclick="closeSvcModal()">← Back</button>`;
+  document.getElementById('svcModal').style.display = 'flex';
+}
+
+function closeSvcModal() {
+  document.getElementById('svcModal').style.display = 'none';
+}
+
+// ═══════════════════════════════════════════════════
+// PROGRAMS SELLING TOOL
+// ═══════════════════════════════════════════════════
+let progView = 'compare';
+
+function openProgramsModal() {
+  progView = 'compare';
+  renderProgramsContent();
+  document.getElementById('progModal').style.display = 'flex';
+}
+
+function closeProgModal() {
+  document.getElementById('progModal').style.display = 'none';
+}
+
+function renderProgramsContent() {
+  if (progView === 'compare') renderProgramCompare();
+  else if (progView === 'specialty') renderSpecialtyPrograms();
+  else if (progView === 'addons') renderAddons();
+  else if (progView === 'objections') renderProgramObjections();
+}
+
+function renderProgramCompare() {
+  let html = `<div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;">
+    <div class="filter-btn active" onclick="progView='compare';renderProgramsContent()">Lawn Programs</div>
+    <div class="filter-btn" onclick="progView='specialty';renderProgramsContent()">Specialty</div>
+    <div class="filter-btn" onclick="progView='addons';renderProgramsContent()">Add-Ons</div>
+    <div class="filter-btn" onclick="progView='objections';renderProgramsContent()">Objections</div>
+  </div>`;
+
+  html += '<div style="font-size:12px;color:var(--t2);margin-bottom:14px;line-height:1.6;">Present Elite Plus first. Each tier builds on the one below it. Lead with value, not price.</div>';
+
+  [...LAWN_PROGRAMS].reverse().forEach(p => {
+    const isTop = p.id === 'elitePlus';
+    html += `<div class="prog-tier ${isTop?'recommended':''}">
+      <div class="prog-tier-header">
+        <span class="prog-tier-name">${p.name}</span>
+        ${p.badge?`<span class="prog-tier-badge">${p.badge}</span>`:''}
+      </div>
+      <div style="font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:10px;">${p.desc}</div>`;
+
+    if (p.id === 'essentials') {
+      html += `<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin-bottom:6px;">Billings</div>
+        <ul class="prog-svc-list">${p.billings.map(s => `<li>${s}</li>`).join('')}</ul>
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin:8px 0 6px;">Bozeman</div>
+        <ul class="prog-svc-list">${p.bozeman.map(s => `<li>${s}</li>`).join('')}</ul>`;
+    } else {
+      html += `<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--green-l);margin-bottom:6px;">Essentials plus</div>
+        <ul class="prog-svc-list">${p.extras.map(s => `<li>${s}</li>`).join('')}</ul>`;
+    }
+
+    if (p.guarantee) {
+      html += `<div style="background:rgba(107,142,35,0.08);border:1px solid rgba(107,142,35,0.18);border-radius:var(--rads);padding:10px 12px;margin-top:10px;">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--green-l);margin-bottom:4px;">Guarantee</div>
+        <div style="font-size:12px;color:var(--green-l);line-height:1.6;">${p.guarantee}</div>
+      </div>`;
+    }
+
+    html += '</div>';
+  });
+
+  html += `<div style="background:rgba(192,80,74,0.08);border:1px solid rgba(192,80,74,0.2);border-radius:var(--rads);padding:12px;margin-top:8px;">
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--red);margin-bottom:4px;">What we do not do</div>
+    <ul style="list-style:none;padding:0;">${DO_NOT_DO.map(d => `<li style="font-size:12px;color:var(--t2);padding:2px 0;line-height:1.5;">✕ ${d}</li>`).join('')}</ul>
+  </div>`;
+
+  document.getElementById('progContent').innerHTML = html;
+}
+
+function renderSpecialtyPrograms() {
+  let html = `<div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;">
+    <div class="filter-btn" onclick="progView='compare';renderProgramsContent()">Lawn Programs</div>
+    <div class="filter-btn active" onclick="progView='specialty';renderProgramsContent()">Specialty</div>
+    <div class="filter-btn" onclick="progView='addons';renderProgramsContent()">Add-Ons</div>
+    <div class="filter-btn" onclick="progView='objections';renderProgramsContent()">Objections</div>
+  </div>`;
+
+  html += '<div style="font-size:12px;color:var(--t2);margin-bottom:14px;line-height:1.6;">Standalone programs. Each qualifies the customer for add-on services.</div>';
+
+  SPECIALTY_PROGRAMS.forEach(p => {
+    html += `<div class="prog-tier" style="margin-bottom:10px;">
+      <div class="prog-tier-header">
+        <span class="prog-tier-name">${p.name}</span>
+        ${p.badge?`<span class="prog-tier-badge">${p.badge}</span>`:''}
+      </div>
+      <div style="font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:10px;">${p.desc}</div>
+      <ul class="prog-svc-list">${p.details.map(d => `<li>${d}</li>`).join('')}</ul>`;
+
+    if (p.note) {
+      html += `<div style="background:rgba(201,168,118,0.08);border:1px solid rgba(201,168,118,0.15);border-radius:var(--rads);padding:10px 12px;margin-top:10px;">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin-bottom:4px;">Important</div>
+        <div style="font-size:12px;color:rgba(201,168,118,0.8);line-height:1.6;">${p.note}</div>
+      </div>`;
+    }
+    html += '</div>';
+  });
+
+  document.getElementById('progContent').innerHTML = html;
+}
+
+function renderAddons() {
+  let html = `<div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;">
+    <div class="filter-btn" onclick="progView='compare';renderProgramsContent()">Lawn Programs</div>
+    <div class="filter-btn" onclick="progView='specialty';renderProgramsContent()">Specialty</div>
+    <div class="filter-btn active" onclick="progView='addons';renderProgramsContent()">Add-Ons</div>
+    <div class="filter-btn" onclick="progView='objections';renderProgramsContent()">Objections</div>
+  </div>`;
+
+  html += `<div style="background:rgba(201,168,118,0.1);border:1px solid rgba(201,168,118,0.25);border-radius:var(--rads);padding:12px;margin-bottom:14px;">
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin-bottom:4px;">Requirement</div>
+    <div style="font-size:12px;color:rgba(201,168,118,0.9);line-height:1.6;">${ADDON_RULE}</div>
+  </div>`;
+
+  ADDON_SERVICES.forEach(s => {
+    html += `<div style="background:var(--s3);border:1px solid var(--bd);border-radius:var(--rads);padding:12px 14px;margin-bottom:7px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:13px;font-weight:700;color:var(--t1);">${s.name}</span>
+        <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:2px 8px;border-radius:10px;background:rgba(107,142,35,0.15);color:var(--green-l);">${s.season}</span>
+      </div>
+      <div style="font-size:12px;color:var(--t2);margin-top:4px;line-height:1.5;">${s.desc}</div>
+      ${s.price?`<div style="font-size:11px;font-weight:700;color:var(--gold);margin-top:4px;">${s.price}</div>`:''}
+    </div>`;
+  });
+
+  document.getElementById('progContent').innerHTML = html;
+}
+
+function renderProgramObjections() {
+  let html = `<div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;">
+    <div class="filter-btn" onclick="progView='compare';renderProgramsContent()">Lawn Programs</div>
+    <div class="filter-btn" onclick="progView='specialty';renderProgramsContent()">Specialty</div>
+    <div class="filter-btn" onclick="progView='addons';renderProgramsContent()">Add-Ons</div>
+    <div class="filter-btn active" onclick="progView='objections';renderProgramsContent()">Objections</div>
+  </div>`;
+
+  html += '<div style="font-size:12px;color:var(--t2);margin-bottom:14px;line-height:1.6;">Most common pushback when selling programs. Tap to see the response.</div>';
+
+  PROGRAM_OBJECTIONS.forEach((obj, i) => {
+    html += `<div class="prog-objection" style="margin-bottom:8px;cursor:pointer;" onclick="toggleProgObj(this)">
+      <div class="prog-obj-q">${obj.q}</div>
+      <div class="prog-obj-a" style="display:none;">${obj.a}</div>
+    </div>`;
+  });
+
+  document.getElementById('progContent').innerHTML = html;
+}
+
+function toggleProgObj(el) {
+  const answer = el.querySelector('.prog-obj-a');
+  answer.style.display = answer.style.display === 'none' ? 'block' : 'none';
+}
+
+// ═══════════════════════════════════════════════════
+// AUTHENTICATION & DATABASE SYNC
+// ═══════════════════════════════════════════════════
+let currentUser = null;
+let isOnline = true;
+
+async function initAuth() {
+  try {
+    const resp = await fetch('/api/auth');
+    if (!resp.ok) return;
+    const data = await resp.json();
+    if (data.user) {
+      currentUser = data.user;
+      onAuthStateChanged();
+    }
+  } catch(e) {}
+  updateAuthButton();
+}
+
+function onAuthStateChanged() {
+  updateAuthButton();
+  if (currentUser) {
+    syncToServer();
+  }
+}
+
+function updateAuthButton() {
+  const btn = document.getElementById('authBtn');
+  if (!btn) return;
+  if (currentUser) {
+    btn.textContent = '✓ ' + (currentUser.email || 'Signed in');
+    btn.style.color = 'var(--green-l)';
+    btn.style.borderColor = 'var(--bd3)';
+    btn.onclick = openAuthModal;
+  } else {
+    btn.textContent = '🔑 Sign In — Save Your Data';
+    btn.style.color = 'var(--gold)';
+    btn.style.borderColor = 'var(--bd2)';
+    btn.onclick = openAuthModal;
+  }
+}
+
+function openAuthModal() {
+  const el = document.getElementById('authContent');
+  if (currentUser) {
+    document.getElementById('authModalTitle').textContent = 'Account';
+    el.innerHTML = `
+      <div style="background:var(--s3);border:1px solid var(--bd);border-radius:var(--rads);padding:14px;margin-bottom:14px;">
+        <div style="font-size:11px;color:var(--t3);margin-bottom:2px;">Signed in as</div>
+        <div style="font-size:14px;font-weight:700;color:var(--t1);">${currentUser.email || 'Unknown'}</div>
+      </div>
+      <div style="font-size:12px;color:var(--t2);margin-bottom:14px;line-height:1.6;">Your call data is being saved to the cloud. You can access it from any device.</div>
+      <button class="btn-secondary" style="width:100%;margin-bottom:8px;" onclick="syncToServer()">↑ Sync local data to cloud</button>
+      <button class="btn-secondary" style="width:100%;margin-bottom:8px;" onclick="pullFromServer()">↓ Load data from cloud</button>
+      <button class="btn-secondary" style="width:100%;color:var(--red);border-color:rgba(192,80,74,0.3);" onclick="handleLogout()">Sign Out</button>`;
+  } else {
+    document.getElementById('authModalTitle').textContent = 'Sign In';
+    el.innerHTML = `
+      <div style="font-size:12px;color:var(--t2);margin-bottom:14px;line-height:1.6;">Sign in to save your call data to the cloud. No more losing data when you clear your browser.</div>
+      <div style="margin-bottom:10px;">
+        <input type="email" id="authEmail" class="lead-input" placeholder="Email" style="width:100%;text-align:left;padding:12px;margin-bottom:8px;">
+        <input type="password" id="authPass" class="lead-input" placeholder="Password" style="width:100%;text-align:left;padding:12px;">
+      </div>
+      <div id="authError" style="color:var(--red);font-size:12px;margin-bottom:8px;display:none;"></div>
+      <button class="btn-primary" style="width:100%;margin-bottom:8px;" onclick="handleLogin()">Sign In</button>
+      <button class="btn-secondary" style="width:100%;margin-bottom:8px;" onclick="handleSignup()">Create Account</button>
+      <div style="font-size:11px;color:var(--t3);text-align:center;line-height:1.5;">Your data stays on this device until you sign in.</div>`;
+  }
+  document.getElementById('authModal').style.display = 'flex';
+}
+
+function closeAuthModal() {
+  document.getElementById('authModal').style.display = 'none';
+}
+
+async function handleLogin() {
+  const email = document.getElementById('authEmail').value.trim();
+  const pass = document.getElementById('authPass').value;
+  if (!email || !pass) { showAuthError('Enter email and password.'); return; }
+  try {
+    const resp = await fetch('/api/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'login', email, password: pass })
+    });
+    const result = await resp.json();
+    if (!resp.ok || result.error) { showAuthError(result.error || 'Login failed.'); return; }
+    currentUser = result.user;
+    closeAuthModal();
+    onAuthStateChanged();
+  } catch(e) {
+    showAuthError('Login failed. Try again.');
+  }
+}
+
+async function handleSignup() {
+  const email = document.getElementById('authEmail').value.trim();
+  const pass = document.getElementById('authPass').value;
+  if (!email || !pass) { showAuthError('Enter email and password.'); return; }
+  if (pass.length < 6) { showAuthError('Password must be at least 6 characters.'); return; }
+  try {
+    const resp = await fetch('/api/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'signup', email, password: pass })
+    });
+    const result = await resp.json();
+    if (!resp.ok || result.error) { showAuthError(result.error || 'Signup failed.'); return; }
+    if (result.emailVerified === false) {
+      showAuthError('Check your email to confirm your account, then sign in.');
+      return;
+    }
+    currentUser = result.user;
+    closeAuthModal();
+    onAuthStateChanged();
+  } catch(e) {
+    showAuthError('Signup failed. Try again.');
+  }
+}
+
+async function handleLogout() {
+  try {
+    await fetch('/api/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'logout' })
+    });
+  } catch(e) {}
+  currentUser = null;
+  closeAuthModal();
+  updateAuthButton();
+}
+
+function showAuthError(msg) {
+  const el = document.getElementById('authError');
+  if (el) { el.textContent = msg; el.style.display = 'block'; }
+}
+
+async function syncToServer() {
+  if (!currentUser) return;
+  try {
+    const localData = JSON.parse(localStorage.getItem('wm_sales') || '{"calls":[]}');
+    if (!localData.calls.length) return;
+    const resp = await fetch('/api/sync', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ calls: localData.calls })
+    });
+    if (resp.ok) {
+      const result = await resp.json();
+      if (result.imported > 0) {
+        localStorage.removeItem('wm_sales');
+        data = { calls: [], totalCalls: 0, totalCloses: 0 };
+        pullFromServer();
+      }
+    }
+  } catch(e) {}
+}
+
+async function pullFromServer() {
+  if (!currentUser) return;
+  try {
+    const resp = await fetch('/api/calls');
+    if (!resp.ok) return;
+    const result = await resp.json();
+    data.calls = result.calls.map(c => ({
+      time: new Date(c.calledAt || c.createdAt).getTime(),
+      name: [c.firstName, c.lastName].filter(Boolean).join(' '),
+      firstName: c.firstName,
+      lastName: c.lastName,
+      outcome: c.outcome,
+      stage: c.stage,
+      obj: c.objection,
+      notes: c.notes,
+      closed: c.closed,
+      serverId: c.id
+    }));
+    data.totalCalls = data.calls.length;
+    data.totalCloses = data.calls.filter(c => c.closed).length;
+    saveData();
+    renderHomeInsights();
+  } catch(e) {}
+}
+
+const origSaveLog = saveLog;
+saveLog = async function() {
+  const notes = document.getElementById('logNotes').value;
+  const first = (document.getElementById('logFirstName').value || '').trim();
+  const last = (document.getElementById('logLastName').value || '').trim();
+  const name = [first, last].filter(Boolean).join(' ');
+  const call = {
+    time: Date.now(),
+    name: name,
+    firstName: first,
+    lastName: last,
+    outcome: logData.outcome || 'unknown',
+    stage: logData.stage || 'unknown',
+    obj: logData.obj || 'none',
+    notes: notes,
+    closed: logData.outcome === 'closed'
+  };
+
+  data.calls.push(call);
+  data.totalCalls++;
+  if(call.closed) data.totalCloses++;
+  saveData();
+
+  if (currentUser) {
+    try {
+      await fetch('/api/calls', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          firstName: first,
+          lastName: last,
+          outcome: call.outcome,
+          stage: call.stage,
+          objection: call.obj,
+          notes: call.notes,
+          calledAt: call.time
+        })
+      });
+    } catch(e) {}
+  }
+
+  logData = { outcome:'', stage:'', obj:'', notes:'', name:'' };
+  leadNameForCall = '';
+  goScreen('home');
+};
+
+// ═══════════════════════════════════════════════════
+// SEASONAL AVAILABILITY
+// ═══════════════════════════════════════════════════
+let serviceAvailabilityData = {};
+
+async function loadServiceAvailability() {
+  try {
+    const resp = await fetch('/api/services');
+    if (!resp.ok) return;
+    const services = await resp.json();
+    services.forEach(s => {
+      serviceAvailabilityData[s.serviceId] = s;
+    });
+    renderSeasonalServices(currentTemp);
+  } catch(e) {}
+}
+
+function isServiceSoldOut(serviceId) {
+  const sa = serviceAvailabilityData[serviceId];
+  if (!sa) return false;
+  if (!sa.available) return true;
+  if (sa.maxSlots && sa.usedSlots >= sa.maxSlots) return true;
+  return false;
+}
+
+loadWeather();
+renderHomeInsights();
+loadServiceAvailability();
+
+try { initAuth(); } catch(e) {}
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(function(){});
+}
+</script>
+</body>
+</html>

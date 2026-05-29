@@ -7,6 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#141210">
 <link rel="manifest" href="/manifest.json">
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <title>Weedman Sales Companion</title>
 
 <style>
@@ -2016,6 +2017,7 @@ function openAuthModal() {
       <div id="authError" style="color:var(--red);font-size:12px;margin-bottom:8px;display:none;"></div>
       <button class="btn-primary" style="width:100%;margin-bottom:8px;" onclick="handleLogin()">Sign In</button>
       <button class="btn-secondary" style="width:100%;margin-bottom:8px;" onclick="handleSignup()">Create Account</button>
+      <button type="button" onclick="handlePasswordReset()" style="background:none;border:none;color:var(--gold);cursor:pointer;margin:10px 0;text-decoration:underline;font-size:12px;width:100%;text-align:center;font-weight:700;font-family:var(--font);">Forgot Password?</button>
       <div style="font-size:11px;color:var(--t3);text-align:center;line-height:1.5;">Your data stays on this device until you sign in.</div>`;
   }
   document.getElementById('authModal').style.display = 'flex';
@@ -2025,62 +2027,51 @@ function closeAuthModal() {
   document.getElementById('authModal').style.display = 'none';
 }
 
-async function handleLogin() {
+function handleLogin() {
   const email = document.getElementById('authEmail').value.trim();
   const pass = document.getElementById('authPass').value;
   if (!email || !pass) { showAuthError('Enter email and password.'); return; }
-  try {
-    const resp = await fetch('/api/auth', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'login', email, password: pass })
-    });
-    const result = await resp.json();
-    if (!resp.ok || result.error) { showAuthError(result.error || 'Login failed.'); return; }
-    currentUser = result.user;
+  
+  window.netlifyIdentity.login(email, pass, true).then(user => {
+    currentUser = user;
     closeAuthModal();
-    onAuthStateChanged();
-  } catch(e) {
-    showAuthError('Login failed. Try again.');
-  }
+    updateAuthButton();
+  }).catch(err => {
+    showAuthError(err.message || 'Login failed');
+  });
 }
 
-async function handleSignup() {
+function handleSignup() {
   const email = document.getElementById('authEmail').value.trim();
   const pass = document.getElementById('authPass').value;
   if (!email || !pass) { showAuthError('Enter email and password.'); return; }
   if (pass.length < 6) { showAuthError('Password must be at least 6 characters.'); return; }
-  try {
-    const resp = await fetch('/api/auth', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'signup', email, password: pass })
-    });
-    const result = await resp.json();
-    if (!resp.ok || result.error) { showAuthError(result.error || 'Signup failed.'); return; }
-    if (result.emailVerified === false) {
-      showAuthError('Check your email to confirm your account, then sign in.');
-      return;
-    }
-    currentUser = result.user;
-    closeAuthModal();
-    onAuthStateChanged();
-  } catch(e) {
-    showAuthError('Signup failed. Try again.');
-  }
+  
+  window.netlifyIdentity.signup(email, pass, {name: email.split('@')[0]}).then(user => {
+    showAuthError('Check your email to verify your account, then sign in.');
+    setTimeout(() => closeAuthModal(), 2000);
+  }).catch(err => {
+    showAuthError(err.message || 'Signup failed');
+  });
 }
 
-async function handleLogout() {
-  try {
-    await fetch('/api/auth', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'logout' })
-    });
-  } catch(e) {}
-  currentUser = null;
-  closeAuthModal();
-  updateAuthButton();
+function handlePasswordReset() {
+  const email = document.getElementById('authEmail').value.trim();
+  if (!email) { showAuthError('Enter your email address'); return; }
+  
+  window.netlifyIdentity.requestPasswordRecovery(email).then(() => {
+    showAuthError('Password reset link sent to ' + email);
+  }).catch(err => {
+    showAuthError(err.message || 'Failed to send reset');
+  });
+}
+
+function handleLogout() {
+  window.netlifyIdentity.logout().then(() => {
+    currentUser = null;
+    closeAuthModal();
+    updateAuthButton();
+  });
 }
 
 function showAuthError(msg) {

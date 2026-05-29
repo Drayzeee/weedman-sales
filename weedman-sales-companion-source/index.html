@@ -7,6 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#141210">
 <link rel="manifest" href="/manifest.json">
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <title>Weedman Sales Companion</title>
 
 <style>
@@ -1956,14 +1957,17 @@ function toggleProgObj(el) {
 let currentUser = null;
 
 // Initialize Netlify Identity
-if (window.netlifyIdentity) {
+function initNetlifyIdentity() {
+  if (!window.netlifyIdentity) {
+    setTimeout(initNetlifyIdentity, 100);
+    return;
+  }
   window.netlifyIdentity.on('init', user => {
     if (user) { currentUser = user; updateAuthButton(); }
   });
   window.netlifyIdentity.on('login', user => {
     currentUser = user;
     updateAuthButton();
-    closeAuthModal();
     syncToServer();
   });
   window.netlifyIdentity.on('logout', () => {
@@ -1972,6 +1976,7 @@ if (window.netlifyIdentity) {
   });
   window.netlifyIdentity.init();
 }
+initNetlifyIdentity();
 
 function updateAuthButton() {
   const btn = document.getElementById('authBtn');

@@ -20,7 +20,23 @@
   --t1:#F2EDE6;--t2:#9A9080;--t3:#5A5248;
   --font:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;--mono:'SF Mono','Fira Code','Consolas',monospace;
   --rad:14px;--rads:9px;
+  /* Accent system — defaults to green */
+  --accent:#6B8E23;--accent-l:#8BA946;--accent-d:#4a6218;
+  --accent-glow:rgba(107,142,35,0.3);--accent-glow-bright:rgba(107,142,35,0.6);
+  --accent-faint:rgba(107,142,35,0.12);--accent-border:rgba(107,142,35,0.25);
+  /* Font scale */
+  --fs-base:15px;--fs-sm:12px;--fs-xs:10px;--fs-lg:17px;
 }
+/* Light mode */
+body.light-mode {
+  --bg:#F4F1EC;--s1:#EAE6DF;--s2:#DDD9D0;--s3:#D0CBC0;--s4:#C3BDB0;
+  --bd:rgba(0,0,0,0.08);--bd2:rgba(150,110,60,0.2);--bd3:rgba(80,110,20,0.2);
+  --t1:#1A1714;--t2:#5A5248;--t3:#9A9080;
+}
+/* Font sizes */
+body.text-sm { --fs-base:13px; --fs-sm:11px; --fs-xs:9px; --fs-lg:15px; }
+body.text-lg { --fs-base:17px; --fs-sm:14px; --fs-xs:11px; --fs-lg:19px; }
+body { font-size: var(--fs-base); }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--font);font-size:15px;overflow:hidden;}
 
@@ -31,7 +47,7 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fon
 
 /* ── HOME SCREEN ── */
 #s-home{padding:0;background:linear-gradient(160deg,var(--bg) 0%,#1a1712 100%);}
-.home-top{padding:32px 24px 20px;position:relative;}
+.home-top{padding:64px 24px 20px;position:relative;}
 .home-logo{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--green-l);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
 .home-logo::before{content:'';width:20px;height:2px;background:var(--green-l);}
 .home-title{font-size:32px;font-weight:800;color:var(--t1);line-height:1.1;margin-bottom:8px;}
@@ -81,10 +97,9 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fon
 .stat-n{font-size:28px;font-weight:800;color:var(--green-l);font-family:var(--mono);}
 .stat-l{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-top:3px;}
 .home-actions{padding:0 24px;display:flex;flex-direction:column;gap:10px;}
-.btn-primary{padding:18px;background:linear-gradient(135deg,var(--green-d),var(--green),var(--green-l));border:none;border-radius:var(--rad);color:#fff;font-size:15px;font-weight:800;cursor:pointer;font-family:var(--font);letter-spacing:.04em;box-shadow:0 8px 24px rgba(107,142,35,0.3);transition:all .2s;position:relative;overflow:hidden;}
-.btn-primary::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:rgba(255,255,255,0.12);transform:skewX(-15deg);animation:shim 3s ease infinite;}
-@keyframes shim{0%{left:-100%}100%{left:180%}}
-.btn-primary:active{transform:scale(.98);}
+.btn-primary{padding:18px;background:linear-gradient(135deg,var(--accent-d),var(--accent-l));border:none;border-radius:var(--rad);color:#fff;font-size:15px;font-weight:800;cursor:pointer;font-family:var(--font);letter-spacing:.04em;box-shadow:0 4px 20px var(--accent-glow);transition:all .2s;position:relative;overflow:hidden;animation:btnPulse 3s ease-in-out infinite;}
+@keyframes btnPulse{0%,100%{box-shadow:0 4px 20px var(--accent-glow);}50%{box-shadow:0 4px 36px var(--accent-glow-bright);}}
+.btn-primary:active{transform:scale(.97);animation:none;}
 .btn-secondary{padding:14px;background:var(--s2);border:1px solid var(--bd2);border-radius:var(--rad);color:var(--gold);font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);transition:all .2s;}
 .btn-secondary:active{transform:scale(.98);}
 .home-insights{padding:16px 24px 0;flex:1;}
@@ -267,9 +282,107 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fon
 .streak-icon{font-size:20px;margin-bottom:4px;}
 .streak-num{font-size:22px;font-weight:800;font-family:var(--mono);color:var(--gold);}
 .streak-label{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-top:2px;}
+/* ── SIDEBAR NAV ── */
+.sidebar-overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0);pointer-events:none;transition:background .3s;}
+.sidebar-overlay.open{background:rgba(0,0,0,0.7);pointer-events:all;backdrop-filter:blur(4px);}
+.sidebar{position:fixed;top:0;left:-280px;width:280px;height:100%;background:var(--s1);border-right:1px solid var(--bd);z-index:201;transition:left .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow:hidden;}
+.sidebar.open{left:0;}
+.sidebar-head{padding:52px 24px 20px;border-bottom:1px solid var(--bd);}
+.sidebar-logo{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-l);margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+.sidebar-logo::before{content:'';width:16px;height:2px;background:var(--accent-l);}
+.sidebar-user{font-size:12px;color:var(--t2);margin-top:6px;}
+.sidebar-user strong{color:var(--t1);}
+.sidebar-nav{flex:1;overflow-y:auto;padding:12px 0;}
+.sidebar-item{display:flex;align-items:center;gap:14px;padding:14px 24px;cursor:pointer;transition:all .2s;border-left:3px solid transparent;}
+.sidebar-item:active{opacity:.7;}
+.sidebar-item.active{background:var(--accent-faint);border-left-color:var(--accent-l);}
+.sidebar-item.active .si-icon{filter:none;}
+.sidebar-item.active .si-label{color:var(--accent-l);}
+.si-icon{font-size:20px;filter:grayscale(1) opacity(.4);transition:all .2s;}
+.si-label{font-size:13px;font-weight:700;color:var(--t2);transition:all .2s;}
+.sidebar-divider{height:1px;background:var(--bd);margin:8px 24px;}
+.sidebar-foot{padding:16px 24px;border-top:1px solid var(--bd);}
+.hamburger{position:fixed;top:14px;left:14px;z-index:199;width:40px;height:40px;background:var(--s2);border:1px solid var(--bd);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;}
+.hamburger:active{transform:scale(.92);}
+.hamburger-icon{display:flex;flex-direction:column;gap:5px;}
+.hamburger-icon span{width:18px;height:2px;background:var(--t1);border-radius:2px;transition:all .25s;}
+.hamburger.open .hamburger-icon span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.hamburger.open .hamburger-icon span:nth-child(2){opacity:0;transform:scaleX(0);}
+.hamburger.open .hamburger-icon span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+/* ── SETTINGS SCREEN ── */
+#s-settings{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:20px 20px 80px;}
+.settings-title{font-size:22px;font-weight:800;color:var(--t1);margin-bottom:20px;margin-top:8px;}
+.settings-section{margin-bottom:24px;}
+.settings-section-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--accent-l);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.settings-section-label::before{content:'';width:12px;height:2px;background:var(--accent-l);}
+.settings-row{display:flex;align-items:center;justify-content:space-between;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rads);padding:14px 16px;margin-bottom:8px;}
+.settings-row-left{flex:1;}
+.settings-row-label{font-size:13px;font-weight:700;color:var(--t1);}
+.settings-row-sub{font-size:11px;color:var(--t2);margin-top:2px;}
+.settings-input{background:var(--s3);border:1px solid var(--bd);border-radius:var(--rads);padding:8px 12px;color:var(--t1);font-size:13px;font-family:var(--font);outline:none;width:140px;text-align:right;}
+.settings-input:focus{border-color:var(--accent-l);}
+.toggle{position:relative;width:44px;height:24px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;position:absolute;}
+.toggle-slider{position:absolute;inset:0;background:var(--s4);border-radius:12px;cursor:pointer;transition:.25s;}
+.toggle-slider::before{content:'';position:absolute;height:18px;width:18px;left:3px;top:3px;background:var(--t3);border-radius:50%;transition:.25s;}
+.toggle input:checked + .toggle-slider{background:var(--accent);}
+.toggle input:checked + .toggle-slider::before{transform:translateX(20px);background:#fff;}
+.size-picker{display:flex;gap:6px;}
+.size-btn{padding:6px 14px;border-radius:var(--rads);font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);border:1.5px solid var(--bd);background:var(--s3);color:var(--t2);transition:all .15s;}
+.size-btn.active{border-color:var(--accent-l);background:var(--accent-faint);color:var(--accent-l);}
+.accent-picker{display:flex;gap:10px;flex-wrap:wrap;}
+.accent-swatch{width:30px;height:30px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .2s;position:relative;display:flex;align-items:center;justify-content:center;}
+.accent-swatch.active{border-color:var(--t1);transform:scale(1.15);}
+.accent-swatch.active::after{content:'✓';font-size:11px;font-weight:900;color:#fff;}
+.market-picker{display:flex;gap:6px;}
+.market-btn{padding:6px 14px;border-radius:var(--rads);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);border:1.5px solid var(--bd);background:var(--s3);color:var(--t2);transition:all .15s;}
+.market-btn.active{border-color:var(--accent-l);background:var(--accent-faint);color:var(--accent-l);}
+
 </style>
 </head>
 <body>
+
+
+<!-- ── HAMBURGER ── -->
+<div class="hamburger" id="hamburgerBtn" onclick="toggleSidebar()">
+  <div class="hamburger-icon">
+    <span></span><span></span><span></span>
+  </div>
+</div>
+
+<!-- ── SIDEBAR OVERLAY ── -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- ── SIDEBAR ── -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-head">
+    <div class="sidebar-logo">Weedman Sales</div>
+    <div style="font-size:18px;font-weight:800;color:var(--t1);" id="sidebarGreeting">Ready to close.</div>
+    <div class="sidebar-user" id="sidebarUser">Not signed in</div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="sidebar-item active" id="si-home" onclick="sidebarNav('home')">
+      <span class="si-icon">🏠</span><span class="si-label">Home</span>
+    </div>
+    <div class="sidebar-item" id="si-call" onclick="sidebarNav('call')">
+      <span class="si-icon">📞</span><span class="si-label">Call</span>
+    </div>
+    <div class="sidebar-item" id="si-log" onclick="sidebarNav('log')">
+      <span class="si-icon">✏️</span><span class="si-label">Log Call</span>
+    </div>
+    <div class="sidebar-item" id="si-dash" onclick="sidebarNav('dash')">
+      <span class="si-icon">📊</span><span class="si-label">Dashboard</span>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-item" id="si-settings" onclick="sidebarNav('settings')">
+      <span class="si-icon">⚙️</span><span class="si-label">Settings</span>
+    </div>
+  </div>
+  <div class="sidebar-foot">
+    <div style="font-size:10px;color:var(--t3);text-align:center;">Weedman Sales Companion v2.0</div>
+  </div>
+</div>
 
 <!-- ── AUTH MODAL ── -->
 <div class="modal-overlay" id="authModal" style="display:none;">
@@ -342,7 +455,7 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fon
       <button class="btn-secondary" onclick="goScreen('dash')">View Dashboard →</button>
       <button class="btn-secondary" style="color:var(--t2);border-color:var(--bd);" onclick="window.open('/science.html','_blank')">🔬 Science & Biology Training</button>
       <button class="btn-secondary" style="color:var(--red);border-color:rgba(192,80,74,0.3);" onclick="openUndoModal()">↩ Undo Last Close</button>
-      <button class="btn-secondary" style="color:var(--gold);border-color:rgba(201,168,118,0.3);" id="dataBtn" onclick="window.openClearModal()">⚙ Data</button>
+      <button class="btn-secondary" style="color:var(--gold);border-color:rgba(201,168,118,0.3);" id="dataBtn" onclick="goScreen('settings')">⚙ Settings</button>
       <button class="btn-secondary" id="authBtn" onclick="openAuthModal()" style="border-color:var(--bd2);color:var(--gold);">🔑 Sign In — Save Your Data</button>
     </div>
     <div class="home-insights" id="homeInsights"></div>
@@ -544,6 +657,146 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fon
   </div>
 </div>
 
+
+<!-- ══════════════════════════════════
+     SETTINGS SCREEN
+══════════════════════════════════ -->
+<div class="screen" id="s-settings" style="display:none;">
+  <div class="settings-title">Settings</div>
+
+  <!-- PROFILE -->
+  <div class="settings-section">
+    <div class="settings-section-label">Your Profile</div>
+    <div class="settings-row">
+      <div class="settings-row-left">
+        <div class="settings-row-label">Your Name</div>
+        <div class="settings-row-sub">Shows on home screen</div>
+      </div>
+      <input type="text" class="settings-input" id="settingName" placeholder="First name" maxlength="20" oninput="saveSettings()">
+    </div>
+    <div class="settings-row">
+      <div class="settings-row-left">
+        <div class="settings-row-label">Market</div>
+        <div class="settings-row-sub">Your territory</div>
+      </div>
+      <div class="market-picker">
+        <div class="market-btn active" id="mkt-billings" onclick="setMarket('billings')">Billings</div>
+        <div class="market-btn" id="mkt-bozeman" onclick="setMarket('bozeman')">Bozeman</div>
+        <div class="market-btn" id="mkt-both" onclick="setMarket('both')">Both</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GOALS -->
+  <div class="settings-section">
+    <div class="settings-section-label">Goals</div>
+    <div class="settings-row">
+      <div class="settings-row-left">
+        <div class="settings-row-label">Daily Call Target</div>
+      </div>
+      <input type="number" class="settings-input" id="settingDailyCalls" min="1" max="200" value="40" oninput="saveSettings()">
+    </div>
+    <div class="settings-row">
+      <div class="settings-row-left">
+        <div class="settings-row-label">Weekly Close Target</div>
+      </div>
+      <input type="number" class="settings-input" id="settingWeeklyCloses" min="1" max="100" value="8" oninput="saveSettings()">
+    </div>
+  </div>
+
+  <!-- DISPLAY -->
+  <div class="settings-section">
+    <div class="settings-section-label">Display</div>
+    <div class="settings-row">
+      <div class="settings-row-left">
+        <div class="settings-row-label">Light Mode</div>
+        <div class="settings-row-sub">Switch to light theme</div>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="settingLightMode" onchange="applyLightMode(this.checked)">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <div class="settings-row">
+      <div class="settings-row-left">
+        <div class="settings-row-label">Text Size</div>
+      </div>
+      <div class="size-picker">
+        <div class="size-btn" id="sz-sm" onclick="setTextSize('sm')">S</div>
+        <div class="size-btn active" id="sz-md" onclick="setTextSize('md')">M</div>
+        <div class="size-btn" id="sz-lg" onclick="setTextSize('lg')">L</div>
+      </div>
+    </div>
+    <div class="settings-row" style="flex-direction:column;align-items:flex-start;gap:12px;">
+      <div class="settings-row-label">Accent Color</div>
+      <div class="accent-picker" id="accentPicker">
+        <div class="accent-swatch active" style="background:#6B8E23;" data-accent="green" onclick="setAccent('green')"></div>
+        <div class="accent-swatch" style="background:#2563EB;" data-accent="blue" onclick="setAccent('blue')"></div>
+        <div class="accent-swatch" style="background:#7C3AED;" data-accent="purple" onclick="setAccent('purple')"></div>
+        <div class="accent-swatch" style="background:#DC2626;" data-accent="red" onclick="setAccent('red')"></div>
+        <div class="accent-swatch" style="background:#D97706;" data-accent="amber" onclick="setAccent('amber')"></div>
+        <div class="accent-swatch" style="background:#0891B2;" data-accent="cyan" onclick="setAccent('cyan')"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BEHAVIOR -->
+  <div class="settings-section">
+    <div class="settings-section-label">Behavior</div>
+    <div class="settings-row">
+      <div class="settings-row-left">
+        <div class="settings-row-label">Auto-advance to Log</div>
+        <div class="settings-row-sub">Go to log screen after a call ends</div>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="settingAutoLog" checked onchange="saveSettings()">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <div class="settings-row">
+      <div class="settings-row-left">
+        <div class="settings-row-label">Show Call Timer</div>
+        <div class="settings-row-sub">Display timer during calls</div>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="settingTimer" checked onchange="saveSettings()">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <!-- ACCOUNT -->
+  <div class="settings-section">
+    <div class="settings-section-label">Account & Data</div>
+    <div class="settings-row" style="cursor:pointer;" onclick="openAuthModal()">
+      <div class="settings-row-left">
+        <div class="settings-row-label" id="settingsAuthLabel">Sign In</div>
+        <div class="settings-row-sub" id="settingsAuthSub">Save data to cloud</div>
+      </div>
+      <span style="color:var(--t3);font-size:18px;">›</span>
+    </div>
+    <div class="settings-row" style="cursor:pointer;" onclick="syncToServer()">
+      <div class="settings-row-left">
+        <div class="settings-row-label">Sync to Cloud</div>
+        <div class="settings-row-sub">Push local data to server</div>
+      </div>
+      <span style="color:var(--t3);font-size:18px;">↑</span>
+    </div>
+    <div class="settings-row" style="cursor:pointer;" onclick="window.openClearModal()">
+      <div class="settings-row-left">
+        <div class="settings-row-label">Manage Data</div>
+        <div class="settings-row-sub">Export, import, or clear</div>
+      </div>
+      <span style="color:var(--t3);font-size:18px;">›</span>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:8px 0 16px;">
+    <div style="font-size:11px;color:var(--t3);">Weedman Sales Companion</div>
+    <div style="font-size:10px;color:var(--t3);margin-top:2px;">v2.0 · Built for closers</div>
+  </div>
+</div>
+
 <!-- ── NAV BAR ── -->
 <div class="nav-bar">
   <div class="ni on" id="ni-home" onclick="goScreen('home')">
@@ -561,6 +814,10 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fon
   <div class="ni" id="ni-dash" onclick="goScreen('dash')">
     <div class="ni-icon">📊</div>
     <div class="ni-label">Stats</div>
+  </div>
+  <div class="ni" id="ni-settings" onclick="goScreen('settings')">
+    <div class="ni-icon">⚙️</div>
+    <div class="ni-label">Settings</div>
   </div>
 </div>
 
@@ -937,6 +1194,7 @@ function goScreen(id) {
   if(id === 'dash') renderDash();
   if(id === 'home') { renderHomeInsights(); hideLeadInput(); }
   if(id === 'log') resetLog();
+  if(id === 'settings') { applySettings(); updateSettingsAuthLabel(); }
 }
 
 // ═══════════════════════════════════════════════════
@@ -1980,16 +2238,19 @@ initNetlifyIdentity();
 
 function updateAuthButton() {
   const btn = document.getElementById('authBtn');
-  if (!btn) return;
-  if (currentUser) {
-    btn.textContent = '✓ ' + (currentUser.email || 'Signed in');
-    btn.style.color = 'var(--green-l)';
-    btn.style.borderColor = 'var(--bd3)';
-  } else {
-    btn.textContent = '🔑 Sign In — Save Your Data';
-    btn.style.color = 'var(--gold)';
-    btn.style.borderColor = 'var(--bd2)';
+  if (btn) {
+    if (currentUser) {
+      btn.textContent = '✓ ' + (currentUser.email || 'Signed in');
+      btn.style.color = 'var(--accent-l)';
+      btn.style.borderColor = 'var(--accent-border)';
+    } else {
+      btn.textContent = '🔑 Sign In — Save Your Data';
+      btn.style.color = 'var(--gold)';
+      btn.style.borderColor = 'var(--bd2)';
+    }
   }
+  updateSidebarUser();
+  updateSettingsAuthLabel();
 }
 
 function openAuthModal() {
@@ -2171,9 +2432,184 @@ loadWeather();
 renderHomeInsights();
 loadServiceAvailability();
 
+
+// ═══════════════════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════════════════
+let appSettings = JSON.parse(localStorage.getItem('wm_settings') || '{}');
+
+const ACCENT_PRESETS = {
+  green:  { accent:'#6B8E23', l:'#8BA946', d:'#4a6218', glow:'rgba(107,142,35,0.3)',  glowB:'rgba(107,142,35,0.6)',  faint:'rgba(107,142,35,0.12)',  border:'rgba(107,142,35,0.25)' },
+  blue:   { accent:'#2563EB', l:'#3B82F6', d:'#1D4ED8', glow:'rgba(37,99,235,0.3)',   glowB:'rgba(37,99,235,0.6)',   faint:'rgba(37,99,235,0.12)',   border:'rgba(37,99,235,0.25)'  },
+  purple: { accent:'#7C3AED', l:'#8B5CF6', d:'#6D28D9', glow:'rgba(124,58,237,0.3)',  glowB:'rgba(124,58,237,0.6)',  faint:'rgba(124,58,237,0.12)',  border:'rgba(124,58,237,0.25)' },
+  red:    { accent:'#DC2626', l:'#EF4444', d:'#B91C1C', glow:'rgba(220,38,38,0.3)',   glowB:'rgba(220,38,38,0.6)',   faint:'rgba(220,38,38,0.12)',   border:'rgba(220,38,38,0.25)'  },
+  amber:  { accent:'#D97706', l:'#F59E0B', d:'#B45309', glow:'rgba(217,119,6,0.3)',   glowB:'rgba(217,119,6,0.6)',   faint:'rgba(217,119,6,0.12)',   border:'rgba(217,119,6,0.25)'  },
+  cyan:   { accent:'#0891B2', l:'#06B6D4', d:'#0E7490', glow:'rgba(8,145,178,0.3)',   glowB:'rgba(8,145,178,0.6)',   faint:'rgba(8,145,178,0.12)',   border:'rgba(8,145,178,0.25)'  },
+};
+
+function applySettings() {
+  const s = appSettings;
+  // Light mode
+  document.body.classList.toggle('light-mode', !!s.lightMode);
+  if (document.getElementById('settingLightMode')) document.getElementById('settingLightMode').checked = !!s.lightMode;
+  // Text size
+  document.body.classList.remove('text-sm','text-lg');
+  if (s.textSize === 'sm') document.body.classList.add('text-sm');
+  if (s.textSize === 'lg') document.body.classList.add('text-lg');
+  document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+  const szKey = s.textSize || 'md';
+  const szEl = document.getElementById('sz-' + szKey);
+  if (szEl) szEl.classList.add('active');
+  // Accent
+  const accentKey = s.accent || 'green';
+  const preset = ACCENT_PRESETS[accentKey] || ACCENT_PRESETS.green;
+  const r = document.documentElement.style;
+  r.setProperty('--accent', preset.accent);
+  r.setProperty('--accent-l', preset.l);
+  r.setProperty('--accent-d', preset.d);
+  r.setProperty('--accent-glow', preset.glow);
+  r.setProperty('--accent-glow-bright', preset.glowB);
+  r.setProperty('--accent-faint', preset.faint);
+  r.setProperty('--accent-border', preset.border);
+  document.querySelectorAll('.accent-swatch').forEach(sw => sw.classList.toggle('active', sw.dataset.accent === accentKey));
+  // Name
+  if (s.name) {
+    const greet = document.getElementById('sidebarGreeting');
+    if (greet) greet.textContent = 'Hey, ' + s.name + '.';
+    const homeTitle = document.querySelector('.home-title');
+    if (homeTitle) homeTitle.innerHTML = 'Hey ' + s.name + ',<br><span>ready to close.</span>';
+  }
+  // Market
+  const mkt = s.market || 'billings';
+  document.querySelectorAll('.market-btn').forEach(b => b.classList.remove('active'));
+  const mktEl = document.getElementById('mkt-' + mkt);
+  if (mktEl) mktEl.classList.add('active');
+  // Goals
+  if (s.dailyCalls) { goals.dailyCalls = s.dailyCalls; if (document.getElementById('settingDailyCalls')) document.getElementById('settingDailyCalls').value = s.dailyCalls; }
+  if (s.weeklyCloses) { goals.weeklyCloses = s.weeklyCloses; if (document.getElementById('settingWeeklyCloses')) document.getElementById('settingWeeklyCloses').value = s.weeklyCloses; }
+  // Toggles
+  if (document.getElementById('settingAutoLog')) document.getElementById('settingAutoLog').checked = s.autoLog !== false;
+  if (document.getElementById('settingTimer')) document.getElementById('settingTimer').checked = s.showTimer !== false;
+  if (document.getElementById('settingName')) document.getElementById('settingName').value = s.name || '';
+  // Timer visibility
+  const timerWrap = document.querySelector('.call-timer-wrap');
+  if (timerWrap) timerWrap.style.display = (s.showTimer === false) ? 'none' : 'flex';
+  // Auth labels
+  updateSettingsAuthLabel();
+}
+
+function saveSettings() {
+  appSettings.name = (document.getElementById('settingName')?.value || '').trim();
+  appSettings.dailyCalls = parseInt(document.getElementById('settingDailyCalls')?.value) || 40;
+  appSettings.weeklyCloses = parseInt(document.getElementById('settingWeeklyCloses')?.value) || 8;
+  appSettings.autoLog = document.getElementById('settingAutoLog')?.checked !== false;
+  appSettings.showTimer = document.getElementById('settingTimer')?.checked !== false;
+  goals.dailyCalls = appSettings.dailyCalls;
+  goals.weeklyCloses = appSettings.weeklyCloses;
+  saveGoalsData();
+  localStorage.setItem('wm_settings', JSON.stringify(appSettings));
+  applySettings();
+  renderGoals();
+}
+
+function applyLightMode(on) {
+  appSettings.lightMode = on;
+  localStorage.setItem('wm_settings', JSON.stringify(appSettings));
+  applySettings();
+}
+
+function setTextSize(size) {
+  appSettings.textSize = size;
+  localStorage.setItem('wm_settings', JSON.stringify(appSettings));
+  applySettings();
+}
+
+function setAccent(key) {
+  appSettings.accent = key;
+  localStorage.setItem('wm_settings', JSON.stringify(appSettings));
+  applySettings();
+}
+
+function setMarket(mkt) {
+  appSettings.market = mkt;
+  localStorage.setItem('wm_settings', JSON.stringify(appSettings));
+  applySettings();
+  // Update home subtitle
+  const sub = document.querySelector('.home-sub');
+  if (sub) {
+    const labels = { billings: 'Billings · Your personal call companion', bozeman: 'Bozeman · Your personal call companion', both: 'Billings & Bozeman · Your personal call companion' };
+    sub.textContent = labels[mkt] || labels.both;
+  }
+}
+
+function updateSettingsAuthLabel() {
+  const lbl = document.getElementById('settingsAuthLabel');
+  const sub = document.getElementById('settingsAuthSub');
+  if (!lbl) return;
+  if (currentUser) {
+    lbl.textContent = currentUser.email || 'Signed in';
+    if (sub) sub.textContent = 'Tap to manage account';
+  } else {
+    lbl.textContent = 'Sign In';
+    if (sub) sub.textContent = 'Save data to cloud';
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// SIDEBAR
+// ═══════════════════════════════════════════════════
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('sidebarOverlay');
+  const hb = document.getElementById('hamburgerBtn');
+  const isOpen = sb.classList.contains('open');
+  if (isOpen) { closeSidebar(); } else {
+    sb.classList.add('open');
+    ov.classList.add('open');
+    hb.classList.add('open');
+    updateSidebarUser();
+  }
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('open');
+  document.getElementById('hamburgerBtn').classList.remove('open');
+}
+
+function sidebarNav(id) {
+  closeSidebar();
+  goScreen(id);
+}
+
+function updateSidebarUser() {
+  const el = document.getElementById('sidebarUser');
+  const greet = document.getElementById('sidebarGreeting');
+  const name = appSettings.name;
+  if (greet) greet.textContent = name ? 'Hey, ' + name + '.' : 'Ready to close.';
+  if (el) {
+    el.textContent = currentUser ? ('✓ ' + (currentUser.email || 'Signed in')) : 'Not signed in';
+  }
+}
+
+// Update goScreen to also update sidebar active state
+const _origGoScreen = goScreen;
+goScreen = function(id) {
+  _origGoScreen(id);
+  // Sync sidebar active state
+  document.querySelectorAll('.sidebar-item').forEach(n => n.classList.remove('active'));
+  const si = document.getElementById('si-' + id);
+  if (si) si.classList.add('active');
+  // Settings screen specific
+  if (id === 'settings') { updateSettingsAuthLabel(); }
+};
+
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js').catch(function(){});
 }
+
+// Init settings on load
+applySettings();
 </script>
 </body>
 </html>

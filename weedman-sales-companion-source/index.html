@@ -2022,50 +2022,22 @@ function closeAuthModal() {
 }
 
 function handleLogin() {
-  const email = document.getElementById('authEmail').value.trim();
-  const pass = document.getElementById('authPass').value;
-  if (!email || !pass) { showAuthError('Enter email and password.'); return; }
-
-  window.netlifyIdentity.login(email, pass, true).then(user => {
-    currentUser = user;
-    closeAuthModal();
-    updateAuthButton();
-  }).catch(err => {
-    showAuthError(err.message || 'Login failed');
-  });
+  closeAuthModal();
+  window.netlifyIdentity.open('login');
 }
 
 function handleSignup() {
-  const email = document.getElementById('authEmail').value.trim();
-  const pass = document.getElementById('authPass').value;
-  if (!email || !pass) { showAuthError('Enter email and password.'); return; }
-  if (pass.length < 6) { showAuthError('Password must be at least 6 characters.'); return; }
-
-  window.netlifyIdentity.signup(email, pass, {name: email.split('@')[0]}).then(user => {
-    showAuthError('Check your email to verify your account, then sign in.');
-    setTimeout(() => closeAuthModal(), 2000);
-  }).catch(err => {
-    showAuthError(err.message || 'Signup failed');
-  });
+  closeAuthModal();
+  window.netlifyIdentity.open('signup');
 }
 
 function handlePasswordReset() {
-  const email = document.getElementById('authEmail').value.trim();
-  if (!email) { showAuthError('Enter your email address'); return; }
-
-  window.netlifyIdentity.requestPasswordRecovery(email).then(() => {
-    showAuthError('Password reset link sent to ' + email);
-  }).catch(err => {
-    showAuthError(err.message || 'Failed to send reset');
-  });
+  closeAuthModal();
+  window.netlifyIdentity.open('login');
 }
 
 function handleLogout() {
-  window.netlifyIdentity.logout().then(() => {
-    currentUser = null;
-    closeAuthModal();
-    updateAuthButton();
-  });
+  window.netlifyIdentity.logout();
 }
 
 function showAuthError(msg) {

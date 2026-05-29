@@ -7,7 +7,6 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#141210">
 <link rel="manifest" href="/manifest.json">
-<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <title>Weedman Sales Companion</title>
 
 <style>
@@ -149,9 +148,7 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fon
 .obj-back{margin-top:12px;width:100%;padding:11px;background:var(--s4);border:1px solid var(--bd);border-radius:var(--rads);color:var(--t2);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);}
 
 /* ── LOG SCREEN ── */
-#s-log {
-  padding: 16px;
-}
+#s-log{}
 .log-title{font-size:22px;font-weight:800;color:var(--t1);margin-bottom:6px;}
 .log-sub{font-size:13px;color:var(--t2);margin-bottom:22px;line-height:1.5;}
 .log-section{margin-bottom:20px;}
@@ -1957,26 +1954,23 @@ function toggleProgObj(el) {
 // AUTHENTICATION & DATABASE SYNC
 // ═══════════════════════════════════════════════════
 let currentUser = null;
-let isOnline = true;
 
-async function initAuth() {
-  try {
-    const resp = await fetch('/api/auth');
-    if (!resp.ok) return;
-    const data = await resp.json();
-    if (data.user) {
-      currentUser = data.user;
-      onAuthStateChanged();
-    }
-  } catch(e) {}
-  updateAuthButton();
-}
-
-function onAuthStateChanged() {
-  updateAuthButton();
-  if (currentUser) {
+// Initialize Netlify Identity
+if (window.netlifyIdentity) {
+  window.netlifyIdentity.on('init', user => {
+    if (user) { currentUser = user; updateAuthButton(); }
+  });
+  window.netlifyIdentity.on('login', user => {
+    currentUser = user;
+    updateAuthButton();
+    closeAuthModal();
     syncToServer();
-  }
+  });
+  window.netlifyIdentity.on('logout', () => {
+    currentUser = null;
+    updateAuthButton();
+  });
+  window.netlifyIdentity.init();
 }
 
 function updateAuthButton() {
@@ -1986,12 +1980,10 @@ function updateAuthButton() {
     btn.textContent = '✓ ' + (currentUser.email || 'Signed in');
     btn.style.color = 'var(--green-l)';
     btn.style.borderColor = 'var(--bd3)';
-    btn.onclick = openAuthModal;
   } else {
     btn.textContent = '🔑 Sign In — Save Your Data';
     btn.style.color = 'var(--gold)';
     btn.style.borderColor = 'var(--bd2)';
-    btn.onclick = openAuthModal;
   }
 }
 
@@ -2028,11 +2020,12 @@ function openAuthModal() {
 function closeAuthModal() {
   document.getElementById('authModal').style.display = 'none';
 }
+
 function handleLogin() {
   const email = document.getElementById('authEmail').value.trim();
   const pass = document.getElementById('authPass').value;
   if (!email || !pass) { showAuthError('Enter email and password.'); return; }
-  
+
   window.netlifyIdentity.login(email, pass, true).then(user => {
     currentUser = user;
     closeAuthModal();
@@ -2047,7 +2040,7 @@ function handleSignup() {
   const pass = document.getElementById('authPass').value;
   if (!email || !pass) { showAuthError('Enter email and password.'); return; }
   if (pass.length < 6) { showAuthError('Password must be at least 6 characters.'); return; }
-  
+
   window.netlifyIdentity.signup(email, pass, {name: email.split('@')[0]}).then(user => {
     showAuthError('Check your email to verify your account, then sign in.');
     setTimeout(() => closeAuthModal(), 2000);
@@ -2059,7 +2052,7 @@ function handleSignup() {
 function handlePasswordReset() {
   const email = document.getElementById('authEmail').value.trim();
   if (!email) { showAuthError('Enter your email address'); return; }
-  
+
   window.netlifyIdentity.requestPasswordRecovery(email).then(() => {
     showAuthError('Password reset link sent to ' + email);
   }).catch(err => {
@@ -2200,8 +2193,6 @@ function isServiceSoldOut(serviceId) {
 loadWeather();
 renderHomeInsights();
 loadServiceAvailability();
-
-try { initAuth(); } catch(e) {}
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js').catch(function(){});

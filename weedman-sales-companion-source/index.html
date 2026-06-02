@@ -310,7 +310,7 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fon
 .hamburger.open .hamburger-icon span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
 
 /* ── SETTINGS SCREEN ── */
-#s-settings{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:20px 20px 80px;}
+#s-settings{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:64px 20px 80px;}
 .settings-title{font-size:22px;font-weight:800;color:var(--t1);margin-bottom:20px;margin-top:8px;}
 .settings-section{margin-bottom:24px;}
 .settings-section-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--accent-l);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
@@ -452,7 +452,7 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fon
       <button class="btn-primary" id="startCallBtn" onclick="startCall()">▶ Start Call</button>
       <button class="btn-secondary" style="color:var(--green-l);border-color:var(--bd3);" onclick="openProgramsModal()">🌿 Programs — Sell the Value</button>
       <button class="btn-secondary" onclick="goScreen('dash')">View Dashboard →</button>
-      <button class="btn-secondary" style="color:var(--t2);border-color:var(--bd);" onclick="window.open('/science.html','_blank')">🔬 Science & Biology Training</button>
+      <button class="btn-secondary" style="color:var(--t2);border-color:var(--bd);" onclick="window.location.href='science.html'">🔬 Science & Biology Training</button>
       <button class="btn-secondary" style="color:var(--red);border-color:rgba(192,80,74,0.3);" onclick="openUndoModal()">↩ Undo Last Close</button>
       <button class="btn-secondary" style="color:var(--gold);border-color:rgba(201,168,118,0.3);" id="dataBtn" onclick="goScreen('settings')">⚙ Settings</button>
       <button class="btn-secondary" id="authBtn" onclick="openAuthModal()" style="border-color:var(--bd2);color:var(--gold);">💾 Local Mode — Data Saved</button>
@@ -489,7 +489,7 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fon
 <!-- ══════════════════════════════════
      LOG SCREEN
 ══════════════════════════════════ -->
-<div class="screen" id="s-log" style="overflow-y:auto;-webkit-overflow-scrolling:touch;padding:20px 20px 80px;">
+<div class="screen" id="s-log" style="overflow-y:auto;-webkit-overflow-scrolling:touch;padding:64px 20px 80px;">
   <div class="log-title">Log this call</div>
   <div class="log-sub">60 seconds. This data makes you better over time.</div>
 
@@ -1551,7 +1551,29 @@ function selectLog(type, val) {
 }
 
 function saveLog() {
-  // overridden below in the auth/sync section
+  const notes = (document.getElementById('logNotes').value || '').trim();
+  const first  = (document.getElementById('logFirstName').value || '').trim();
+  const last   = (document.getElementById('logLastName').value || '').trim();
+  const name   = [first, last].filter(Boolean).join(' ');
+  const call = {
+    time:    Date.now(),
+    name:    name,
+    firstName: first,
+    lastName:  last,
+    outcome: logData.outcome || 'unknown',
+    stage:   logData.stage   || 'unknown',
+    obj:     logData.obj     || 'none',
+    notes:   notes,
+    closed:  logData.outcome === 'closed'
+  };
+  data.calls.push(call);
+  data.totalCalls++;
+  if (call.closed) data.totalCloses++;
+  saveData();
+  if (call.closed) celebrate();
+  logData = { outcome:'', stage:'', obj:'', notes:'', name:'' };
+  leadNameForCall = '';
+  if (!call.closed) goScreen('home');
 }
 
 // ═══════════════════════════════════════════════════

@@ -56,7 +56,9 @@
   }
 
   function waitForGlobals(cb, attempts = 0) {
-    if (typeof STAGES !== 'undefined' && typeof currentStage !== 'undefined') {
+    if (typeof STAGES !== 'undefined' &&
+        typeof currentStage !== 'undefined' &&
+        typeof renderCallStage === 'function') {
       cb();
     } else if (attempts < 60) {
       setTimeout(() => waitForGlobals(cb, attempts + 1), 100);
@@ -400,37 +402,33 @@
 
     // Patch renderCallStage to update timer UI per stage
     const _origRenderCallStage = window.renderCallStage;
-    window.renderCallStage = function() {
-      _origRenderCallStage();
-      // After DOM updates, inject badge and update display
-      requestAnimationFrame(() => {
-        injectStageClock();
-        injectStageBadge();
-        const stageId = STAGES[currentStage]?.id;
-        if (stageId) switchStageTimer(stageId);
-      });
-    };
+    if (typeof _origRenderCallStage === 'function') {
+      window.renderCallStage = function() {
+        try { _origRenderCallStage(); } catch(e) { console.warn('[stage-timer]', e); }
+        requestAnimationFrame(() => {
+          try {
+            injectStageClock();
+            injectStageBadge();
+            const stageId = STAGES[currentStage]?.id;
+            if (stageId) switchStageTimer(stageId);
+          } catch(e) {}
+        });
+      };
+    }
 
     // Patch nextStage to track transitions
     const _origNextStage = window.nextStage;
-    window.nextStage = function() {
-      recordStageTime();
-      _origNextStage();
-    };
-
-    // Patch prevStage
+    if (typeof _origNextStage === 'function') {
+      window.nextStage = function() { try { recordStageTime(); } catch(e){} _origNextStage(); };
+    }
     const _origPrevStage = window.prevStage;
-    window.prevStage = function() {
-      recordStageTime();
-      _origPrevStage();
-    };
-
-    // Patch jumpStage
+    if (typeof _origPrevStage === 'function') {
+      window.prevStage = function() { try { recordStageTime(); } catch(e){} _origPrevStage(); };
+    }
     const _origJumpStage = window.jumpStage;
-    window.jumpStage = function(i) {
-      recordStageTime();
-      _origJumpStage(i);
-    };
+    if (typeof _origJumpStage === 'function') {
+      window.jumpStage = function(i) { try { recordStageTime(); } catch(e){} _origJumpStage(i); };
+    }
   }
 
   // ── TIMER LOGIC ──────────────────────────────────

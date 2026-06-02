@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#141210">
 <link rel="manifest" href="/manifest.json">
-<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <title>Weedman Sales Companion</title>
 
 <style>
@@ -2209,44 +2209,23 @@ function toggleProgObj(el) {
 }
 
 // ═══════════════════════════════════════════════════
-// AUTHENTICATION & DATABASE SYNC
+// SETTINGS (must be defined before auth section)
+// ═══════════════════════════════════════════════════
+let appSettings = JSON.parse(localStorage.getItem('wm_settings') || '{}');
+
+// ═══════════════════════════════════════════════════
+// AUTH — LOCAL MODE (no backend, localStorage only)
 // ═══════════════════════════════════════════════════
 let currentUser = null;
 
-// Initialize Netlify Identity
-function initNetlifyIdentity() {
-  if (!window.netlifyIdentity) {
-    setTimeout(initNetlifyIdentity, 100);
-    return;
-  }
-  window.netlifyIdentity.on('init', user => {
-    if (user) { currentUser = user; updateAuthButton(); }
-  });
-  window.netlifyIdentity.on('login', user => {
-    currentUser = user;
-    updateAuthButton();
-    syncToServer();
-  });
-  window.netlifyIdentity.on('logout', () => {
-    currentUser = null;
-    updateAuthButton();
-  });
-  window.netlifyIdentity.init();
-}
-initNetlifyIdentity();
+// Auth disabled — localStorage mode only
 
 function updateAuthButton() {
   const btn = document.getElementById('authBtn');
   if (btn) {
-    if (currentUser) {
-      btn.textContent = '✓ ' + (currentUser.email || 'Signed in');
-      btn.style.color = 'var(--accent-l)';
-      btn.style.borderColor = 'var(--accent-border)';
-    } else {
-      btn.textContent = '🔑 Sign In — Save Your Data';
-      btn.style.color = 'var(--gold)';
-      btn.style.borderColor = 'var(--bd2)';
-    }
+    btn.textContent = '💾 Local Mode — Data Saved';
+    btn.style.color = 'var(--green-l)';
+    btn.style.borderColor = 'var(--bd3)';
   }
   updateSidebarUser();
   updateSettingsAuthLabel();
@@ -2254,31 +2233,16 @@ function updateAuthButton() {
 
 function openAuthModal() {
   const el = document.getElementById('authContent');
-  if (currentUser) {
-    document.getElementById('authModalTitle').textContent = 'Account';
-    el.innerHTML = `
-      <div style="background:var(--s3);border:1px solid var(--bd);border-radius:var(--rads);padding:14px;margin-bottom:14px;">
-        <div style="font-size:11px;color:var(--t3);margin-bottom:2px;">Signed in as</div>
-        <div style="font-size:14px;font-weight:700;color:var(--t1);">${currentUser.email || 'Unknown'}</div>
-      </div>
-      <div style="font-size:12px;color:var(--t2);margin-bottom:14px;line-height:1.6;">Your call data is being saved to the cloud. You can access it from any device.</div>
-      <button class="btn-secondary" style="width:100%;margin-bottom:8px;" onclick="syncToServer()">↑ Sync local data to cloud</button>
-      <button class="btn-secondary" style="width:100%;margin-bottom:8px;" onclick="pullFromServer()">↓ Load data from cloud</button>
-      <button class="btn-secondary" style="width:100%;color:var(--red);border-color:rgba(192,80,74,0.3);" onclick="handleLogout()">Sign Out</button>`;
-  } else {
-    document.getElementById('authModalTitle').textContent = 'Sign In';
-    el.innerHTML = `
-      <div style="font-size:12px;color:var(--t2);margin-bottom:14px;line-height:1.6;">Sign in to save your call data to the cloud. No more losing data when you clear your browser.</div>
-      <div style="margin-bottom:10px;">
-        <input type="email" id="authEmail" class="lead-input" placeholder="Email" style="width:100%;text-align:left;padding:12px;margin-bottom:8px;">
-        <input type="password" id="authPass" class="lead-input" placeholder="Password" style="width:100%;text-align:left;padding:12px;">
-      </div>
-      <div id="authError" style="color:var(--red);font-size:12px;margin-bottom:8px;display:none;"></div>
-      <button class="btn-primary" style="width:100%;margin-bottom:8px;" onclick="handleLogin()">Sign In</button>
-      <button class="btn-secondary" style="width:100%;margin-bottom:8px;" onclick="handleSignup()">Create Account</button>
-      <button type="button" onclick="handlePasswordReset()" style="background:none;border:none;color:var(--gold);cursor:pointer;margin:10px 0;text-decoration:underline;font-size:12px;width:100%;text-align:center;font-weight:700;font-family:var(--font);">Forgot Password?</button>
-      <div style="font-size:11px;color:var(--t3);text-align:center;line-height:1.5;">Your data stays on this device until you sign in.</div>`;
-  }
+  document.getElementById('authModalTitle').textContent = 'Your Data';
+  el.innerHTML = `
+    <div style="background:rgba(107,142,35,0.08);border:1px solid var(--bd3);border-radius:var(--rads);padding:14px;margin-bottom:14px;text-align:center;">
+      <div style="font-size:24px;margin-bottom:6px;">💾</div>
+      <div style="font-size:14px;font-weight:700;color:var(--green-l);margin-bottom:4px;">Local Mode</div>
+      <div style="font-size:12px;color:var(--t2);">All your call data is saved on this device.</div>
+    </div>
+    <div style="font-size:12px;color:var(--t2);margin-bottom:14px;line-height:1.6;">Use the export feature to back up your data as a JSON file. You can import it anytime to restore your logs.</div>
+    <button class="btn-secondary" style="width:100%;" onclick="closeAuthModal();openClearModal()">Manage Data & Backups</button>
+    <button class="btn-secondary" style="width:100%;margin-top:8px;" onclick="closeAuthModal()">Close</button>`;
   document.getElementById('authModal').style.display = 'flex';
 }
 
@@ -2286,137 +2250,29 @@ function closeAuthModal() {
   document.getElementById('authModal').style.display = 'none';
 }
 
-function handleLogin() {
-  closeAuthModal();
-  window.netlifyIdentity.open('login');
-}
-
-function handleSignup() {
-  closeAuthModal();
-  window.netlifyIdentity.open('signup');
-}
-
-function handlePasswordReset() {
-  closeAuthModal();
-  window.netlifyIdentity.open('login');
-}
-
-function handleLogout() {
-  window.netlifyIdentity.logout();
-}
+function handleLogin() { closeAuthModal(); }
+function handleSignup() { closeAuthModal(); }
+function handlePasswordReset() { closeAuthModal(); }
+function handleLogout() { closeAuthModal(); }
 
 function showAuthError(msg) {
   const el = document.getElementById('authError');
   if (el) { el.textContent = msg; el.style.display = 'block'; }
 }
 
-async function syncToServer() {
-  if (!currentUser) return;
-  try {
-    const localData = JSON.parse(localStorage.getItem('wm_sales') || '{"calls":[]}');
-    if (!localData.calls.length) return;
-    const resp = await fetch('/api/sync', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ calls: localData.calls })
-    });
-    if (resp.ok) {
-      const result = await resp.json();
-      if (result.imported > 0) {
-        localStorage.removeItem('wm_sales');
-        data = { calls: [], totalCalls: 0, totalCloses: 0 };
-        pullFromServer();
-      }
-    }
-  } catch(e) {}
-}
+function syncToServer() { /* localStorage mode — no server */ }
+function pullFromServer() { /* localStorage mode — no server */ }
 
-async function pullFromServer() {
-  if (!currentUser) return;
-  try {
-    const resp = await fetch('/api/calls');
-    if (!resp.ok) return;
-    const result = await resp.json();
-    data.calls = result.calls.map(c => ({
-      time: new Date(c.calledAt || c.createdAt).getTime(),
-      name: [c.firstName, c.lastName].filter(Boolean).join(' '),
-      firstName: c.firstName,
-      lastName: c.lastName,
-      outcome: c.outcome,
-      stage: c.stage,
-      obj: c.objection,
-      notes: c.notes,
-      closed: c.closed,
-      serverId: c.id
-    }));
-    data.totalCalls = data.calls.length;
-    data.totalCloses = data.calls.filter(c => c.closed).length;
-    saveData();
-    renderHomeInsights();
-  } catch(e) {}
-}
-
-const origSaveLog = saveLog;
-saveLog = async function() {
-  const notes = document.getElementById('logNotes').value;
-  const first = (document.getElementById('logFirstName').value || '').trim();
-  const last = (document.getElementById('logLastName').value || '').trim();
-  const name = [first, last].filter(Boolean).join(' ');
-  const call = {
-    time: Date.now(),
-    name: name,
-    firstName: first,
-    lastName: last,
-    outcome: logData.outcome || 'unknown',
-    stage: logData.stage || 'unknown',
-    obj: logData.obj || 'none',
-    notes: notes,
-    closed: logData.outcome === 'closed'
-  };
-
-  data.calls.push(call);
-  data.totalCalls++;
-  if(call.closed) data.totalCloses++;
-  saveData();
-
-  if (currentUser) {
-    try {
-      await fetch('/api/calls', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          firstName: first,
-          lastName: last,
-          outcome: call.outcome,
-          stage: call.stage,
-          objection: call.obj,
-          notes: call.notes,
-          calledAt: call.time
-        })
-      });
-    } catch(e) {}
-  }
-
-  logData = { outcome:'', stage:'', obj:'', notes:'', name:'' };
-  leadNameForCall = '';
-  goScreen('home');
-};
+// saveLog runs as defined — localStorage only, no server override needed
 
 // ═══════════════════════════════════════════════════
 // SEASONAL AVAILABILITY
 // ═══════════════════════════════════════════════════
 let serviceAvailabilityData = {};
 
-async function loadServiceAvailability() {
-  try {
-    const resp = await fetch('/api/services');
-    if (!resp.ok) return;
-    const services = await resp.json();
-    services.forEach(s => {
-      serviceAvailabilityData[s.serviceId] = s;
-    });
-    renderSeasonalServices(currentTemp);
-  } catch(e) {}
+function loadServiceAvailability() {
+  // localStorage mode — no server availability data
+  // All services available by default
 }
 
 function isServiceSoldOut(serviceId) {
@@ -2429,13 +2285,12 @@ function isServiceSoldOut(serviceId) {
 
 loadWeather();
 renderHomeInsights();
-loadServiceAvailability();
+loadServiceAvailability(); // no-op in local mode
 
 
 // ═══════════════════════════════════════════════════
 // SETTINGS
 // ═══════════════════════════════════════════════════
-let appSettings = JSON.parse(localStorage.getItem('wm_settings') || '{}');
 
 const ACCENT_PRESETS = {
   green:  { accent:'#6B8E23', l:'#8BA946', d:'#4a6218', glow:'rgba(107,142,35,0.3)',  glowB:'rgba(107,142,35,0.6)',  faint:'rgba(107,142,35,0.12)',  border:'rgba(107,142,35,0.25)' },
@@ -2545,13 +2400,8 @@ function updateSettingsAuthLabel() {
   const lbl = document.getElementById('settingsAuthLabel');
   const sub = document.getElementById('settingsAuthSub');
   if (!lbl) return;
-  if (currentUser) {
-    lbl.textContent = currentUser.email || 'Signed in';
-    if (sub) sub.textContent = 'Tap to manage account';
-  } else {
-    lbl.textContent = 'Sign In';
-    if (sub) sub.textContent = 'Save data to cloud';
-  }
+  lbl.textContent = 'Local Mode';
+  if (sub) sub.textContent = 'Data saved on this device';
 }
 
 // ═══════════════════════════════════════════════════

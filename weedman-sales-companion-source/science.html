@@ -4,590 +4,1332 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Weedman Training">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SF Training">
+<meta name="theme-color" content="#1A1815">
+<link rel="manifest" href="manifest.json">
 <title>Weedman Science Training</title>
 <style>
 :root{
-  --primary:#6B8E23;
-  --primary-light:#8BA946;
-  --primary-dark:#556B1A;
-  --accent:#C9A876;
-  --accent-dark:#A0845F;
-  --text-primary:#F4F1EE;
-  --text-secondary:#B8AFA8;
-  --text-muted:#7A726B;
-  --bg:#1A1815;
-  --surface-1:#242220;
-  --surface-2:#2E2B28;
-  --surface-3:#383531;
-  --border:#4A4540;
-  --border-light:#5A524A;
-  --rad:14px;
-  --rads:9px;
-  --font:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif;
+  --primary:#6B8E23;--primary-light:#8BA946;--primary-dark:#556B1A;
+  --accent:#C9A876;--accent-dark:#A0845F;
+  --t1:#F4F1EE;--t2:#B8AFA8;--t3:#7A726B;
+  --bg:#1A1815;--s1:#242220;--s2:#2E2B28;--s3:#383531;
+  --bd:#4A4540;--bd2:#5A524A;
+  --rad:14px;--rads:9px;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",sans-serif;
+  --fs:15px;
 }
-
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;background:var(--bg);color:var(--text-primary);font-family:var(--font);font-size:15px;overflow:hidden;}
-
+html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--font);font-size:var(--fs);overflow:hidden;}
 .app{display:flex;flex-direction:column;height:100vh;height:100dvh;background:linear-gradient(135deg,var(--bg) 0%,#1F1C18 100%);}
 
-.topbar{background:linear-gradient(135deg,var(--surface-1),var(--surface-2));border-bottom:2px solid var(--border);padding:20px;flex-shrink:0;box-shadow:0 4px 16px rgba(0,0,0,0.5);}
-.wordmark{font-size:20px;font-weight:900;letter-spacing:-0.5px;color:var(--text-primary);margin-bottom:4px;text-transform:uppercase;tracking:2px;}
-.wordmark span{color:var(--accent);font-size:18px;}
-.topbar-sub{font-size:12px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;}
+/* ── TOPBAR ── */
+.topbar{background:linear-gradient(135deg,var(--s1),var(--s2));border-bottom:2px solid var(--bd);padding:14px 16px 10px;flex-shrink:0;}
+.topbar-row{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.wordmark{font-size:18px;font-weight:900;letter-spacing:-0.5px;color:var(--t1);text-transform:uppercase;}
+.wordmark span{color:var(--accent);}
+.topbar-sub{font-size:10px;color:var(--t3);letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+.topbar-actions{display:flex;align-items:center;gap:6px;}
+.icon-btn{width:30px;height:30px;border-radius:8px;background:var(--s3);border:1px solid var(--bd);color:var(--t2);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;font-family:var(--font);font-weight:700;}
+.icon-btn:hover{border-color:var(--accent);color:var(--accent);}
+.fs-btns{display:flex;gap:3px;}
+.cert-btn{padding:5px 12px;background:rgba(107,142,35,0.15);border:1.5px solid rgba(107,142,35,0.3);border-radius:20px;color:var(--primary-light);font-size:11px;font-weight:900;cursor:pointer;font-family:var(--font);text-transform:uppercase;letter-spacing:.5px;transition:all .2s;}
+.cert-btn.done{background:rgba(107,142,35,0.25);border-color:var(--primary-light);}
 
-.tabrow{display:flex;background:var(--surface-1);border-bottom:2px solid var(--border);flex-shrink:0;overflow-x:auto;scrollbar-width:none;gap:0;padding:0;}
+/* ── PROGRESS ── */
+.prog-wrap{background:var(--s1);border-bottom:1px solid var(--bd);padding:8px 16px;flex-shrink:0;display:flex;align-items:center;gap:10px;}
+.prog-track{flex:1;height:5px;background:var(--s3);border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--primary),var(--accent));transition:width .6s cubic-bezier(.4,0,.2,1);width:0%;}
+.prog-label{font-size:10px;font-weight:700;color:var(--t3);white-space:nowrap;text-transform:uppercase;letter-spacing:.5px;}
+
+/* ── SEARCH BAR ── */
+.search-bar{background:var(--s1);border-bottom:1px solid var(--bd);padding:8px 14px;flex-shrink:0;display:none;gap:8px;align-items:center;}
+.search-bar.visible{display:flex;}
+.search-input{flex:1;background:var(--s3);border:1.5px solid var(--bd);border-radius:8px;padding:9px 12px;color:var(--t1);font-size:14px;font-family:var(--font);outline:none;transition:border-color .2s;}
+.search-input:focus{border-color:var(--accent);}
+.search-cancel{font-size:12px;color:var(--accent);font-weight:700;cursor:pointer;white-space:nowrap;background:none;border:none;font-family:var(--font);}
+
+/* ── TABS ── */
+.tabrow{display:flex;background:var(--s1);border-bottom:2px solid var(--bd);flex-shrink:0;overflow-x:auto;scrollbar-width:none;}
 .tabrow::-webkit-scrollbar{display:none;}
-.tab{flex-shrink:0;padding:14px 18px;font-size:12px;font-weight:700;color:var(--text-muted);cursor:pointer;border-bottom:3px solid transparent;transition:all .25s cubic-bezier(.4,0,.2,1);white-space:nowrap;text-transform:uppercase;letter-spacing:.5px;position:relative;}
-.tab:hover{color:var(--accent);}
+.tab{flex-shrink:0;padding:11px 14px;font-size:11px;font-weight:700;color:var(--t3);cursor:pointer;border-bottom:3px solid transparent;transition:all .25s;white-space:nowrap;text-transform:uppercase;letter-spacing:.5px;}
+.tab:hover:not(.locked){color:var(--accent);}
 .tab.on{color:var(--accent);border-bottom-color:var(--accent);background:rgba(107,142,35,0.08);}
+.tab.done{color:var(--primary-light);}
+.tab.locked{color:var(--bd2);cursor:not-allowed;opacity:.5;}
+.tab.qref{color:var(--accent-dark);}
+.tab.qref.on{color:var(--accent);}
 
+/* ── CONTENT ── */
 .content{flex:1;overflow:hidden;position:relative;}
-.panel{display:none;height:100%;overflow-y:auto;padding:20px;opacity:0;animation:fadeInPanel .35s ease-out forwards;}
+.panel{display:none;height:100%;overflow-y:auto;padding:16px 16px 80px;opacity:0;animation:fadeInPanel .35s ease-out forwards;}
 .panel.on{display:block;}
 @keyframes fadeInPanel{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
-.card{background:linear-gradient(135deg,var(--surface-2) 0%,var(--surface-3) 100%);border:1.5px solid var(--border);border-radius:var(--rad);overflow:hidden;margin-bottom:14px;transition:all .3s cubic-bezier(.4,0,.2,1);cursor:pointer;animation:slideUpStagger .4s ease-out backwards;}
-@keyframes slideUpStagger{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-.card:nth-child(2){animation-delay:0.05s}
-.card:nth-child(3){animation-delay:0.1s}
-.card:nth-child(4){animation-delay:0.15s}
-.card:nth-child(5){animation-delay:0.2s}
-.card:nth-child(6){animation-delay:0.25s}
-.card:nth-child(7){animation-delay:0.3s}
-.card:nth-child(8){animation-delay:0.35s}
+/* ── SEARCH RESULTS ── */
+.search-panel{display:none;height:100%;overflow-y:auto;padding:16px 16px 80px;}
+.search-panel.on{display:block;}
+.sr-empty{text-align:center;padding:60px 20px;color:var(--t3);}
+.sr-empty-icon{font-size:40px;margin-bottom:12px;opacity:.3;}
+.sr-item{background:var(--s2);border:1.5px solid var(--bd);border-radius:10px;padding:14px;margin-bottom:10px;cursor:pointer;transition:all .2s;}
+.sr-item:hover{border-color:var(--accent);background:var(--s3);}
+.sr-module{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--primary-light);margin-bottom:4px;}
+.sr-title{font-size:14px;font-weight:700;color:var(--t1);margin-bottom:4px;}
+.sr-preview{font-size:12px;color:var(--t2);line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+.sr-highlight{background:rgba(212,168,71,0.25);color:var(--accent);border-radius:2px;}
 
+/* ── LOCKED OVERLAY ── */
+.locked-overlay{display:none;position:absolute;inset:0;background:rgba(26,24,21,0.92);backdrop-filter:blur(8px);z-index:10;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;gap:14px;}
+.locked-overlay.show{display:flex;}
+.locked-overlay-icon{font-size:48px;opacity:.4;}
+.locked-overlay-title{font-size:18px;font-weight:900;color:var(--t3);}
+.locked-overlay-desc{font-size:13px;color:var(--t3);line-height:1.7;max-width:260px;}
+
+/* ── CARDS ── */
+.card{background:linear-gradient(135deg,var(--s2),var(--s3));border:1.5px solid var(--bd);border-radius:var(--rad);overflow:hidden;margin-bottom:12px;transition:all .3s;animation:slideUpStagger .4s ease-out backwards;}
+@keyframes slideUpStagger{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.card:nth-child(2){animation-delay:.04s}.card:nth-child(3){animation-delay:.08s}.card:nth-child(4){animation-delay:.12s}.card:nth-child(5){animation-delay:.16s}.card:nth-child(6){animation-delay:.20s}.card:nth-child(7){animation-delay:.24s}.card:nth-child(8){animation-delay:.28s}
 .card.expanded{border-color:var(--accent);}
-.card:hover:not(.expanded){border-color:var(--border-light);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.4);}
-
-.card-header{padding:16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;}
-.card-title{font-size:15px;font-weight:800;color:var(--text-primary);flex:1;}
-.card-toggle{font-size:16px;color:var(--accent);transition:transform .3s;}
+.card:hover:not(.expanded){border-color:var(--bd2);transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,0.3);}
+.card-header{padding:14px 14px 14px 14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;gap:8px;}
+.card-title{font-size:14px;font-weight:800;color:var(--t1);flex:1;line-height:1.3;}
+.card-header-right{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.bm-btn{background:none;border:none;cursor:pointer;font-size:16px;padding:2px 4px;line-height:1;transition:transform .2s;color:var(--t3);}
+.bm-btn:hover{transform:scale(1.2);}
+.bm-btn.saved{color:#DFA876;}
+.card-toggle{font-size:14px;color:var(--accent);transition:transform .3s;}
 .card.expanded .card-toggle{transform:rotate(180deg);}
-
-.card-content{display:none;padding:0 16px 16px;max-height:0;overflow:hidden;opacity:0;transition:all .3s ease-out;}
-.card.expanded .card-content{display:block;max-height:2000px;opacity:1;padding:0 16px 16px;}
-
-.card-body{font-size:13px;color:var(--text-secondary);line-height:1.85;margin-bottom:12px;}
+.card-content{display:none;padding:0 14px 14px;max-height:0;overflow:hidden;opacity:0;transition:all .3s ease-out;}
+.card.expanded .card-content{display:block;max-height:2000px;opacity:1;}
+.card-body{font-size:13px;color:var(--t2);line-height:1.85;margin-bottom:10px;}
 .card-body strong{color:var(--accent);font-weight:700;}
 
-.slbl{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.15em;color:var(--primary-light);margin:20px 0 12px;display:flex;align-items:center;gap:8px;position:relative;padding-left:12px;}
-.slbl:first-child{margin-top:0;}
-.slbl::before{content:'';width:4px;height:4px;background:var(--accent);border-radius:50%;display:block;}
-
-.badge{display:inline-block;font-size:10px;padding:4px 10px;border-radius:5px;font-weight:800;margin-right:6px;margin-top:8px;text-transform:uppercase;letter-spacing:.5px;}
+/* ── LABELS & BADGES ── */
+.slbl{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.15em;color:var(--primary-light);margin:16px 0 10px;display:flex;align-items:center;gap:8px;padding-left:10px;position:relative;}
+.slbl::before{content:"";width:4px;height:4px;background:var(--accent);border-radius:50%;display:block;}
+.badge{display:inline-block;font-size:9px;padding:3px 8px;border-radius:5px;font-weight:800;margin-right:4px;margin-top:6px;text-transform:uppercase;letter-spacing:.5px;}
 .badge-primary{background:rgba(107,142,35,0.2);color:var(--primary-light);border:1px solid rgba(107,142,35,0.4);}
 .badge-accent{background:rgba(201,168,118,0.2);color:var(--accent);border:1px solid rgba(201,168,118,0.4);}
 .badge-warn{background:rgba(220,120,80,0.2);color:#DFA876;border:1px solid rgba(220,120,80,0.4);}
 
-.highlight{background:linear-gradient(135deg,rgba(107,142,35,0.12),rgba(107,142,35,0.05));border:1.5px solid var(--border-light);border-radius:var(--rads);padding:14px;margin:12px 0;position:relative;overflow:hidden;}
-.highlight::before{content:'★';position:absolute;right:12px;top:50%;transform:translateY(-50%);opacity:0.15;font-size:20px;}
-.highlight p{font-size:13px;color:var(--text-secondary);line-height:1.75;margin:0;}
+/* ── HIGHLIGHT & ANALOGY ── */
+.highlight{background:linear-gradient(135deg,rgba(107,142,35,0.12),rgba(107,142,35,0.05));border:1.5px solid var(--bd2);border-radius:var(--rads);padding:12px;margin:10px 0;position:relative;}
+.highlight p{font-size:12px;color:var(--t2);line-height:1.75;margin:0;}
 .highlight strong{color:var(--accent);font-weight:700;}
+.analogy{background:linear-gradient(135deg,var(--s3),rgba(107,142,35,0.08));border-left:4px solid var(--accent);border-radius:0 var(--rads) var(--rads) 0;padding:12px;margin:12px 0;max-height:0;opacity:0;overflow:hidden;transition:all .4s ease-out;position:relative;}
+.analogy.visible{max-height:500px;opacity:1;animation:slideInAn .4s ease-out forwards;}
+@keyframes slideInAn{from{opacity:0;transform:translateY(-6px);max-height:0}to{opacity:1;transform:translateY(0);max-height:500px}}
+.analogy::before{content:"\1F4A1";position:absolute;right:12px;top:10px;opacity:.15;font-size:16px;}
+.analogy p{font-size:12px;color:var(--accent);line-height:1.75;font-style:italic;margin:0;padding-right:26px;}
+.analogy strong{color:var(--t1);font-style:normal;font-weight:700;}
+.script{border-left:3px solid var(--primary-light);padding:10px 12px;margin:10px 0;font-style:italic;font-size:12px;color:var(--t2);line-height:1.75;background:rgba(107,142,35,0.06);border-radius:0 var(--rads) var(--rads) 0;}
 
-.analogy{background:linear-gradient(135deg,var(--surface-3),rgba(107,142,35,0.08));border-left:4px solid var(--accent);border-radius:0 var(--rads) var(--rads) 0;padding:14px;margin:14px 0;max-height:0;opacity:0;overflow:hidden;transition:all .4s ease-out;transform-origin:top;animation:none;}
-.analogy.visible{max-height:500px;opacity:1;margin:14px 0;}
-@keyframes slideInAnalogy{from{opacity:0;transform:translateY(-8px);max-height:0}to{opacity:1;transform:translateY(0);max-height:500px}}
-.analogy.visible{animation:slideInAnalogy .4s ease-out forwards;}
-.analogy::before{content:'💡';position:absolute;right:14px;top:12px;opacity:0.2;font-size:18px;}
-.analogy p{font-size:13px;color:var(--accent);line-height:1.75;font-style:italic;margin:0;padding-right:30px;}
-.analogy strong{color:var(--text-primary);font-style:normal;font-weight:700;}
+/* ── FACT BOX ── */
+.fact-box{background:linear-gradient(135deg,var(--s2),var(--s3));border:1.5px solid var(--bd);border-radius:var(--rads);padding:14px;text-align:center;transition:all .3s;cursor:pointer;}
+.fact-box:hover{transform:translateY(-3px);border-color:var(--accent);}
+.fact-num{font-size:30px;font-weight:900;background:linear-gradient(135deg,var(--primary-light),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px;}
+.fact-label{font-size:10px;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+.facts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
 
-.script{border-left:3px solid var(--primary-light);padding:12px 14px;margin:12px 0;font-style:italic;font-size:13px;color:var(--text-secondary);line-height:1.75;background:rgba(107,142,35,0.06);border-radius:0 var(--rads) var(--rads) 0;}
+/* ── SECTION HERO ── */
+.section-hero{background:linear-gradient(135deg,rgba(107,142,35,0.15),rgba(107,142,35,0.05));border:1.5px solid var(--bd2);border-radius:var(--rad);padding:16px;margin-bottom:14px;position:relative;overflow:hidden;}
+.section-hero::before{content:"";position:absolute;top:-50%;right:-50%;width:250px;height:250px;border-radius:50%;background:radial-gradient(circle,rgba(107,142,35,0.1),transparent);pointer-events:none;}
+.section-hero h2{font-size:20px;font-weight:900;color:var(--t1);margin-bottom:6px;position:relative;z-index:1;text-transform:uppercase;letter-spacing:1px;}
+.section-hero p{font-size:12px;color:var(--t2);line-height:1.75;position:relative;z-index:1;}
 
-.fact-box{background:linear-gradient(135deg,var(--surface-2),var(--surface-3));border:1.5px solid var(--border);border-radius:var(--rads);padding:16px;text-align:center;transition:all .3s;cursor:pointer;animation:slideUpStagger .4s ease-out backwards;}
-.fact-box:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:0 8px 20px rgba(201,168,118,0.15);}
-.fact-num{font-size:36px;font-weight:900;background:linear-gradient(135deg,var(--primary-light),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;}
-.fact-label{font-size:11px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
-.facts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+/* ── VIDEO ── */
+.video-wrap{margin-bottom:14px;border-radius:var(--rad);overflow:hidden;border:1.5px solid var(--bd);}
+.video-wrap iframe{width:100%;aspect-ratio:16/9;display:block;border:none;}
 
-.section-hero{background:linear-gradient(135deg,rgba(107,142,35,0.15),rgba(107,142,35,0.05));border:1.5px solid var(--border-light);border-radius:var(--rad);padding:20px;margin-bottom:18px;position:relative;overflow:hidden;}
-.section-hero::before{content:'';position:absolute;top:-60%;right:-60%;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(107,142,35,0.1),transparent);pointer-events:none;}
-.section-hero h2{font-size:22px;font-weight:900;color:var(--text-primary);margin-bottom:8px;position:relative;z-index:1;text-transform:uppercase;letter-spacing:1px;}
-.section-hero p{font-size:13px;color:var(--text-secondary);line-height:1.75;position:relative;z-index:1;}
-
-.siol-btn{width:100%;margin-top:16px;padding:14px;background:linear-gradient(135deg,var(--primary-light),var(--accent));border:none;border-radius:var(--rads);color:var(--bg);font-size:13px;font-weight:900;cursor:pointer;font-family:var(--font);letter-spacing:.05em;position:relative;overflow:hidden;box-shadow:0 6px 20px rgba(107,142,35,0.3);transition:all .3s;text-transform:uppercase;}
-.siol-btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:rgba(255,255,255,0.25);animation:shimmer 3s infinite;}
+/* ── BUTTONS ── */
+.siol-btn{width:100%;margin-top:14px;padding:13px;background:linear-gradient(135deg,var(--primary-light),var(--accent));border:none;border-radius:var(--rads);color:var(--bg);font-size:12px;font-weight:900;cursor:pointer;font-family:var(--font);letter-spacing:.05em;position:relative;overflow:hidden;box-shadow:0 5px 16px rgba(107,142,35,0.3);transition:all .3s;text-transform:uppercase;}
+.siol-btn::before{content:"";position:absolute;top:0;left:-100%;width:100%;height:100%;background:rgba(255,255,255,0.2);animation:shimmer 3s infinite;}
 @keyframes shimmer{0%{left:-100%}100%{left:100%}}
-.siol-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(107,142,35,0.4);}
-.siol-btn:active{transform:scale(.97);}
+.siol-btn:hover{transform:translateY(-1px);}
+.quiz-btn{width:100%;margin-top:8px;padding:13px;background:rgba(107,142,35,0.15);border:1.5px solid rgba(107,142,35,0.35);border-radius:var(--rads);color:var(--primary-light);font-size:12px;font-weight:900;cursor:pointer;font-family:var(--font);transition:all .3s;text-transform:uppercase;letter-spacing:.05em;}
+.quiz-btn:hover{background:rgba(107,142,35,0.25);border-color:var(--primary-light);}
+.quiz-btn.passed{color:var(--primary-light);border-color:var(--primary-light);background:rgba(107,142,35,0.2);}
 
-.siol-overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.92);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn .25s ease both;}
+/* ── QUICK REFERENCE ── */
+.qref-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.qref-card{background:var(--s2);border:1.5px solid var(--bd);border-radius:10px;padding:14px;}
+.qref-card-title{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:var(--primary-light);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.qref-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--bd);gap:8px;}
+.qref-row:last-child{border-bottom:none;}
+.qref-key{font-size:11px;color:var(--t2);flex:1;}
+.qref-val{font-size:12px;font-weight:900;color:var(--accent);text-align:right;white-space:nowrap;}
+.qref-script{background:var(--s2);border:1.5px solid var(--bd);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:12px 14px;margin-bottom:8px;}
+.qref-script-label{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:var(--primary-light);margin-bottom:5px;}
+.qref-script-text{font-size:12px;color:var(--accent);font-style:italic;line-height:1.6;}
+.qref-full{background:var(--s2);border:1.5px solid var(--bd);border-radius:10px;padding:14px;margin-bottom:10px;}
+.qref-full-title{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:var(--primary-light);margin-bottom:10px;}
+
+/* ── SIOL OVERLAY ── */
+.siol-overlay{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.92);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .25s ease;}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.siol-card{background:linear-gradient(135deg,var(--surface-2),var(--surface-3));border:1.5px solid var(--border-light);border-top:3px solid var(--accent);border-radius:18px;padding:36px 28px;max-width:360px;width:100%;text-align:center;animation:popIn .35s cubic-bezier(.34,1.56,.64,1) both;}
-@keyframes popIn{from{opacity:0;transform:scale(.8) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
-.siol-mic{font-size:48px;margin-bottom:16px;animation:micPulse 2.2s ease infinite;}
-@keyframes micPulse{0%,100%{transform:scale(1);filter:drop-shadow(0 0 8px rgba(201,168,118,0.3))}50%{transform:scale(1.12);filter:drop-shadow(0 0 20px rgba(201,168,118,0.7))}}
-.siol-label{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.15em;color:var(--accent);margin-bottom:14px;}
-.siol-text{font-size:15px;font-weight:600;color:var(--text-primary);line-height:1.75;margin-bottom:24px;}
-.siol-close{padding:12px 36px;background:var(--surface-3);border:1.5px solid var(--border-light);border-radius:var(--rads);color:var(--text-secondary);font-size:13px;cursor:pointer;font-family:var(--font);font-weight:700;transition:all .2s;text-transform:uppercase;letter-spacing:.5px;}
-.siol-close:hover{border-color:var(--accent);color:var(--accent);}
+.siol-card{background:linear-gradient(135deg,var(--s2),var(--s3));border:1.5px solid var(--bd2);border-top:3px solid var(--accent);border-radius:18px;padding:28px 22px;max-width:360px;width:100%;text-align:center;animation:popIn .35s cubic-bezier(.34,1.56,.64,1);}
+@keyframes popIn{from{opacity:0;transform:scale(.85) translateY(16px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.siol-mic{font-size:44px;margin-bottom:14px;animation:micPulse 2.2s ease infinite;}
+.siol-mic.speaking{animation:micPulse .8s ease infinite;}
+@keyframes micPulse{0%,100%{transform:scale(1);filter:drop-shadow(0 0 8px rgba(201,168,118,0.3))}50%{transform:scale(1.1);filter:drop-shadow(0 0 18px rgba(201,168,118,0.7))}}
+.siol-label{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.15em;color:var(--accent);margin-bottom:12px;}
+.siol-text{font-size:13px;color:var(--t1);line-height:1.75;margin-bottom:16px;text-align:left;max-height:180px;overflow-y:auto;}
+.siol-actions{display:flex;gap:8px;}
+.siol-speak-btn{flex:1;padding:10px;background:linear-gradient(135deg,var(--primary-light),var(--accent));border:none;border-radius:var(--rads);color:var(--bg);font-size:12px;font-weight:900;cursor:pointer;font-family:var(--font);text-transform:uppercase;transition:all .2s;}
+.siol-speak-btn.active{background:linear-gradient(135deg,#e07070,#c05050);}
+.siol-close-btn{padding:10px 20px;background:var(--s3);border:1.5px solid var(--bd2);border-radius:var(--rads);color:var(--t2);font-size:12px;cursor:pointer;font-family:var(--font);font-weight:700;text-transform:uppercase;}
 
+/* ── QUIZ OVERLAY ── */
+.quiz-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:500;display:none;align-items:center;justify-content:center;padding:16px;}
+.quiz-overlay.open{display:flex;}
+.quiz-modal{background:linear-gradient(135deg,var(--s2),var(--s3));border:1.5px solid var(--bd);border-radius:18px;width:100%;max-width:440px;max-height:88vh;overflow-y:auto;padding:24px 20px;}
+.qhdr{text-align:center;margin-bottom:20px;}
+.qhdr-title{font-size:17px;font-weight:900;color:var(--t1);margin-bottom:3px;}
+.qhdr-sub{font-size:11px;color:var(--t3);font-weight:700;text-transform:uppercase;}
+.q-text{font-size:14px;font-weight:700;color:var(--t1);margin-bottom:14px;line-height:1.6;}
+.q-opts{display:flex;flex-direction:column;gap:7px;margin-bottom:12px;}
+.q-opt{padding:11px 13px;background:var(--s2);border:1.5px solid var(--bd);border-radius:8px;cursor:pointer;font-size:12px;color:var(--t2);transition:all .2s;text-align:left;font-family:var(--font);width:100%;}
+.q-opt:hover{border-color:var(--accent);}
+.q-opt.selected{background:rgba(107,142,35,0.15);border-color:var(--primary-light);color:var(--primary-light);}
+.q-opt.correct{background:rgba(107,142,35,0.2);border-color:var(--primary-light);color:var(--primary-light);}
+.q-opt.wrong{background:rgba(224,112,112,0.15);border-color:#e07070;color:#e07070;}
+.q-explain{font-size:12px;color:var(--t2);padding:9px 11px;background:rgba(107,142,35,0.05);border-left:3px solid var(--accent);border-radius:4px;display:none;line-height:1.6;margin-bottom:10px;}
+.q-explain.show{display:block;}
+.q-actions{display:flex;gap:8px;margin-top:14px;}
+.q-btn{flex:1;padding:11px;border:none;border-radius:8px;cursor:pointer;font-weight:700;font-size:12px;font-family:var(--font);transition:all .2s;text-transform:uppercase;}
+.q-btn-primary{background:linear-gradient(135deg,var(--primary-light),var(--accent));color:var(--bg);}
+.q-btn-primary:disabled{opacity:.4;cursor:not-allowed;}
+.q-btn-secondary{background:var(--s2);border:1px solid var(--bd);color:var(--t2);}
+.q-results{text-align:center;}
+.q-result-icon{font-size:44px;margin-bottom:14px;}
+.q-result-score{font-size:44px;font-weight:900;color:var(--primary-light);margin:6px 0;}
+.q-result-msg{font-size:13px;color:var(--t2);margin-bottom:16px;line-height:1.6;}
+.q-result-msg.fail{color:#DFA876;}
+
+/* ── PRINT SUPPORT ── */
+/* Print handled by popup window in printCert() */
+@media print { .cert-no-print { display: none !important; } }
+
+/* ── NAME OVERLAY ── */
+.name-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:600;display:none;align-items:center;justify-content:center;padding:20px;}
+.name-overlay.open{display:flex;}
+.name-card{background:linear-gradient(135deg,var(--s2),var(--s3));border:1.5px solid var(--bd);border-radius:18px;padding:32px 24px;max-width:340px;width:100%;text-align:center;animation:popIn .35s cubic-bezier(.34,1.56,.64,1);}
+.name-icon{font-size:44px;margin-bottom:14px;}
+.name-title{font-size:17px;font-weight:900;color:var(--t1);margin-bottom:6px;}
+.name-sub{font-size:12px;color:var(--t2);margin-bottom:20px;line-height:1.6;}
+.name-input{width:100%;padding:13px;background:var(--s3);border:1.5px solid var(--bd);border-radius:var(--rads);color:var(--t1);font-size:16px;font-family:var(--font);font-weight:700;text-align:center;margin-bottom:12px;outline:none;transition:border-color .2s;}
+.name-input:focus{border-color:var(--accent);}
+.name-claim-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--primary-light),var(--accent));border:none;border-radius:var(--rads);color:var(--bg);font-size:13px;font-weight:900;cursor:pointer;font-family:var(--font);text-transform:uppercase;}
+
+/* ── CERTIFICATE OVERLAY ── */
+.cert-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:700;display:none;align-items:center;justify-content:center;padding:16px;overflow-y:auto;}
+.cert-overlay.open{display:flex;}
+.cert-print-area{max-width:560px;width:100%;}
+.cert-card{
+  background:linear-gradient(160deg,#faf8f0 0%,#f2ead6 50%,#faf8f0 100%);
+  color:#1a1410;
+  border:3px solid #9b8560;
+  box-shadow:0 0 0 2px #f2ead6,0 0 0 8px #9b8560,0 0 0 10px #f2ead6,0 30px 80px rgba(0,0,0,0.7);
+  border-radius:5px;padding:36px 32px;text-align:center;position:relative;
+  animation:popIn .4s cubic-bezier(.34,1.56,.64,1);
+}
+.cert-corner{position:absolute;font-size:22px;color:#9b8560;opacity:.5;}
+.cert-corner.tl{top:12px;left:16px;}
+.cert-corner.tr{top:12px;right:16px;}
+.cert-corner.bl{bottom:12px;left:16px;}
+.cert-corner.br{bottom:12px;right:16px;}
+.cert-inner{border:1.5px solid rgba(155,133,96,0.35);border-radius:3px;padding:28px 24px;position:relative;}
+.cert-org-name{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.25em;color:#556B1A;margin-bottom:10px;}
+.cert-seal{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#6B8E23,#8BA946);border:3px solid #556B1A;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 0 0 2px #f2ead6,0 0 0 4px #9b8560;}
+.cert-award-title{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.2em;color:#9b8560;margin-bottom:10px;}
+.cert-divider{height:1px;background:linear-gradient(90deg,transparent,#9b8560,transparent);margin:12px 0;}
+.cert-certifies-text{font-size:12px;color:#6b5840;font-style:italic;margin-bottom:8px;letter-spacing:.02em;}
+.cert-name{font-size:36px;font-weight:900;color:#2a4a08;letter-spacing:-0.5px;margin-bottom:4px;font-family:Georgia,"Times New Roman",serif;line-height:1.1;}
+.cert-name-underline{height:2px;background:linear-gradient(90deg,transparent,#9b8560,transparent);width:240px;margin:0 auto 14px;}
+.cert-desc{font-size:12px;color:#6b5840;line-height:1.8;margin-bottom:14px;}
+.cert-desc strong{color:#2a4a08;font-weight:700;}
+.cert-issued{font-size:11px;font-weight:700;color:#9b8560;letter-spacing:.12em;text-transform:uppercase;margin-bottom:18px;}
+.cert-footer-row{display:flex;justify-content:space-around;padding-top:14px;border-top:1px solid rgba(155,133,96,0.3);}
+.cert-sig-block{text-align:center;}
+.cert-sig-line-el{height:1px;background:#9b8560;width:110px;margin:0 auto 4px;opacity:.5;}
+.cert-sig-label{font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:#9b8560;font-weight:700;}
+.cert-actions{display:flex;gap:10px;margin-top:14px;}
+.cert-print-btn{flex:1;padding:12px;background:linear-gradient(135deg,#6B8E23,#8BA946);border:none;border-radius:8px;color:#fff;font-weight:700;cursor:pointer;font-family:var(--font);font-size:13px;text-transform:uppercase;letter-spacing:.05em;transition:all .2s;}
+.cert-print-btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(107,142,35,0.3);}
+.cert-close-plain{padding:12px 20px;background:rgba(255,255,255,0.08);border:1px solid rgba(155,133,96,0.3);border-radius:8px;color:#9b8560;font-weight:700;cursor:pointer;font-family:var(--font);font-size:13px;transition:all .2s;}
+.cert-close-plain:hover{background:rgba(255,255,255,0.12);}
+
+/* ── BOTTOM NAV ── */
+.bnav{display:flex;background:var(--s1);border-top:2px solid var(--bd);flex-shrink:0;padding:6px 0 8px;}
+.bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;background:none;border:none;padding:4px 0;transition:all .2s;font-family:var(--font);}
+.bnav-icon{font-size:20px;line-height:1;}
+.bnav-label{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;transition:color .2s;}
+.bnav-btn.on .bnav-label{color:var(--accent);}
+.bnav-badge{position:absolute;top:-4px;right:-4px;width:16px;height:16px;background:var(--accent);border-radius:50%;font-size:9px;font-weight:900;color:var(--bg);display:flex;align-items:center;justify-content:center;}
+.bnav-btn-wrap{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;}
+
+/* ── BOOKMARKS PANEL ── */
+.bm-panel{display:none;height:100%;overflow-y:auto;padding:16px 16px 80px;}
+.bm-panel.on{display:block;}
+.bm-empty{text-align:center;padding:60px 20px;color:var(--t3);}
+.bm-empty-icon{font-size:40px;margin-bottom:12px;opacity:.3;}
+
+/* ── PROGRESS PANEL ── */
+.pstat-panel{display:none;height:100%;overflow-y:auto;padding:16px 16px 80px;}
+.pstat-panel.on{display:block;}
+.pstat-card{background:var(--s2);border:1.5px solid var(--bd);border-radius:10px;padding:14px;margin-bottom:10px;}
+.pstat-card-title{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:var(--primary-light);margin-bottom:10px;}
+.pstat-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bd);}
+.pstat-row:last-child{border-bottom:none;}
+.pstat-module{font-size:13px;font-weight:700;color:var(--t1);}
+.pstat-score{font-size:12px;font-weight:900;color:var(--primary-light);}
+.pstat-score.locked{color:var(--t3);}
+.pstat-score.pending{color:var(--accent);}
+.pstat-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.pstat-stat{text-align:center;padding:14px;background:var(--s3);border-radius:8px;}
+.pstat-stat-val{font-size:28px;font-weight:900;color:var(--accent);margin-bottom:4px;}
+.pstat-stat-label{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;font-weight:700;}
+
+/* ── TOAST ── */
+.toast-wrap{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:800;pointer-events:none;width:calc(100% - 32px);max-width:320px;}
+.toast{background:var(--s3);border:1.5px solid var(--bd2);border-left:3px solid var(--primary-light);border-radius:10px;padding:11px 13px;display:flex;align-items:center;gap:9px;animation:toastIn .3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 6px 20px rgba(0,0,0,0.4);margin-bottom:7px;}
+@keyframes toastIn{from{opacity:0;transform:translateY(-10px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+.toast-icon{font-size:16px;flex-shrink:0;}
+.toast-title{font-size:12px;font-weight:700;color:var(--t1);}
+.toast-sub{font-size:11px;color:var(--t2);}
+
+/* ── CONFETTI ── */
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:900;overflow:hidden;}
+.cf{position:absolute;width:8px;height:12px;top:-20px;border-radius:2px;animation:cfFall linear forwards;}
+@keyframes cfFall{to{transform:translateY(105vh) rotate(720deg);opacity:0;}}
 </style>
 </head>
 <body>
-<div class="app">
+<div class="app" id="app">
 
+<!-- TOPBAR -->
 <div class="topbar">
-  <div class="wordmark">Weedman <span>Training</span></div>
-  <div class="topbar-sub">Science & Biology — Billings & Bozeman, Montana</div>
-</div>
-
-<div class="tabrow" id="tabrow">
-  <div class="tab on" onclick="showTab('soil',this)">Soil</div>
-  <div class="tab" onclick="showTab('grass',this)">Grass</div>
-  <div class="tab" onclick="showTab('weeds',this)">Weeds</div>
-  <div class="tab" onclick="showTab('products',this)">Products</div>
-  <div class="tab" onclick="showTab('montana',this)">Montana</div>
-  <div class="tab" onclick="showTab('seasons',this)">Seasons</div>
-  <div class="tab" onclick="showTab('water',this)">Watering</div>
-  <div class="tab" onclick="showTab('mosquito',this)">Mosquito</div>
-</div>
-
-<div class="content">
-
-<!-- ══ SOIL ══ -->
-<div class="panel on" id="p-soil">
-  <div class="section-hero">
-    <h2>Soil Science</h2>
-    <p>If the soil is wrong, nothing works. This is your foundation for understanding why treatments succeed or fail in Montana's unique conditions.</p>
+  <div class="topbar-row">
+    <div>
+      <div class="wordmark" id="appWordmark">Weedman <span>Training</span></div>
+      <div class="topbar-sub" id="appSub">Science &amp; Biology, Billings &amp; Bozeman, Montana</div>
+    </div>
+    <div class="topbar-actions">
+      <div class="fs-btns">
+        <button class="icon-btn" onclick="setFS(-1)">A-</button>
+        <button class="icon-btn" onclick="setFS(1)">A+</button>
+      </div>
+      <button class="cert-btn" id="certBtn" onclick="handleCertBtn()">🏆 Badge</button>
+    </div>
   </div>
-  
+</div>
+
+<!-- PROGRESS BAR -->
+<div class="prog-wrap">
+  <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
+  <div class="prog-label" id="progLabel">0 of 8 complete</div>
+</div>
+
+<!-- SEARCH BAR -->
+<div class="search-bar" id="searchBar">
+  <input type="search" class="search-input" id="searchInput" placeholder="Search all modules..." oninput="doSearch(this.value)">
+  <button class="search-cancel" onclick="closeSearch()">Cancel</button>
+</div>
+
+<!-- TABS -->
+<div class="tabrow" id="tabrow">
+  <div class="tab on" data-module="soil" onclick="handleTab('soil',this)">Soil</div>
+  <div class="tab" data-module="grass" onclick="handleTab('grass',this)">Grass</div>
+  <div class="tab" data-module="weeds" onclick="handleTab('weeds',this)">Weeds</div>
+  <div class="tab" data-module="products" onclick="handleTab('products',this)">Products</div>
+  <div class="tab" data-module="montana" onclick="handleTab('montana',this)">Montana</div>
+  <div class="tab" data-module="seasons" onclick="handleTab('seasons',this)">Seasons</div>
+  <div class="tab" data-module="water" onclick="handleTab('water',this)">Watering</div>
+  <div class="tab" data-module="mosquito" onclick="handleTab('mosquito',this)">Mosquito</div>
+  <div class="tab qref" data-module="qref" onclick="handleTab('qref',this)">📋 Quick Ref</div>
+</div>
+
+<!-- CONTENT -->
+<div class="content" id="contentArea">
+
+<!-- SOIL -->
+<div class="panel on" id="p-soil" style="position:relative;">
+  <div class="locked-overlay" id="lo-soil"><div class="locked-overlay-icon">🔒</div><div class="locked-overlay-title">Module Locked</div><div class="locked-overlay-desc">Complete the previous module quiz to unlock this one.</div></div>
+  <div id="vid-soil"></div>
+  <div class="section-hero"><h2>Soil Science</h2><p>If the soil is wrong, nothing works. Foundation for understanding why treatments succeed or fail in Montana.</p></div>
   <div class="facts-grid">
-    <div class="fact-box"><div class="fact-num">55°F</div><div class="fact-label">Crabgrass germination</div></div>
-    <div class="fact-box"><div class="fact-num">6–7</div><div class="fact-label">Ideal soil pH</div></div>
+    <div class="fact-box"><div class="fact-num">55&#176;F</div><div class="fact-label">Crabgrass germination</div></div>
+    <div class="fact-box"><div class="fact-num">6&#8211;7</div><div class="fact-label">Ideal soil pH</div></div>
     <div class="fact-box"><div class="fact-num">7.5+</div><div class="fact-label">Montana soil pH</div></div>
   </div>
-
   <div class="slbl">Montana Clay Soil</div>
-  
-  <div class="card" onclick="toggleCard(this)">
-    <div class="card-header">
-      <div class="card-title">What is clay soil?</div>
-      <div class="card-toggle">▼</div>
-    </div>
-    <div class="card-content">
-      <div class="card-body">Clay is made of extremely fine, tightly packed particles. Water cannot move through it. Roots cannot push through it. When it dries in Billings heat, it becomes rock hard. Freeze/thaw cycles in winter compact it further every year.</div>
-      <div class="analogy visible">
-        <p><strong>Analogy:</strong> Clay soil is like a compressed sponge — nothing gets in, roots cannot push through. Aeration is like opening up that sponge with holes so water and roots can actually work.</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="card" onclick="toggleCard(this)">
-    <div class="card-header">
-      <div class="card-title">Compaction — why it happens</div>
-      <div class="card-toggle">▼</div>
-    </div>
-    <div class="card-content">
-      <div class="card-body">Soil particles get squeezed together from foot traffic, mowing, and especially freeze/thaw cycles. Zero air pockets left. Roots need air. Water runs off. Fertilizer sits on top and washes away instead of absorbing.</div>
-      <div class="highlight">
-        <p><strong>Key insight:</strong> Water pooling or running off = compaction. And it means our fertilizer and treatments are not absorbing either. Aeration fixes both problems at once.</p>
-      </div>
-      <div class="analogy">
-        <p><strong>Analogy:</strong> Compacted soil is like trying to water a parking lot. It all runs off. Aeration punches holes in that parking lot so water and nutrients can actually reach the roots underneath.</p>
-      </div>
-    </div>
-  </div>
-
+  <div class="card" onclick="toggleCard(this)"><div class="card-header"><div class="card-title">What is clay soil?</div><div class="card-header-right"><div class="card-toggle">&#9660;</div></div></div><div class="card-content"><div class="card-body">Clay is made of extremely fine, tightly packed particles. Water cannot move through it. Roots cannot push through it. When it dries in Billings heat, it becomes rock hard. Freeze/thaw cycles compact it further every year.</div><div class="analogy visible"><p><strong>Analogy:</strong> Clay soil is like a compressed sponge. Nothing gets in and roots cannot push through. Aeration opens up that sponge with channels so water and roots can actually work.</p></div></div></div>
+  <div class="card" onclick="toggleCard(this)"><div class="card-header"><div class="card-title">Compaction: Why It Happens</div><div class="card-header-right"><div class="card-toggle">&#9660;</div></div></div><div class="card-content"><div class="card-body">Soil particles get squeezed from foot traffic, mowing, and freeze/thaw cycles. Zero air pockets. Roots need air. Water runs off. Fertilizer sits on top and washes away instead of absorbing.</div><div class="highlight"><p><strong>Key insight:</strong> Water pooling or running off = compaction. Aeration fixes both at once.</p></div><div class="analogy"><p><strong>Analogy:</strong> Compacted soil is like trying to water a parking lot. It all runs off. Aeration punches channels so water and nutrients can reach roots.</p></div></div></div>
   <div class="slbl">Soil pH</div>
-
-  <div class="card" onclick="toggleCard(this)">
-    <div class="card-header">
-      <div class="card-title">Why Montana soil runs alkaline <span class="badge badge-accent">Montana Specific</span></div>
-      <div class="card-toggle">▼</div>
-    </div>
-    <div class="card-content">
-      <div class="card-body">Montana is semi-arid — less rainfall means alkaline minerals never get leached out. Calcium carbonate and other compounds have accumulated over thousands of years. This is geology. Natural pH of 7.5–8.5+ across the region. Grass needs 6.0–7.0. Not something homeowners caused.</div>
-      <div class="analogy">
-        <p><strong>Analogy:</strong> Soil pH is like a combination lock on a safe. The fertilizer is in there but if the combination is wrong, it cannot get out. Turf Fuel MIC DROP dials the combination correctly so everything absorbs.</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="slbl">N-P-K (The Three Numbers)</div>
-
-  <div class="card" onclick="toggleCard(this)">
-    <div class="card-header">
-      <div class="card-title">What fertilizer numbers mean</div>
-      <div class="card-toggle">▼</div>
-    </div>
-    <div class="card-content">
-      <div class="card-body"><strong>Nitrogen (N):</strong> Green growth driver. Most critical for established lawns.<br><br><strong>Phosphorus (P):</strong> Root development. Important for new lawns. Our summer formula has zero — established turf does not need it.<br><br><strong>Potassium (K):</strong> Stress resistance. Drought and winter survival. Critical in summer and fall.</div>
-      <div class="analogy">
-        <p><strong>Analogy:</strong> N-P-K is like a smoothie recipe. Nitrogen is the protein — builds and grows. Phosphorus is the vitamin for roots. Potassium is the electrolytes — keeps everything resilient under stress.</p>
-      </div>
-    </div>
-  </div>
-
-  <button class="siol-btn" onclick="openSIOL('soil')">🎙 Say it out loud</button>
+  <div class="card" onclick="toggleCard(this)"><div class="card-header"><div class="card-title">Why Montana soil runs alkaline <span class="badge badge-accent">Montana Specific</span></div><div class="card-header-right"><div class="card-toggle">&#9660;</div></div></div><div class="card-content"><div class="card-body">Montana is semi-arid. less rainfall means alkaline minerals never get leached out. Calcium carbonate accumulated over thousands of years. Natural pH of 7.5&#8211;8.5+. Grass needs 6.0&#8211;7.0.</div><div class="analogy"><p><strong>Analogy:</strong> Soil pH is like a combination lock on a safe. The fertilizer is in there but if the combination is wrong it cannot get out. MIC DROP dials it correctly.</p></div></div></div>
+  <div class="slbl">N-P-K</div>
+  <div class="card" onclick="toggleCard(this)"><div class="card-header"><div class="card-title">What fertilizer numbers mean</div><div class="card-header-right"><div class="card-toggle">&#9660;</div></div></div><div class="card-content"><div class="card-body"><strong>Nitrogen (N):</strong> Green growth driver.<br><br><strong>Phosphorus (P):</strong> Root development. Summer formula has zero. established turf does not need it.<br><br><strong>Potassium (K):</strong> Stress resistance. Drought and winter survival.</div><div class="analogy"><p><strong>Analogy:</strong> N-P-K is like a smoothie recipe. Nitrogen is the protein. Phosphorus is the vitamin for roots. Potassium is the electrolytes. resilience under stress.</p></div></div></div>
+  <button class="siol-btn" onclick="openSIOL('soil')">&#127897; Say it out loud</button>
+  <button class="quiz-btn" id="qbtn-soil" onclick="openQuiz('soil')">&#128221; Take Module Quiz</button>
 </div>
 
-<!-- ══ GRASS ══ -->
-<div class="panel" id="p-grass">
-  <div class="section-hero">
-    <h2>Grass Biology</h2>
-    <p>All Montana lawns are cool-season grasses. Understanding their lifecycle is everything for retaining customers through summer dormancy.</p>
-  </div>
-
-  <div class="highlight">
-    <p><strong>Critical concept:</strong> Brown grass in July is dormancy, NOT death. The roots stay alive underground. Consistent watering brings it back in 1-2 weeks. This single fact saves more cancels than anything else.</p>
-  </div>
-
+<!-- GRASS -->
+<div class="panel" id="p-grass" style="position:relative;">
+  <div class="locked-overlay" id="lo-grass"><div class="locked-overlay-icon">&#128274;</div><div class="locked-overlay-title">Module Locked</div><div class="locked-overlay-desc">Pass the Soil Science quiz to unlock Grass Biology.</div></div>
+  <div id="vid-grass"></div>
+  <div class="section-hero"><h2>Grass Biology</h2><p>All Montana lawns are cool-season grasses. Understanding their lifecycle is everything for retaining customers through summer.</p></div>
+  <div class="highlight"><p><strong>Critical concept:</strong> Brown grass in July is dormancy, NOT death. Roots stay alive. Consistent watering brings it back in 1-2 weeks. This saves more cancels than anything else.</p></div>
   <div class="slbl">Montana Grass Types</div>
-
-  <div class="card" onclick="toggleCard(this)">
-    <div class="card-header">
-      <div class="card-title">Kentucky Bluegrass <span class="badge badge-primary">Most common in Billings</span></div>
-      <div class="card-toggle">▼</div>
-    </div>
-    <div class="card-content">
-      <div class="card-body">Beautiful dark green when healthy. Dense. Self-repairs bare spots via rhizomes (underground spreading). Needs consistent water to thrive. Struggles in Billings dry summers. Responds visibly to fertilization within 1-2 weeks.</div>
-      <div class="analogy">
-        <p><strong>Analogy:</strong> Kentucky bluegrass is like a high-maintenance sports car — gorgeous when well maintained, falls apart fast when neglected. It responds faster to our program than any other grass type.</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="card" onclick="toggleCard(this)">
-    <div class="card-header">
-      <div class="card-title">Tall Fescue <span class="badge badge-accent">Common in Bozeman/higher elevation</span></div>
-      <div class="card-toggle">▼</div>
-    </div>
-    <div class="card-content">
-      <div class="card-body">Deeper roots. Handles Billings heat and drought dramatically better. Coarser texture. Lighter green. Does NOT spread on its own — bare spots stay bare without overseeding.</div>
-      <div class="highlight">
-        <p>Fescue bare patches that will not fill in = normal behavior. They need to be reseeded. This opens the Natural Knit overseeding conversation.</p>
-      </div>
-      <div class="analogy">
-        <p><strong>Analogy:</strong> Tall fescue is like a diesel truck — not flashy but tough. Handles conditions bluegrass cannot. The tradeoff is it never self-repairs, so bare spots stay bare.</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="card" onclick="toggleCard(this)">
-    <div class="card-header">
-      <div class="card-title">Dormancy vs Death — the most critical distinction</div>
-      <div class="card-toggle">▼</div>
-    </div>
-    <div class="card-content">
-      <div class="card-body">When heat or drought hits, blades die back but the crown (growing point at soil level) and roots stay alive underground. Grass can survive 4-6 weeks of full dormancy without permanent damage.</div>
-      <div class="analogy">
-        <p><strong>Analogy:</strong> Dormancy is like a bear hibernating. The bear is not dead — it is conserving energy until conditions improve. The crown of your grass is the same. It is alive and waiting. Water it and it wakes right back up.</p>
-      </div>
-      <div class="script">"Brown grass in July is dormancy — the crown and roots are alive. Consistent watering brings it back in one to two weeks. This is completely normal for Montana cool-season grass."</div>
-    </div>
-  </div>
-
-  <button class="siol-btn" onclick="openSIOL('grass')">🎙 Say it out loud</button>
+  <div class="card" onclick="toggleCard(this)"><div class="card-header"><div class="card-title">Kentucky Bluegrass <span class="badge badge-primary">Most common in Billings</span></div><div class="card-header-right"><div class="card-toggle">&#9660;</div></div></div><div class="card-content"><div class="card-body">Beautiful dark green when healthy. Self-repairs bare spots via rhizomes (underground spreading). Needs consistent water. Responds to fertilization in 1-2 weeks.</div><div class="analogy"><p><strong>Analogy:</strong> Kentucky bluegrass is like a high-maintenance sports car. Gorgeous when maintained and falls apart fast when neglected.</p></div></div></div>
+  <div class="card" onclick="toggleCard(this)"><div class="card-header"><div class="card-title">Tall Fescue <span class="badge badge-accent">Common in Bozeman</span></div><div class="card-header-right"><div class="card-toggle">&#9660;</div></div></div><div class="card-content"><div class="card-body">Deeper roots. Handles heat better. Coarser texture. Does NOT spread on its own. bare spots stay bare without overseeding.</div><div class="analogy"><p><strong>Analogy:</strong> Tall fescue is like a tough pickup truck. Not the prettiest but it survives conditions that would destroy a sports car.</p></div></div></div>
+  <div class="card" onclick="toggleCard(this)"><div class="card-header"><div class="card-title">Perennial Ryegrass <span class="badge badge-accent">Quick germination</span></div><div class="card-header-right"><div class="card-toggle">&#9660;</div></div></div><div class="card-content"><div class="card-body">Germinates in 5-7 days. Used as nurse grass. establishes fast while bluegrass fills in behind it.</div><div class="analogy"><p><strong>Analogy:</strong> Perennial ryegrass is the first responder. shows up fast, holds the gap while the long-term solution establishes.</p></div></div></div>
+  <div class="slbl">Dormancy vs Death</div>
+  <div class="card" onclick="toggleCard(this)"><div class="card-header"><div class="card-title">Brown Grass in Summer: Dormant, Not Dead</div><div class="card-header-right"><div class="card-toggle">&#9660;</div></div></div><div class="card-content"><div class="card-body">Cool-season grasses go dormant when soil temps exceed 85&#176;F. Crown stays alive. Roots stay alive. Consistent watering prevents dormancy or brings it back in 7 to 14 days.</div><div class="highlight"><p><strong>Sales impact:</strong> This is the #1 cancel save. Customer says lawn is dead in July. it is almost never dead.</p></div><div class="analogy"><p><strong>Analogy:</strong> Summer dormancy is like a bear hibernating. Not dead. conserving energy. Wake it up (consistent water) and it comes back fully.</p></div></div></div>
+  <button class="siol-btn" onclick="openSIOL('grass')">&#127897; Say it out loud</button>
+  <button class="quiz-btn" id="qbtn-grass" onclick="openQuiz('grass')">&#128221; Take Module Quiz</button>
 </div>
 
-<!-- ══ WEEDS ══ -->
-<div class="panel" id="p-weeds">
-  <div class="section-hero">
-    <h2>Weed Biology</h2>
-    <p>Why weeds grow, why store products fail, and why professional treatment is genuinely different — not just more expensive.</p>
-  </div>
-
-  <div class="slbl">The Waxy Coating — Your #1 Differentiator</div>
-
-  <div class="card" onclick="toggleCard(this)">
-    <div class="card-header">
-      <div class="card-title">Why store products fail on dandelions & thistle <span class="badge badge-warn">KEY SELLING POINT</span></div>
-      <div class="card-toggle">▼</div>
-    </div>
-    <div class="card-content">
-      <div class="card-body">Dandelions, thistle, and wild violet have a hydrophobic waxy coating on their leaves. Store granular products literally slide right off — never penetrate. Our professional liquid contains surfactants specifically formulated to break through that coating and deliver herbicide to the root.</div>
-      <div class="analogy">
-        <p><strong>Analogy:</strong> Those weeds wear a raincoat. Store granular hits that raincoat and slides off, never gets inside. Our professional liquid is like a special soap that dissolves the raincoat so the product gets inside and kills the weed at the root.</p>
-      </div>
-      <div class="highlight">
-        <p><strong>This is chemistry, not sales talk.</strong> Store granular is physically incapable of penetrating these weeds. That is why DIY customers keep getting them year after year.</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="slbl">Broadleaf vs Grassy Weeds</div>
-
-  <div class="card" onclick="toggleCard(this)">
-    <div class="card-header">
-      <div class="card-title">The fundamental difference</div>
-      <div class="card-toggle">▼</div>
-    </div>
-    <div class="card-content">
-      <div class="card-body"><strong>Broadleaf weeds</strong> (dandelion, thistle, clover, violet) — wide leaves, networked veins. Can be selectively treated. This is what we do.<br><br><strong>Grassy weeds</strong> (quackgrass, fescue clumps) — they ARE grasses. No selective herbicide exists. Weedman does not offer removal. Homeowner handles removal, our program prevents recurrence.</div>
-      <div class="analogy">
-        <p><strong>Analogy:</strong> Trying to spray quackgrass selectively is like trying to remove one ingredient from a smoothie after blending. Once it is mixed in, you cannot separate them chemically.</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="slbl">Clover Science</div>
-
-  <div class="card" onclick="toggleCard(this)">
-    <div class="card-header">
-      <div class="card-title">Clover = Nitrogen deficiency signal</div>
-      <div class="card-toggle">▼</div>
-    </div>
-    <div class="card-content">
-      <div class="card-body">Clover makes its own nitrogen from the air via bacteria in its roots. It thrives where soil nitrogen is LOW because it has a biological advantage over grass in nitrogen-poor soil. The lawn is starving for nitrogen.</div>
-      <div class="analogy">
-        <p><strong>Analogy:</strong> Clover is your lawn telling you it is starving for nitrogen. It is like your body craving specific foods when you are deficient. The fertilization program feeds the grass, thickens it, and crowds the clover out naturally.</p>
-      </div>
-    </div>
-  </div>
-
-  <button class="siol-btn" onclick="openSIOL('weeds')">🎙 Say it out loud</button>
+<!-- WEEDS -->
+<div class="panel" id="p-weeds" style="position:relative;">
+  <div class="locked-overlay" id="lo-weeds"><div class="locked-overlay-icon">&#128274;</div><div class="locked-overlay-title">Module Locked</div><div class="locked-overlay-desc">Pass the Grass Biology quiz to unlock Weed Control.</div></div>
+  <div id="vid-weeds"></div>
+  <div class="section-hero"><h2>Weed Control Science</h2><p>Understanding why store products fail makes you the expert. This is how you justify our professional approach.</p></div>
+  <div class="slbl">Why Store Products Fail</div>
+  <div class="card" onclick="toggleCard(this)"><div class="card-header"><div class="card-title">Dandelions and the Waxy Coating Problem</div><div class="card-header-right"><div class="card-toggle">&#9660;</div></div></div><div class="card-content"><div class="card-body">Dandelion and thistle leaves have a waxy cuticle. Store granular rolls right off. Our professional liquid contains surfactants that break surface tension and penetrate the leaf.</div><div class="analogy"><p><strong>Analogy:</strong> Spraying store granular on dandelions is like washing a duck with water. it beads off. Our liquid has surfactants like dish soap that break the coating.</p></div></div></div>
+  <div class="card" onclick="toggleCard(this)"><div class="card-header"><div class="card-title">Crabgrass: A Timing Problem <span class="badge badge-warn">Window closes fast</span></div><div class="card-header-right"><div class="card-toggle">&#9660;</div></div></div><div class="card-content"><div class="card-body">Crabgrass germinates from seed when soil hits 55&#176;F. Pre-emergent creates a barrier preventing germination. Once it germinates, pre-emergent does NOTHING. Window: mid-April to early May in Billings.</div><div class="analogy"><p><strong>Analogy:</strong> The pre-emergent window is like catching a flight. if you are there before departure everything works. Miss it and no amount of running helps.</p></div></div></div>
+  <div class="card" onclick="toggleCard(this)"><div class="card-header"><div class="card-title">What Clover Really Means</div><div class="card-header-right"><div class="card-toggle">&#9660;</div></div></div><div class="card-content"><div class="card-body">Clover thrives where grass is thin from nitrogen deficiency. Fertilization thickens turf which crowds clover out naturally. Weed killer helps short-term but without density it comes back.</div><div class="highlight"><p><strong>Key insight:</strong> Clover = proof fertilization has been inadequate. Our program addresses root cause, not just the symptom.</p></div></div></div>
+  <div class="card" onclick="toggleCard(this)"><div class="card-header"><div class="card-title">Professional liquid vs store granular</div><div class="card-header-right"><div class="card-toggle">&#9660;</div></div></div><div class="card-content"><div class="card-body">Professional 3-way liquid is applied to foliage with surfactants ensuring full contact. Store granular must dissolve onto leaves and slides off waxy surfaces.</div><div class="script">"The reason store products struggle on dandelions is the waxy coating. granular just slides off. Our professional liquid is formulated to penetrate that coating. Chemistry, not a sales pitch."</div></div></div>
+  <button class="siol-btn" onclick="openSIOL('weeds')">&#127897; Say it out loud</button>
+  <button class="quiz-btn" id="qbtn-weeds" onclick="openQuiz('weeds')">&#128221; Take Module Quiz</button>
 </div>
 
-<!-- ══ PRODUCTS ══ -->
-<div class="panel" id="p-products">
-  <div class="section-hero">
-    <h2>Our Products</h2>
-    <p>Know exactly what each product does, when it's applied, and why the timing matters. Understanding the system makes you dangerous on calls.</p>
-  </div>
-
+<!-- PRODUCTS -->
+<div class="panel" id="p-products" style="position:relative;">
+  <div class="locked-overlay" id="lo-products"><div class="locked-overlay-icon">&#128274;</div><div class="locked-overlay-title">Module Locked</div><div class="locked-overlay-desc">Pass the Weed Control quiz to unlock Products.</div></div>
+  <div id="vid-products"></div>
+  <div class="section-hero"><h2>Our Products</h2><p>Know exactly what each product does, when it&#8217;s applied, and why timing matters. Understanding this makes you dangerous on calls.</p></div>
   <div class="slbl">Fertilizers</div>
-
-  <div class="card" onclick="toggleCard(this)">
-    <div class="card-header">
-      <div class="card-title">Spring — 36-04-06 80% XCU <span class="badge badge-primary">120-day slow release</span></div>
-      <div class="card-toggle">▼</div>
-    </div>
-    <div class="card-content">
-      <div class="card-body">High nitrogen (36) to push growth coming out of dormancy. XCU polymer shell breaks down gradually with soil moisture, releasing nutrients continuously for 120 days. Store products: fast-release 3-4 week surge then gone.</div>
-      <div class="analogy">
-        <p><strong>Analogy:</strong> Store fertilizer is like eating one massive meal every month — spike then crash. Our XCU slow-release is like eating steady balanced meals every day for 4 months. Consistent nutrition builds stronger roots.</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="card" onclick="toggleCard(this)">
-    <div class="card-header">
-      <div class="card-title">Summer/Fall — 24-0-6 <span class="badge badge-accent">Stress management</span></div>
-      <div class="card-toggle">▼</div>
-    </div>
-    <div class="card-content">
-      <div class="card-body">Lower nitrogen (24) is intentional — too much N in heat causes rapid top growth stressed roots cannot support. Zero phosphorus — established turf does not need root development push. High potassium builds drought and cold resistance.</div>
-      <div class="analogy">
-        <p><strong>Analogy:</strong> Summer feeding is like an athlete switching from bulking calories to maintenance calories during competition. You do not push hard growth when everything is already stressed.</p>
-      </div>
-    </div>
-  </div>
-
-  <button class="siol-btn" onclick="openSIOL('products')">🎙 Say it out loud</button>
+  <div class="card" onclick="toggleCard(this)"><div class="card-header"><div class="card-title">Spring. 36-04-06 80% XCU <span class="badge badge-primary">120-day slow release</span></div><div class="card-header-right"><div class="card-toggle">&#9660;</div></div></div><div class="card-content"><div class="card-body">High nitrogen (36) to push growth out of dormancy. XCU polymer shell breaks down gradually, releasing nutrients for 120 days. Store products: 4-6 week surge then gone.</div><div class="analogy"><p><strong>Analogy:</strong> Store fertilizer is like eating one massive meal monthly. spike then crash. Our XCU slow-release is like steady balanced meals every day for 4 months.</p></div></div></div>
+  <div class="card" onclick="toggleCard(this)"><div class="card-header"><div class="card-title">Summer/Fall. 24-0-6 <span class="badge badge-accent">Stress management</span></div><div class="card-header-right"><div class="card-toggle">&#9660;</div></div></div><div class="card-content"><div class="card-body">Lower nitrogen (24) is intentional. too much N in heat causes rapid top growth stressed roots cannot support. Zero phosphorus. High potassium builds drought and cold resistance.</div><div class="analogy"><p><strong>Analogy:</strong> Summer feeding is like an athlete switching from bulking to maintenance during competition. You don&#8217;t push hard growth when everything is stressed.</p></div></div></div>
+  <div class="card" onclick="toggleCard(this)"><div class="card-header"><div class="card-title">Professional 3-way weed control</div><div class="card-header-right"><div class="card-toggle">&#9660;</div></div></div><div class="card-content"><div class="card-body">Three active ingredients targeting different weed types. Applied as liquid with surfactants. Visible results in 7 to 14 days. Does not harm established grass at labeled rates.</div><div class="script">"We use a professional 3-way liquid. handles dandelions, clover, thistle, most broadleaf weeds in one application. Store granular misses most because of formulation."</div></div></div>
+  <button class="siol-btn" onclick="openSIOL('products')">&#127897; Say it out loud</button>
+  <button class="quiz-btn" id="qbtn-products" onclick="openQuiz('products')">&#128221; Take Module Quiz</button>
 </div>
 
-<!-- ══ MONTANA ══ -->
-<div class="panel" id="p-montana">
-  <div class="section-hero">
-    <h2>Montana Climate & Geology</h2>
-    <p>Understanding the specific conditions in Billings and Bozeman makes you sound like a local expert and explains why our approach works here.</p>
-  </div>
-
+<!-- MONTANA -->
+<div class="panel" id="p-montana" style="position:relative;">
+  <div class="locked-overlay" id="lo-montana"><div class="locked-overlay-icon">&#128274;</div><div class="locked-overlay-title">Module Locked</div><div class="locked-overlay-desc">Pass the Products quiz to unlock Montana Climate.</div></div>
+  <div id="vid-montana"></div>
+  <div class="section-hero"><h2>Montana Climate &amp; Geology</h2><p>Understanding Billings and Bozeman specifically makes you sound like a local expert.</p></div>
   <div class="facts-grid">
-    <div class="fact-box"><div class="fact-num">14"</div><div class="fact-label">Billings rainfall/year</div></div>
-    <div class="fact-box"><div class="fact-num">19"</div><div class="fact-label">Bozeman rainfall/year</div></div>
-    <div class="fact-box"><div class="fact-num">2-3</div><div class="fact-label">Years to build roots</div></div>
+    <div class="fact-box"><div class="fact-num">14&#34;</div><div class="fact-label">Billings rainfall/yr</div></div>
+    <div class="fact-box"><div class="fact-num">19&#34;</div><div class="fact-label">Bozeman rainfall/yr</div></div>
+    <div class="fact-box"><div class="fact-num">2-3</div><div class="fact-label">Seasons to build roots</div></div>
   </div>
-
-  <div class="slbl">Chinook Winds (Billings Specific)</div>
-
-  <div class="card" onclick="toggleCard(this)">
-    <div class="card-header">
-      <div class="card-title">Why Billings lawns dry out so fast</div>
-      <div class="card-toggle">▼</div>
-    </div>
-    <div class="card-content">
-      <div class="card-body">Chinook winds are warm dry air masses descending from the Rockies. As air descends it compresses and heats up — sometimes 20-30°F temperature increases in hours. Critical effect: Chinooks act like a giant blow dryer on soil surface, pulling moisture at rates far beyond normal evaporation. A lawn that looked fine Monday can be stressed by Wednesday after a Chinook event.</div>
-      <div class="analogy">
-        <p><strong>Analogy:</strong> A Chinook is like someone leaving a hair dryer pointed at the soil for 48 hours. Normal evaporation is slow. Chinook evaporation is aggressive. That is why deep root development matters so much here — shallow roots dry out immediately.</p>
-      </div>
-    </div>
-  </div>
-
-  <button class="siol-btn" onclick="openSIOL('montana')">🎙 Say it out loud</button>
+  <div class="slbl">Chinook Winds</div>
+  <div class="card" onclick="toggleCard(this)"><div class="card-header"><div class="card-title">Why Billings lawns dry out so fast</div><div class="card-header-right"><div class="card-toggle">&#9660;</div></div></div><div class="card-content"><div class="card-body">Chinook winds are warm dry air masses descending from the Rockies. They compress and heat. sometimes 20-30&#176;F increases in hours. Effect: like a giant blow dryer on soil surface, pulling moisture far beyond normal evaporation.</div><div class="analogy"><p><strong>Analogy:</strong> A Chinook is like someone pointing a hair dryer at the soil for 48 hours. That is why deep roots matter. shallow roots dry out immediately.</p></div></div></div>
+  <div class="slbl">Montana Geology</div>
+  <div class="card" onclick="toggleCard(this)"><div class="card-header"><div class="card-title">Why roots take 2 to 3 seasons here</div><div class="card-header-right"><div class="card-toggle">&#9660;</div></div></div><div class="card-content"><div class="card-body">Montana clay compaction + alkaline pH + Chinooks + freeze/thaw = hardest environment for lawn establishment. Year 1: roots barely penetrating. Year 2: structure improving. Year 3: deep enough to handle our climate.</div><div class="highlight"><p><strong>Sales language:</strong> &#8220;Year 1 you are building the foundation. Year 2 real improvement. Year 3 your lawn does things it has never done.&#8221;</p></div></div></div>
+  <button class="siol-btn" onclick="openSIOL('montana')">&#127897; Say it out loud</button>
+  <button class="quiz-btn" id="qbtn-montana" onclick="openQuiz('montana')">&#128221; Take Module Quiz</button>
 </div>
 
-<!-- ══ SEASONS ══ -->
-<div class="panel" id="p-seasons">
-  <div class="section-hero">
-    <h2>Seasonal Timing</h2>
-    <p>Right treatment at wrong time does not work. Understanding timing gives you real urgency — not manufactured pressure.</p>
-  </div>
-
-  <div class="slbl">Spring — The Critical Window</div>
-
-  <div class="card" onclick="toggleCard(this)">
-    <div class="card-header">
-      <div class="card-title">April–May <span class="badge badge-warn">Narrow window</span></div>
-      <div class="card-toggle">▼</div>
-    </div>
-    <div class="card-content">
-      <div class="card-body"><strong>Dimension pre-emergent</strong> must go before soil hits 55°F consistently. Once crabgrass germinates pre-emergent does nothing.<br><br><strong>36-04-06 fertilizer</strong> kickstarts growth coming out of dormancy.<br><br><strong>3-way + Dimension</strong> kills existing broadleaf weeds and prevents crabgrass in one visit.</div>
-      <div class="analogy">
-        <p><strong>Analogy:</strong> The pre-emergent window is like catching a flight. If you are there before the plane departs — everything works. Miss it and no amount of running helps.</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="slbl">Summer & Fall</div>
-
-  <div class="card" onclick="toggleCard(this)">
-    <div class="card-header">
-      <div class="card-title">June–August (Protection), September–October (Building)</div>
-      <div class="card-toggle">▼</div>
-    </div>
-    <div class="card-content">
-      <div class="card-body"><strong>Summer:</strong> Switch to 24-0-6. Acelepryn grub control in early summer. Dormancy management is the biggest retention tool.<br><br><strong>Fall:</strong> Best time for aeration. Soil is workable, grass recovers before frost, roots go deep before winter. Overseeding after aeration = best germination rates of the year.</div>
-      <div class="analogy">
-        <p><strong>Analogy:</strong> Fall lawn care is like investing in your retirement. You do not see payoff immediately — you see it next spring when everyone else is struggling and your lawn just takes off.</p>
-      </div>
-    </div>
-  </div>
-
-  <button class="siol-btn" onclick="openSIOL('seasons')">🎙 Say it out loud</button>
+<!-- SEASONS -->
+<div class="panel" id="p-seasons" style="position:relative;">
+  <div class="locked-overlay" id="lo-seasons"><div class="locked-overlay-icon">&#128274;</div><div class="locked-overlay-title">Module Locked</div><div class="locked-overlay-desc">Pass the Montana Climate quiz to unlock Seasonal Timing.</div></div>
+  <div id="vid-seasons"></div>
+  <div class="section-hero"><h2>Seasonal Timing</h2><p>Right treatment at wrong time does not work. This gives you real urgency. not manufactured pressure.</p></div>
+  <div class="slbl">Spring. Critical Window</div>
+  <div class="card" onclick="toggleCard(this)"><div class="card-header"><div class="card-title">April&#8211;May <span class="badge badge-warn">Narrow window</span></div><div class="card-header-right"><div class="card-toggle">&#9660;</div></div></div><div class="card-content"><div class="card-body"><strong>Dimension pre-emergent</strong> must go before soil hits 55&#176;F. Once crabgrass germinates, pre-emergent does nothing.<br><br><strong>36-04-06</strong> kickstarts growth out of dormancy.<br><br><strong>3-way + Dimension</strong> kills broadleaf weeds and prevents crabgrass in one visit.</div><div class="analogy"><p><strong>Analogy:</strong> Pre-emergent window is like catching a flight. there before departure, it works. Miss it and no amount of running helps.</p></div></div></div>
+  <div class="slbl">Summer &amp; Fall</div>
+  <div class="card" onclick="toggleCard(this)"><div class="card-header"><div class="card-title">June&#8211;Aug (Protection), Sep&#8211;Oct (Building)</div><div class="card-header-right"><div class="card-toggle">&#9660;</div></div></div><div class="card-content"><div class="card-body"><strong>Summer:</strong> Switch to 24-0-6. Dormancy management is the biggest retention tool.<br><br><strong>Fall:</strong> Best time for aeration. Soil workable, grass recovers before frost, roots go deep. Overseeding after aeration = best germination of the year.</div><div class="analogy"><p><strong>Analogy:</strong> Fall lawn care is like investing in retirement. You don&#8217;t see payoff immediately. you see it next spring when everyone else is struggling.</p></div></div></div>
+  <div class="card" onclick="toggleCard(this)"><div class="card-header"><div class="card-title">Winterizer. most important app of the year</div><div class="card-header-right"><div class="card-toggle">&#9660;</div></div></div><div class="card-content"><div class="card-body">Applied before dormancy. Feeds roots through winter. Root systems store that energy for a faster, stronger spring emergence. Skip it and the lawn starts spring depleted.</div><div class="highlight"><p><strong>Key insight:</strong> The difference between a lawn that pops in April and one that limps into spring is often what happened in October.</p></div></div></div>
+  <button class="siol-btn" onclick="openSIOL('seasons')">&#127897; Say it out loud</button>
+  <button class="quiz-btn" id="qbtn-seasons" onclick="openQuiz('seasons')">&#128221; Take Module Quiz</button>
 </div>
 
-<!-- ══ WATERING ══ -->
-<div class="panel" id="p-water">
-  <div class="section-hero">
-    <h2>Watering Science</h2>
-    <p>Most customers water wrong. This knowledge makes you an expert immediately and gives them something actionable today.</p>
-  </div>
-
+<!-- WATERING -->
+<div class="panel" id="p-water" style="position:relative;">
+  <div class="locked-overlay" id="lo-water"><div class="locked-overlay-icon">&#128274;</div><div class="locked-overlay-title">Module Locked</div><div class="locked-overlay-desc">Pass the Seasonal Timing quiz to unlock Watering Science.</div></div>
+  <div id="vid-water"></div>
+  <div class="section-hero"><h2>Watering Science</h2><p>Most customers water wrong. This knowledge makes you an expert immediately.</p></div>
   <div class="facts-grid">
-    <div class="fact-box"><div class="fact-num">1-1.5"</div><div class="fact-label">Water per week</div></div>
+    <div class="fact-box"><div class="fact-num">1-1.5&#34;</div><div class="fact-label">Water per week</div></div>
     <div class="fact-box"><div class="fact-num">3-4x</div><div class="fact-label">Days per week</div></div>
     <div class="fact-box"><div class="fact-num">20min</div><div class="fact-label">Per section</div></div>
   </div>
-
   <div class="slbl">The Correct Schedule</div>
-
-  <div class="card" onclick="toggleCard(this)">
-    <div class="card-header">
-      <div class="card-title">Deep and infrequent — not shallow daily</div>
-      <div class="card-toggle">▼</div>
-    </div>
-    <div class="card-content">
-      <div class="card-body"><strong>Standard:</strong> Monday, Wednesday, Friday — 20 minutes per section.<br><br><strong>Above 85°F:</strong> Add Saturday, bump to 20-30 minutes per section.<br><br><strong>Why:</strong> Shallow daily watering trains roots to stay near the surface where soil dries fastest. Deep watering 3 times a week forces roots down into cooler, consistently moist soil.</div>
-      <div class="analogy">
-        <p><strong>Analogy:</strong> Daily shallow watering is like giving a plant a tiny sip every hour. Roots never go looking for water. Deep watering 3 times a week forces roots to develop, reaching water that stays cool and moist.</p>
-      </div>
-      <div class="script">"One thing that makes a huge difference — watering depth. In summer, deep watering three times a week forces roots down where it stays cool. Shallow daily watering keeps roots at the surface where everything dries out fast."</div>
-    </div>
-  </div>
-
-  <button class="siol-btn" onclick="openSIOL('water')">🎙 Say it out loud</button>
+  <div class="card" onclick="toggleCard(this)"><div class="card-header"><div class="card-title">The Deep and Infrequent Method</div><div class="card-header-right"><div class="card-toggle">&#9660;</div></div></div><div class="card-content"><div class="card-body"><strong>Standard:</strong> Mon, Wed, Fri. 20 minutes per section.<br><br><strong>Above 85&#176;F:</strong> Add Saturday, bump to 20-30 min per section.<br><br><strong>Why:</strong> Shallow daily trains roots to stay at the surface where soil dries fastest. Deep watering 3x/week forces roots into cooler moist soil.</div><div class="analogy"><p><strong>Analogy:</strong> Daily shallow watering is like giving a tiny sip every hour. Roots never search deeper. Deep 3x/week forces roots down to water that stays cool.</p></div></div></div>
+  <div class="card" onclick="toggleCard(this)"><div class="card-header"><div class="card-title">Why watering matters for our product performance</div><div class="card-header-right"><div class="card-toggle">&#9660;</div></div></div><div class="card-content"><div class="card-body">Our fertilizer activates with soil moisture. Inadequate watering slows product performance. Customers who water correctly see results faster. directly impacting satisfaction and retention.</div><div class="script">"Deep watering three times a week forces roots down where it stays cool. Shallow daily keeps roots at the surface where everything dries out fast."</div></div></div>
+  <button class="siol-btn" onclick="openSIOL('water')">&#127897; Say it out loud</button>
+  <button class="quiz-btn" id="qbtn-water" onclick="openQuiz('water')">&#128221; Take Module Quiz</button>
 </div>
 
-<!-- ══ MOSQUITO ══ -->
-<div class="panel" id="p-mosquito">
-  <div class="section-hero">
-    <h2>Mosquito Program</h2>
-    <p>Biological control at the breeding source — not a spray. Understanding this science makes it one of the easiest and most compelling add-ons.</p>
-  </div>
-
+<!-- MOSQUITO -->
+<div class="panel" id="p-mosquito" style="position:relative;">
+  <div class="locked-overlay" id="lo-mosquito"><div class="locked-overlay-icon">&#128274;</div><div class="locked-overlay-title">Module Locked</div><div class="locked-overlay-desc">Pass the Watering Science quiz to unlock Mosquito Program.</div></div>
+  <div id="vid-mosquito"></div>
+  <div class="section-hero"><h2>Mosquito Program</h2><p>Biological control at the breeding source. Understanding this makes it one of the easiest and most compelling add-ons.</p></div>
   <div class="slbl">Why It Works Differently</div>
+  <div class="card" onclick="toggleCard(this)"><div class="card-header"><div class="card-title">Prevention vs. Temporary Suppression</div><div class="card-header-right"><div class="card-toggle">&#9660;</div></div></div><div class="card-content"><div class="card-body">Most services spray to kill adults. new ones emerge constantly from breeding sites. Our program uses biological control at the source. Population drops over time.</div><div class="analogy"><p><strong>Analogy:</strong> Most services play whack-a-mole. Kill one, three more show up. Ours shuts down the factory instead of blocking delivery trucks.</p></div></div></div>
+  <div class="card" onclick="toggleCard(this)"><div class="card-header"><div class="card-title">How the bucket station works</div><div class="card-header-right"><div class="card-toggle">&#9660;</div></div></div><div class="card-content"><div class="card-body">5-gallon buckets placed in breeding areas. Female mosquito enters to lay eggs. Picks up Bti (naturally occurring bacteria) that stops larvae developing. She carries it to other breeding sites she visits.</div><div class="analogy"><p><strong>Analogy:</strong> The bucket turns the mosquito into her own worst enemy. She comes to lay eggs, picks up Bti, and unknowingly delivers it to every other breeding site.</p></div></div></div>
+  <button class="siol-btn" onclick="openSIOL('mosquito')">&#127897; Say it out loud</button>
+  <button class="quiz-btn" id="qbtn-mosquito" onclick="openQuiz('mosquito')">&#128221; Take Module Quiz</button>
+</div>
 
-  <div class="card" onclick="toggleCard(this)">
-    <div class="card-header">
-      <div class="card-title">Prevention vs temporary suppression</div>
-      <div class="card-toggle">▼</div>
+<!-- QUICK REFERENCE -->
+<div class="panel" id="p-qref">
+  <div class="section-hero"><h2>&#128203; Quick Reference</h2><p>All key numbers, formulas, and scripts in one place. Use this mid-call.</p></div>
+  <div class="qref-grid">
+    <div class="qref-card">
+      <div class="qref-card-title">&#9989; Key Numbers</div>
+      <div class="qref-row"><div class="qref-key">Crabgrass germination</div><div class="qref-val">55&#176;F</div></div>
+      <div class="qref-row"><div class="qref-key">Ideal soil pH</div><div class="qref-val">6.0&#8211;7.0</div></div>
+      <div class="qref-row"><div class="qref-key">Montana soil pH</div><div class="qref-val">7.5&#8211;8.5+</div></div>
+      <div class="qref-row"><div class="qref-key">Our fert duration</div><div class="qref-val">120 days</div></div>
+      <div class="qref-row"><div class="qref-key">Store fert duration</div><div class="qref-val">4&#8211;6 wks</div></div>
+      <div class="qref-row"><div class="qref-key">Root building time</div><div class="qref-val">2&#8211;3 seasons</div></div>
+      <div class="qref-row"><div class="qref-key">Dormancy recovery</div><div class="qref-val">7&#8211;14 days</div></div>
     </div>
-    <div class="card-content">
-      <div class="card-body">Most mosquito services spray insecticide to kill adults. Short-term suppression — new adults emerge from breeding sites constantly. Our program uses biological control at the breeding source. Population drops over time instead of being temporarily suppressed.</div>
-      <div class="analogy">
-        <p><strong>Analogy:</strong> Most services play whack-a-mole with adults. Kill one and three more show up. Ours goes to where they breed and stops the next generation from ever showing up. It is like shutting down the factory instead of blocking the delivery trucks.</p>
-      </div>
+    <div class="qref-card">
+      <div class="qref-card-title">&#127749; Formulas</div>
+      <div class="qref-row"><div class="qref-key">Spring</div><div class="qref-val">36-4-6</div></div>
+      <div class="qref-row"><div class="qref-key">Summer/Fall</div><div class="qref-val">24-0-6</div></div>
+      <div class="qref-row"><div class="qref-key">N = </div><div class="qref-val">Green growth</div></div>
+      <div class="qref-row"><div class="qref-key">P = </div><div class="qref-val">Root dev.</div></div>
+      <div class="qref-row"><div class="qref-key">K = </div><div class="qref-val">Stress resist.</div></div>
+      <div class="qref-card-title" style="margin-top:12px;">&#128167; Watering</div>
+      <div class="qref-row"><div class="qref-key">Standard</div><div class="qref-val">MWF 20min</div></div>
+      <div class="qref-row"><div class="qref-key">Heat (85&#176;F+)</div><div class="qref-val">+Sat 30min</div></div>
+      <div class="qref-row"><div class="qref-key">Billings rainfall</div><div class="qref-val">14&#34;/yr</div></div>
     </div>
   </div>
-
-  <div class="card" onclick="toggleCard(this)">
-    <div class="card-header">
-      <div class="card-title">How the bucket station works</div>
-      <div class="card-toggle">▼</div>
-    </div>
-    <div class="card-content">
-      <div class="card-body">5-gallon bucket stations placed in natural breeding areas (ditches, low spots, shaded areas). Female mosquito enters looking to lay eggs. Picks up Bti (naturally occurring bacteria) that stops larvae from developing. Female unknowingly carries it to other breeding sites she visits, spreading the effect.</div>
-      <div class="analogy">
-        <p><strong>Analogy:</strong> The bucket is basically a trap that turns the mosquito into her own worst enemy. She comes to lay eggs, picks up Bti, and then unknowingly delivers it to every other breeding site she visits.</p>
-      </div>
-    </div>
+  <div class="qref-full">
+    <div class="qref-full-title">&#128197; Seasonal Timeline</div>
+    <div class="qref-row"><div class="qref-key">Apr&#8211;May</div><div class="qref-val">Pre-emergent window</div></div>
+    <div class="qref-row"><div class="qref-key">Jun&#8211;Aug</div><div class="qref-val">Protection mode (24-0-6)</div></div>
+    <div class="qref-row"><div class="qref-key">Sep&#8211;Oct</div><div class="qref-val">Aeration + overseed</div></div>
+    <div class="qref-row"><div class="qref-key">Oct&#8211;Nov</div><div class="qref-val">Winterizer</div></div>
   </div>
+  <div class="slbl">Key Sales Scripts</div>
+  <div class="qref-script"><div class="qref-script-label">Brown Grass</div><div class="qref-script-text">"That brown is dormancy, not death. The roots are alive underground. With consistent watering it greens back up in 7 to 14 days."</div></div>
+  <div class="qref-script"><div class="qref-script-label">Store Products</div><div class="qref-script-text">"Store granular slides off the waxy coating on dandelions and thistle. Our professional liquid has surfactants that penetrate it. That is chemistry, not a sales pitch."</div></div>
+  <div class="qref-script"><div class="qref-script-label">Soil pH</div><div class="qref-script-text">"Think of soil pH like a combination lock. The fertilizer is in the soil but if the combination is wrong it cannot get out. We dial it correctly."</div></div>
+  <div class="qref-script"><div class="qref-script-label">Slow Release</div><div class="qref-script-text">"Store fertilizer is like one massive meal a month. spike then crash. Ours is like steady balanced meals every day for four months."</div></div>
+  <div class="qref-script"><div class="qref-script-label">Pre-emergent Urgency</div><div class="qref-script-text">"The pre-emergent window closes when soil hits 55 degrees. Miss it and we are chasing crabgrass all season instead of preventing it."</div></div>
+  <div class="qref-script"><div class="qref-script-label">Roots Take Time</div><div class="qref-script-text">"Year 1 you are building the foundation. Year 2 you see real improvement. Year 3 your lawn handles things it never could before. That is Montana clay."</div></div>
+  <div class="qref-script"><div class="qref-script-label">Mosquito Program</div><div class="qref-script-text">"Most services spray adults. new ones emerge from breeding sites constantly. Ours uses biological control at the source. Population drops over time instead of being temporarily suppressed."</div></div>
+</div>
 
-  <button class="siol-btn" onclick="openSIOL('mosquito')">🎙 Say it out loud</button>
+<!-- SEARCH RESULTS -->
+<div class="search-panel" id="searchPanel">
+  <div id="searchResults"></div>
+</div>
+
+<!-- BOOKMARKS PANEL -->
+<div class="bm-panel" id="bmPanel">
+  <div class="section-hero" style="margin-bottom:14px;"><h2>&#11088; Saved Cards</h2><p>Cards you have bookmarked for quick reference.</p></div>
+  <div id="bmList"></div>
+</div>
+
+<!-- PROGRESS PANEL -->
+<div class="pstat-panel" id="pstatPanel">
+  <div class="section-hero" style="margin-bottom:14px;"><h2>&#128202; My Progress</h2><p>Your training status and scores.</p></div>
+  <div class="pstat-card">
+    <div class="pstat-card-title">Module Scores</div>
+    <div id="pstatModules"></div>
+  </div>
+  <div class="pstat-card" style="margin-top:10px;">
+    <div class="pstat-card-title">Stats</div>
+    <div class="pstat-stat-grid" id="pstatStats"></div>
+  </div>
 </div>
 
 </div><!-- end content -->
+
+<!-- BOTTOM NAV -->
+<div class="bnav">
+  <button class="bnav-btn on" id="bn-study" onclick="bnavSwitch('study')"><div class="bnav-icon">&#128218;</div><div class="bnav-label">Study</div></button>
+  <button class="bnav-btn" id="bn-search" onclick="bnavSwitch('search')"><div class="bnav-icon">&#128269;</div><div class="bnav-label">Search</div></button>
+  <button class="bnav-btn" id="bn-saved" onclick="bnavSwitch('saved')">
+    <div class="bnav-btn-wrap"><div class="bnav-icon">&#11088;</div><div id="bmBadge" class="bnav-badge" style="display:none;">0</div></div>
+    <div class="bnav-label">Saved</div>
+  </button>
+  <button class="bnav-btn" id="bn-progress" onclick="bnavSwitch('progress')"><div class="bnav-icon">&#128202;</div><div class="bnav-label">Progress</div></button>
+</div>
+
 </div><!-- end app -->
 
 <!-- SIOL OVERLAY -->
 <div class="siol-overlay" id="siolOverlay" style="display:none;" onclick="closeSIOL()">
   <div class="siol-card" onclick="event.stopPropagation()">
-    <div class="siol-mic">🎙</div>
+    <div class="siol-mic" id="siolMic">&#127897;</div>
     <div class="siol-label">Say it out loud</div>
     <div class="siol-text" id="siolText"></div>
-    <button class="siol-close" onclick="closeSIOL()">Got it</button>
+    <div class="siol-actions">
+      <button class="siol-speak-btn" id="speakBtn" onclick="toggleSpeak()">&#9654; Read Aloud</button>
+      <button class="siol-close-btn" onclick="closeSIOL()">Got it</button>
+    </div>
   </div>
 </div>
 
+<!-- QUIZ OVERLAY -->
+<div class="quiz-overlay" id="quizOverlay">
+  <div class="quiz-modal" id="quizModal"></div>
+</div>
+
+<!-- NAME OVERLAY -->
+<div class="name-overlay" id="nameOverlay">
+  <div class="name-card">
+    <div class="name-icon">&#127942;</div>
+    <div class="name-title">All 8 Modules Complete!</div>
+    <div class="name-sub">Enter your name to generate your official certified sales rep badge.</div>
+    <input type="text" class="name-input" id="repNameInput" placeholder="Your full name" maxlength="40">
+    <button class="name-claim-btn" onclick="claimCert()">Claim My Certificate</button>
+  </div>
+</div>
+
+<!-- CERT OVERLAY -->
+<div class="cert-overlay" id="certOverlay">
+  <div class="cert-print-area">
+    <div class="cert-card">
+      <div class="cert-corner tl">&#10022;</div>
+      <div class="cert-corner tr">&#10022;</div>
+      <div class="cert-corner bl">&#10022;</div>
+      <div class="cert-corner br">&#10022;</div>
+      <div class="cert-inner">
+        <div class="cert-org-name" id="certCompany">Weedman Lawn Care</div>
+        <div class="cert-seal">&#127807;</div>
+        <div class="cert-award-title">Certificate of Achievement</div>
+        <div class="cert-divider"></div>
+        <div class="cert-certifies-text">This certifies that</div>
+        <div class="cert-name" id="certRepName"></div>
+        <div class="cert-name-underline"></div>
+        <div class="cert-desc">
+          Has successfully completed all required modules of the<br>
+          <strong>Sales Representative Certification Program</strong><br>
+          demonstrating comprehensive knowledge of lawn science,<br>
+          products, and professional sales methodology.
+        </div>
+        <div class="cert-issued" id="certDateEl"></div>
+        <div class="cert-footer-row">
+          <div class="cert-sig-block">
+            <div class="cert-sig-line-el"></div>
+            <div class="cert-sig-label">Training Director</div>
+          </div>
+          <div class="cert-sig-block">
+            <div class="cert-sig-line-el"></div>
+            <div class="cert-sig-label">Date of Completion</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cert-actions cert-no-print">
+      <button class="cert-print-btn" onclick="printCert()">&#128424; Print Certificate</button>
+      <button class="cert-close-plain" onclick="closeCert()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFETTI -->
+<div id="confetti"></div>
+<!-- TOAST -->
+<div class="toast-wrap" id="toastWrap"></div>
+
 <script>
+// ═══════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════
+const MODULE_ORDER = ["soil","grass","weeds","products","montana","seasons","water","mosquito"];
+const MODULE_NAMES = {soil:"Soil Science",grass:"Grass Biology",weeds:"Weed Control",products:"Our Products",montana:"Montana Climate",seasons:"Seasonal Timing",water:"Watering Science",mosquito:"Mosquito Program"};
+
 const SIOL_COPY = {
-  soil: `Montana clay is naturally dense and freeze/thaw cycles compact it every winter. High soil pH at 7.5 to 8.5 locks nutrients out chemically. Three things fix it: aeration to break compaction, slow-release fertilizer that feeds for months instead of weeks, and soil management like Turf Fuel MIC DROP to correct the pH so nutrients actually absorb.`,
-  grass: `Brown grass in summer is dormancy, not death. The crown and roots stay alive underground. Consistent watering brings it back in one to two weeks. Kentucky bluegrass responds fastest to our program. Tall fescue handles heat better but does not self-repair bare spots.`,
-  weeds: `Store granular slides right off the waxy coating on dandelions and thistle. Our professional liquid is specifically formulated to penetrate that coating. That is chemistry, not sales. Clover means nitrogen deficiency — fertilization thickens the grass and crowds it out naturally.`,
-  products: `Spring is 36-04-06 XCU slow-release that feeds for 120 days. Store products burn out in 4 to 6 weeks. Summer is 24-0-6 low nitrogen to protect through stress. Fall builds roots. Weed control uses professional liquid with surfactants that store granular cannot match.`,
-  montana: `Billings gets Chinook winds that pull soil moisture out like a giant blow dryer. That is why deep roots matter — shallow roots dry out immediately. Montana is naturally alkaline at 7.5 to 8.5 pH from geology. Roots take 2 to 3 seasons to build in our clay.`,
-  seasons: `Spring is the pre-emergent window before 55°F closes. Summer is protection mode. Fall is the best season for aeration and overseeding — that work in September and October is what makes April look effortless.`,
-  water: `Monday, Wednesday, Friday for 20 minutes per section. Deep and infrequent, not shallow daily. As it gets hotter add a fourth day and bump to 20 to 30 minutes. Deep watering forces roots down where it stays cool. Shallow daily keeps roots at the surface.`,
-  mosquito: `The bucket uses Bti, a naturally occurring bacteria, that the female mosquito picks up when she enters to lay eggs. It stops her larvae from developing and she unknowingly carries it to every other breeding site she visits. Population drops over time.`
+  soil:"Montana clay is naturally dense and freeze/thaw cycles compact it every winter. High soil pH at 7.5 to 8.5 locks nutrients out chemically. Three things fix it: aeration to break compaction, slow-release fertilizer that feeds for months, and pH correction so nutrients actually absorb.",
+  grass:"Brown grass in summer is dormancy, not death. The crown and roots stay alive underground. Consistent watering brings it back in 7 to 14 days. Kentucky bluegrass responds fastest. Tall fescue handles heat better but does not self-repair bare spots.",
+  weeds:"Store granular slides right off the waxy coating on dandelions. Our professional liquid has surfactants that penetrate it. Clover means nitrogen deficiency. Fertilization thickens grass and crowds clover out naturally.",
+  products:"Spring is 36-04-06 XCU that feeds for 120 days. Store products burn out in 4 to 6 weeks. Summer is 24-0-6 lower nitrogen to protect through heat stress. Weed control uses professional liquid with surfactants store granular cannot match.",
+  montana:"Billings gets Chinook winds that pull soil moisture out like a blow dryer. That is why deep roots matter. Montana is naturally alkaline at 7.5 to 8.5 pH. Roots take 2 to 3 seasons to build in our clay.",
+  seasons:"Spring is the pre-emergent window before 55 degrees closes it. Summer is protection mode. Fall is the best season for aeration and overseeding. Winterizer feeds dormant roots through winter for stronger spring emergence.",
+  water:"Monday Wednesday Friday for 20 minutes per section. Deep and infrequent, not shallow daily. Above 85 degrees add Saturday and bump to 20 to 30 minutes. Deep watering forces roots down where it stays cool and moist.",
+  mosquito:"The bucket uses Bti, a naturally occurring bacteria, that the female mosquito picks up when she enters to lay eggs. She carries it to every other breeding site she visits. Population drops over time instead of being temporarily suppressed."
 };
 
-function showTab(id, el) {
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
-  document.getElementById('p-'+id).classList.add('on');
-  el.classList.add('on');
-  
-  // Animate analogies in on tab change
+const QUIZZES = {
+  soil:{name:"Soil Science",questions:[
+    {q:"What is the main reason Montana soil pH is naturally high?",opts:["Low rainfall means alkaline minerals accumulate over time","Farmers add lime regularly","Cold temperatures cause alkalinity","Montana clay is always alkaline"],correct:0,explain:"Montana is semi-arid. Low rainfall means alkaline minerals like calcium carbonate accumulate over thousands of years instead of being leached out."},
+    {q:"Which THREE things work together to fix Montana clay soil?",opts:["Just fertilization alone","Aeration, slow-release fertilizer, and pH correction","Adding sand to loosen it","Watering more frequently"],correct:1,explain:"Aeration breaks compaction, slow-release feeds for months, pH correction unlocks nutrients. All three work together, none works well without the others."},
+    {q:"What does high soil pH (7.5-8.5) do to nutrients in the soil?",opts:["Makes them absorb faster","Locks them out chemically even if they are present","Helps grass stay green","Has no effect on availability"],correct:1,explain:"High pH is like a combination lock. Nutrients are present in the soil but the chemistry prevents roots from accessing them."},
+    {q:"What do N, P, and K stand for and what does Potassium (K) specifically do?",opts:["Nitrogen growth, Phosphorus roots, Potassium stress resistance","Nitrogen roots, Phosphorus growth, Potassium water retention","All three drive green color","K prevents weed growth"],correct:0,explain:"N=green growth, P=root development, K=stress resistance (drought, cold, heat). Understanding this lets you explain any formula on a call."},
+    {q:"Why does compaction get worse every winter in Montana specifically?",opts:["Snow weight kills surface roots","Freeze-thaw cycles push clay particles tighter every year","Cold permanently reduces soil volume","Winter moisture hardens clay into concrete"],correct:1,explain:"Freeze-thaw is relentless. Ice expands, compresses particles, thaws, and repeats every single winter. It compounds every year without aeration."},
+    {q:"What is the ideal soil pH range for cool-season grass to thrive?",opts:["5.0 to 6.0","6.0 to 7.0","7.5 to 8.5","8.0 to 9.0"],correct:1,explain:"Grass thrives at 6.0-7.0 pH. Montana naturally averages 7.5-8.5 which is why pH correction products like MIC DROP matter for our market."},
+    {q:"What does aeration physically do to compacted clay soil?",opts:["Adds nutrients directly to the soil","Removes plugs of soil creating channels for water, air, and fertilizer to reach roots","Kills thatch and surface weeds","Softens the soil permanently after one treatment"],correct:1,explain:"Aeration physically removes plugs of soil, creating channels through the clay. Water penetrates, fertilizer reaches roots, roots can push deeper."},
+    {q:"When water pools on a lawn or runs off instead of soaking in, what does that indicate?",opts:["The lawn has been overwatered","Compaction, and it means fertilizer is not absorbing either","The grass is dormant","There is a drainage problem unrelated to soil"],correct:1,explain:"Runoff is the visual sign of compaction. Water cannot penetrate packed clay. Fertilizer applied to that lawn is also running off instead of feeding the grass."},
+    {q:"Why does established turf need zero phosphorus (P) in the summer formula?",opts:["Phosphorus is too expensive in summer","Established roots are already developed and do not need the root-building push","Phosphorus causes heat stress","Summer rain washes it away too fast"],correct:1,explain:"Phosphorus drives root development which is critical for new lawns. Established turf roots are already built. Summer formula focuses on nitrogen for growth and potassium for stress resistance."}
+  ]},
+  grass:{name:"Grass Biology",questions:[
+    {q:"Brown grass in July in Montana most likely means...",opts:["The grass is dead and needs replacement","Dormant, crown and roots are alive underground","A disease is actively killing it","It has been severely overwatered"],correct:1,explain:"Brown summer grass is dormancy not death. Cool-season grass shuts down top growth to protect roots. Crown and roots survive. Consistent watering brings it back in 7 to 14 days."},
+    {q:"Which Montana grass type self-repairs bare spots and why?",opts:["Tall fescue because of its deep roots","Kentucky bluegrass because rhizomes spread underground to fill gaps","Perennial ryegrass because it germinates fastest","All grass types self-repair given enough time"],correct:1,explain:"Bluegrass spreads via rhizomes (underground runners) that reach into bare areas and establish new growth. Tall fescue and ryegrass are bunch grasses and do not spread laterally."},
+    {q:"Why is perennial ryegrass used as a nurse grass when overseeding?",opts:["It is the most durable long-term grass for Montana","It germinates in 5-7 days and holds the area while bluegrass establishes underneath","It handles Billings heat the best of all grass types","It is the cheapest seed option"],correct:1,explain:"Ryegrass germinates fast and prevents erosion and weed invasion while slower-germinating bluegrass establishes. It is the first responder holding things together until the long-term solution fills in."},
+    {q:"How long does dormant cool-season grass take to green back up with consistent watering?",opts:["Same day with heavy watering","3 to 5 days","7 to 14 days","4 to 6 weeks minimum"],correct:2,explain:"Cool-season grass breaks dormancy in 7 to 14 days with consistent deep watering. Setting this expectation with customers prevents cancels in July and August."},
+    {q:"At what soil temperature do cool-season grasses typically go dormant?",opts:["Above 70 degrees","Above 75 degrees","Above 85 degrees consistently","Above 95 degrees"],correct:2,explain:"Soil temps consistently above 85F trigger dormancy as a self-protection mechanism. The grass conserves energy instead of trying to grow in conditions it cannot sustain."},
+    {q:"A customer calls in July saying their lawn looks dead. What is almost always the true situation?",opts:["The lawn is dead and needs renovation","The grass is dormant from heat and will recover with water","The lawn has a disease outbreak","The fertilizer burned the grass"],correct:1,explain:"Summer brown in Montana is almost always dormancy. This is the number one cancel save. Explain dormancy, give the watering schedule, and the customer keeps the service."},
+    {q:"What is the key difference between Kentucky bluegrass and Tall Fescue in terms of heat tolerance?",opts:["Bluegrass handles heat much better than fescue","Fescue has deeper roots and handles Billings heat and drought dramatically better","They handle heat the same way","Fescue dies in heat while bluegrass stays green"],correct:1,explain:"Fescue has deeper roots and is built for heat tolerance. Bluegrass looks better when conditions are good but is the first to show stress in Billings summers."},
+    {q:"What does the crown of the grass plant do during dormancy?",opts:["It dies and must regrow from seed in spring","It stays alive and acts as the recovery point when conditions improve","It goes completely dormant with no biological activity","It continues growing underground"],correct:1,explain:"The crown is the growing point of the plant. Even when top growth is completely brown, the crown stays alive underground. When water and temperature improve it sends up new growth."}
+  ]},
+  weeds:{name:"Weed Control Science",questions:[
+    {q:"Why does store granular weed killer consistently fail on dandelions?",opts:["Store products use lower quality chemicals","Granular is too heavy to land on leaves","Dandelion leaves have a waxy cuticle coating that granular slides right off","It needs warmer weather to activate"],correct:2,explain:"Dandelion and thistle leaves have a waxy cuticle. Granular rolls off it like water off a duck. Our professional liquid contains surfactants that break through that coating."},
+    {q:"What does clover growing in a lawn actually indicate?",opts:["Too much irrigation water","Too much fertilizer applied","Nitrogen deficiency, the turf is too thin for clover to compete with","Soil pH is too low"],correct:2,explain:"Clover thrives where grass is thin from nitrogen deficiency. Fertilization thickens turf which crowds clover out naturally. Treating the weed without fixing the cause means it returns."},
+    {q:"What is the pre-emergent window and what happens if you miss it?",opts:["After crabgrass appears in June, treat it then","Before soil temps reach 55F consistently, miss it and prevention fails for the entire season","Before the first frost in fall","Winter applications only"],correct:1,explain:"Pre-emergent blocks crabgrass germination. Once soil hits 55F and crabgrass germinates the pre-emergent does absolutely nothing. The window is mid-April to early May in Billings."},
+    {q:"What makes professional liquid weed control more effective than store granular?",opts:["It uses a stronger chemical compound","Surfactants that break surface tension on waxy leaf coatings so herbicide penetrates and absorbs","Liquid is always stronger than granular regardless","Store products are old when purchased"],correct:1,explain:"Surfactants are the real differentiator. They dissolve the waxy cuticle on broadleaf weed leaves. Without surfactants the herbicide cannot penetrate. This is chemistry not a sales pitch."},
+    {q:"What are surfactants and how do they work on weed leaves?",opts:["A type of slow-release fertilizer additive","Soap-like compounds that break surface tension allowing herbicide to penetrate and stick to waxy leaf surfaces","A UV stabilizer that keeps product active longer","They are a spreading agent for granular products only"],correct:1,explain:"Surfactants work exactly like dish soap on grease. They break the surface tension on the waxy leaf coating, allowing the herbicide to spread across and penetrate into the plant tissue."},
+    {q:"Dandelions have deep taproots. What does our professional liquid target?",opts:["Only the taproot below the soil","The leaf surface, once absorbed it translocates through the entire plant including the root","Just the crown and stem","The seed before it germinates"],correct:1,explain:"Our liquid is a systemic herbicide. It enters through the leaf, travels through the plant's vascular system, and kills the entire plant including the taproot. That is why it is effective where granular fails."},
+    {q:"After the pre-emergent window closes in May what are you dealing with all summer?",opts:["Nothing, crabgrass stops growing after May","Post-emergent treatment of established crabgrass plants which is harder and less effective","Dandelion control only","Clover management"],correct:1,explain:"Miss the pre-emergent window and you spend all summer chasing established crabgrass with post-emergent products. Prevention is far more effective than treatment. This creates real urgency for early sign-ups."},
+    {q:"Why is thickening the turf through fertilization important for long-term weed control?",opts:["Thick turf has antifungal properties","Dense healthy grass physically crowds out weeds by occupying all available space and light","Fertilizer makes weeds grow faster then die","It does not help, herbicide is the only solution"],correct:1,explain:"A dense healthy lawn is the best long-term weed prevention. Weeds need open space, bare soil, and light. Thick turf eliminates all three. Fertilization plus weed control is always more effective than weed control alone."}
+  ]},
+  products:{name:"Our Products",questions:[
+    {q:"What is our Spring fertilizer formula and what makes it different from store products?",opts:["24-0-6 same as what stores carry","36-4-6 XCU slow-release, feeds for 120 days vs 4-6 weeks for store fast-release","18-3-3 fast-release for spring green-up","20-5-5 balanced formula for all seasons"],correct:1,explain:"36-4-6 XCU polymer shell releases nutrients gradually with soil moisture for 120 continuous days. Store fast-release products surge in 2-3 weeks then nutrients are gone."},
+    {q:"Why does our Summer formula intentionally lower nitrogen to 24-0-6?",opts:["Nitrogen is more expensive in summer","Too much nitrogen in heat causes rapid top growth that stressed roots cannot support, it actually harms the lawn","Summer grass does not need nitrogen at all","Lower nitrogen makes the grass appear greener"],correct:1,explain:"High N in summer heat pushes top growth the stressed root system cannot support. Lower N maintains the lawn without stressing it further. High potassium (K) builds the drought resistance it needs."},
+    {q:"What does the XCU polymer shell on our slow-release fertilizer do?",opts:["Makes the fertilizer waterproof so it stays on top","Breaks down gradually with soil moisture releasing nutrients continuously for 120 days","Prevents the fertilizer from burning grass","Colors the lawn temporarily so you can see where it was applied"],correct:1,explain:"The XCU polymer is temperature and moisture activated. As soil moisture contacts the shell it releases nutrients at a controlled rate, steady feeding for months instead of one fast surge."},
+    {q:"A customer says they buy fertilizer from the hardware store. Why is ours worth more?",opts:["It is not worth more, both do the same thing","Store fast-release lasts 4-6 weeks with a quick surge then nothing. Ours feeds continuously for 120 days building stronger roots with consistent nutrition.","Our bags are larger","Ours has more chemicals"],correct:1,explain:"The analogy that works: store fertilizer is one massive meal a month, spike then crash. Ours is steady balanced meals every day for 4 months. Consistent nutrition builds roots that store fertilizer never achieves."},
+    {q:"What does the 36 represent in our 36-4-6 spring formula?",opts:["The bag weighs 36 pounds","36 percent nitrogen by weight, the green growth driver","It feeds for 36 days","36 is the product batch number"],correct:1,explain:"The first number in N-P-K is always nitrogen percentage by weight. 36 percent is high nitrogen, intentional for spring when we want to push growth coming out of dormancy."},
+    {q:"Why does our Summer formula have zero phosphorus (the middle number is 0)?",opts:["Phosphorus is too expensive in summer","Established turf roots are already developed and do not need the root-building push that phosphorus provides","Summer rain washes phosphorus away","Zero phosphorus is an error on the formula"],correct:1,explain:"Phosphorus drives root development, critical for new lawns. Established turf roots are already built. Summer formula uses that budget on potassium instead for drought and stress resistance."},
+    {q:"Our professional 3-way liquid weed control handles which weed types?",opts:["Only crabgrass","Only dandelions","Dandelions, clover, thistle, and most broadleaf weeds simultaneously in one application","Only annual weeds not perennial ones"],correct:2,explain:"Three active ingredients means three different herbicide mechanisms working simultaneously. One application handles the full spectrum of common broadleaf weeds the customer can see in their lawn."},
+    {q:"What activates our XCU slow-release fertilizer?",opts:["Direct sunlight","Soil moisture and temperature","Foot traffic pressing it into soil","Rain only, not irrigation"],correct:1,explain:"XCU polymer shells respond to soil moisture and temperature. Consistent watering is important for consistent nutrient release. Dry soil slows nutrient delivery which is another reason watering technique matters."}
+  ]},
+  montana:{name:"Montana Climate",questions:[
+    {q:"What are Chinook winds and what do they do to lawns?",opts:["Cold Arctic blasts that freeze shallow roots","Warm dry winds descending from the Rockies that pull soil moisture out rapidly like a blow dryer","Spring rain patterns from the Pacific","Summer thunderstorms from the Gulf"],correct:1,explain:"Chinooks are warm dry air masses that compress and heat as they descend from the Rockies. They evaporate soil moisture far faster than normal evaporation. Shallow-rooted lawns can stress within 48 hours of a Chinook event."},
+    {q:"Why is Montana soil naturally alkaline at 7.5-8.5 pH?",opts:["Mountains block rainfall creating an artificial climate","Semi-arid climate means alkaline minerals accumulate over geologic time instead of being leached away","Farmers have maintained high pH for crop purposes","pH changes seasonally based on snowmelt"],correct:1,explain:"Low rainfall means mineral-rich water never gets flushed away. Calcium carbonate and other alkaline compounds concentrate over thousands of years. This is pure geology, not something homeowners caused."},
+    {q:"How long does it realistically take roots to build properly in Montana clay?",opts:["One season with correct fertilization","2 to 3 seasons, clay compaction and alkaline pH both slow establishment significantly","6 months if watered correctly","Immediate improvement with aeration"],correct:1,explain:"Montana clay compaction plus alkaline pH equals slow root establishment. Year 1 is foundation building. Year 2 shows real improvement. Year 3 the lawn handles our climate in ways it never could before."},
+    {q:"How much annual rainfall does Billings receive and why does that number matter?",opts:["About 30 inches similar to Midwest cities","14 inches per year, semi-arid, which is why alkaline soil pH develops and deep watering is critical","19 inches the same as Bozeman","40 inches, Montana is actually quite wet"],correct:1,explain:"14 inches makes Billings semi-arid. That drives everything: alkaline mineral accumulation, Chinook wind impact, why deep watering technique matters so much, and why roots struggle without a consistent program."},
+    {q:"What specific mineral compound is primarily responsible for Montana's high soil pH?",opts:["Iron oxide from the Rockies","Calcium carbonate accumulated over thousands of years","Agricultural lime added by farmers","Natural salt from ancient sea beds"],correct:1,explain:"Calcium carbonate is the primary alkaline compound in Montana soil. Semi-arid climate means it never gets leached out. This is why products that lower pH and unlock nutrients are specifically important in our market."},
+    {q:"What two specific Montana conditions combine to make root establishment slowest?",opts:["Cold winters and dry summers","Clay compaction preventing root penetration plus alkaline pH locking out nutrients roots need to grow","Low rainfall and high altitude","Chinook winds and freeze-thaw cycles"],correct:1,explain:"Clay compaction physically blocks root growth. High pH simultaneously locks out the nutrients roots need to push through that clay. Both problems must be addressed together for real improvement."},
+    {q:"How does a Chinook wind event affect a lawn with shallow roots vs deep roots?",opts:["Both lawns are affected equally","Shallow roots dry out within 24-48 hours. Deep roots reach cool moist soil below the surface drying zone and survive.","Deep roots are more vulnerable to Chinooks","Neither is affected since Chinooks are warm air not drought"],correct:1,explain:"This is why the 2-3 season root building investment matters. Shallow roots are completely exposed to surface evaporation. Deep roots reach moisture that Chinook wind cannot access."},
+    {q:"Why is the sales language 'Year 1 foundation, Year 2 improvement, Year 3 transformation' accurate for Montana?",opts:["It is marketing language not based in science","It accurately reflects how long Montana clay and pH conditions realistically require for roots to establish properly","Most lawns transform in year 1","This applies to all states not just Montana"],correct:1,explain:"This is science not sales. Year 1 the program fights compaction and pH. Year 2 roots are building through improved soil structure. Year 3 roots are deep enough to handle Chinooks, drought, and freeze-thaw cycles on their own."}
+  ]},
+  seasons:{name:"Seasonal Timing",questions:[
+    {q:"When is the pre-emergent window and what determines when it closes?",opts:["After crabgrass appears in June, treat it then","Before soil temps reach 55F consistently, typically mid-April to early May in Billings","Before the first frost in fall each year","Winter applications are most effective"],correct:1,explain:"Pre-emergent blocks crabgrass germination. Once soil hits 55F and crabgrass germinates the pre-emergent barrier is useless. The window is narrow, typically mid-April to early May in Billings."},
+    {q:"Why is fall the best season for aeration and overseeding in Montana?",opts:["It is less expensive and crews are less busy","Cool nights plus warm soil creates ideal germination conditions and roots establish before winter dormancy","Spring is too wet for aeration equipment","Summer heat makes new seed germination impossible"],correct:1,explain:"September/October soil is still warm enough to germinate seed quickly. Cool air means the new seedlings do not stress. Roots establish before hard freeze and emerge thick and strong the following spring."},
+    {q:"What is the winterizer application and why is it arguably the most important of the year?",opts:["It keeps grass green through winter months","It feeds dormant roots through winter so the lawn has stored energy to emerge strong and fast in spring","It prevents frost damage to the crown","It is cosmetic only with no real agronomic benefit"],correct:1,explain:"Winterizer fuels roots through dormancy. That stored energy powers spring emergence. Skip it and the lawn starts spring depleted, you see the difference every April between winterized and non-winterized lawns."},
+    {q:"What does the summer application phase focus on and why?",opts:["Maximum growth push since summer is prime growing season","Protection mode, lower nitrogen prevents stress, dormancy management retains customers","Weed elimination is the only summer priority","Summer applications are skipped to save money"],correct:1,explain:"Summer is protection not growth. Lower N prevents stress-induced growth. Dormancy coaching saves accounts. The work done in summer makes fall results possible."},
+    {q:"What happens to crabgrass control if a customer signs up in June instead of April?",opts:["The same pre-emergent is still applied and works fine","Pre-emergent window is closed, crabgrass has germinated and you are chasing it all season with less effective post-emergent","June sign-ups get a double application to catch up","Nothing changes since crabgrass is easy to control any time"],correct:1,explain:"This creates the urgency for spring sign-ups. Miss the pre-emergent window and the entire crabgrass prevention strategy fails for the season. Early enrollment is the only way to get ahead of it."},
+    {q:"What makes September and October the best window for overseeding bare spots?",opts:["Lower crew costs in fall","Warm soil germinates seed fast, cool air prevents heat stress, and roots establish before freeze, it is the perfect combination","Spring is actually better for overseeding","There is no best time, overseeding works equally any time"],correct:1,explain:"Fall gives the best conditions: warm soil for fast germination, cool temps for stress-free establishment, enough growing days before freeze for roots to anchor. Spring seeding competes with weeds and faces summer heat too quickly."},
+    {q:"Why does the fall aeration investment show up most visibly in the following spring?",opts:["Fall aeration is primarily about appearance not results","Aerated channels fill with organic matter over winter, improving soil structure so spring growth emerges through improved conditions","Spring weather makes any lawn look better","The timing is coincidental"],correct:1,explain:"Fall aeration creates channels through clay. Winter rain and snowmelt flush organic matter into those channels. Soil structure improves over winter. Spring growth emerges through better soil than it had the previous year."},
+    {q:"A customer asks why they should spend money on a winterizer when the lawn is going dormant anyway. Your response?",opts:["You do not need to, it is optional","Winterizer feeds roots not top growth. Dormant roots store that energy and use it for faster stronger spring emergence than unfed roots can produce.","It prevents winter damage to grass blades","The winterizer keeps the lawn green through December"],correct:1,explain:"This is the key insight about winterizer. The grass is dormant above ground but roots are still biologically active. Feeding those roots in late fall gives them stored nutrition that translates directly into spring performance."}
+  ]},
+  water:{name:"Watering Science",questions:[
+    {q:"What is the recommended standard summer watering schedule in Billings?",opts:["Daily for 10 minutes per section","Monday Wednesday Friday, 20 minutes or more per section deep and infrequent","Every other day 30 minutes across the whole lawn","Only water when grass shows visible stress signs"],correct:1,explain:"3 days per week, 20+ minutes per section, forces roots down to cool moist soil. Daily shallow watering keeps roots at the surface where Chinook winds and heat destroy them."},
+    {q:"Why does deep infrequent watering matter specifically in Billings versus other cities?",opts:["Billings water is different from other cities","Shallow roots dry out fast in Billings heat and Chinook winds. Deep roots reach cool consistently moist soil that surface conditions cannot reach.","Deep water is naturally colder in Montana","It makes grass grow faster and thicker"],correct:1,explain:"Billings has Chinook winds that pull surface moisture rapidly. Only roots below the surface drying zone reach consistently moist soil. This is not preference, it is survival in our climate."},
+    {q:"How should you adjust the watering schedule when temperatures exceed 85 degrees?",opts:["Water less frequently since heat causes evaporation","Switch to daily 5-minute light watering","Add a fourth day and increase time to 20-30 minutes per section","Stop watering and let the lawn go dormant"],correct:2,explain:"More heat means more moisture demand and more surface evaporation. Four days per week at 20-30 minutes per section maintains the deep root moisture without creating the shallow-root dependency of daily watering."},
+    {q:"What happens to lawns that receive shallow daily watering over time?",opts:["Roots gradually go deeper seeking water","Roots stay near the surface, become dependent on daily water, and one interruption causes the lawn to fail fast","Shallow daily watering is actually the most efficient method","Chinook winds cannot affect shallow-rooted lawns"],correct:1,explain:"Shallow daily creates shallow dependent roots. Vacation, a system failure, or a Chinook event interrupts that daily water and the lawn crashes fast. Deep-rooted lawns have resilience because they reach moisture the surface cannot lose."},
+    {q:"What is the total target water amount per week for a Montana cool-season lawn?",opts:["Half an inch per week","1 to 1.5 inches per week delivered deep and infrequently","3 inches per week in summer","Only what falls naturally from rain"],correct:1,explain:"1 to 1.5 inches per week is the agronomic target. The key is HOW it is delivered, deep and infrequent forces roots down. The same total amount delivered daily shallow creates surface-dependent roots."},
+    {q:"How does our fertilizer performance relate to the customer's watering habits?",opts:["Watering has no effect on fertilizer performance","Our XCU fertilizer activates with soil moisture, customers who water correctly see faster more dramatic results than those who do not","Our fertilizer works the same regardless of watering","Poor watering actually makes fertilizer more concentrated and effective"],correct:1,explain:"XCU is moisture-activated. Adequate deep watering is what allows the polymer shell to release nutrients consistently. Customers who follow the watering schedule see better results and are more likely to stay."},
+    {q:"Why is watering advice one of the most valuable things you can give a customer during a call?",opts:["It is not particularly valuable, they probably know how to water","Most customers water wrong and changing their technique produces visible results in days, it creates immediate value and trust","Watering advice is not your job as a sales rep","Customers do not care about watering technique"],correct:1,explain:"Most customers water daily and shallow. Giving them the Mon/Wed/Fri deep watering schedule and explaining why it works gives them something actionable today. When they see results in 1-2 weeks their confidence in the program increases."},
+    {q:"A customer says their lawn looks stressed and brown even though they water every day. What is likely happening?",opts:["They are not watering enough total volume","They are watering daily and shallow, roots are at the surface where heat dries them fast. Switching to deep infrequent watering will improve conditions.","The grass has a disease from overwatering","The fertilizer is burning the lawn"],correct:1,explain:"Daily shallow watering is one of the most common mistakes. The lawn looks like it needs more water but what it actually needs is deeper water less often. This is a key retention conversation, explain and solve it."}
+  ]},
+  mosquito:{name:"Mosquito Program",questions:[
+    {q:"What is Bti and how does it stop mosquito larvae?",opts:["A pesticide spray that kills adult mosquitoes on contact","A naturally occurring soil bacteria that larvae ingest and cannot develop from","An adult mosquito repellent added to bucket water","A synthetic insecticide that breaks down harmlessly in water"],correct:1,explain:"Bti is Bacillus thuringiensis israelensis, found naturally in soils worldwide. Larvae ingest it when entering the bucket water and cannot complete development. Adults are completely unaffected."},
+    {q:"Why is our bucket station approach more effective long-term than spray services?",opts:["Spraying is always better for fast immediate results","Spray kills adults temporarily but new ones constantly emerge from untouched breeding sites. Buckets prevent next-generation development so the population drops over time instead of being temporarily suppressed.","Buckets are significantly cheaper to operate","They are equally effective just different approaches"],correct:1,explain:"Spray services are whack-a-mole. Kill adults and more emerge from breeding sites within days. Buckets prevent the next generation from ever becoming adults. Results compound over the season as the breeding population decreases."},
+    {q:"How does the female mosquito unknowingly spread Bti beyond the bucket location?",opts:["She carries Bti in her body fluids to breeding sites","She enters the bucket to lay eggs, picks up Bti on her body and legs, then visits other breeding sites and deposits it there","Bti dissolves into groundwater and spreads naturally","Wind carries Bti particles to nearby areas"],correct:1,explain:"The female mosquito becomes her own pest control delivery system. She contacts Bti in the bucket water, carries it physically, and deposits it at every subsequent breeding site she visits. Our bucket turns her into a weapon against her own population."},
+    {q:"Where are mosquito breeding sites most commonly located on residential properties?",opts:["Only in large standing ponds and water features","Ditches, low spots, shaded areas under decks, and anywhere water collects and sits for more than 7 days","In tall unmowed grass areas only","Near rivers and streams exclusively"],correct:1,explain:"Female mosquitoes seek any shallow standing water in shaded areas to lay eggs. Low drainage spots, bird baths, clogged gutters, under decks, any water sitting 7+ days is a viable breeding site. Buckets target these distributed sites."},
+    {q:"What does Bti specifically target and what does it leave unharmed?",opts:["It kills all insects in contact with the water","Only mosquito larvae, adult mosquitoes, beneficial insects, fish, wildlife, and humans are completely unharmed","Mosquito larvae and small fish","All flying insects near the bucket area"],correct:1,explain:"Bti is remarkably specific to mosquito larvae due to the receptor sites in their digestive system. This specificity is what makes it safe for the environment, beneficial insects, pollinators, fish, and people are completely unaffected."},
+    {q:"Why do most spray mosquito services require treatment every few weeks all season?",opts:["The product degrades in heat and needs refreshing","Sprays only kill existing adults. New adults emerge constantly from breeding sites that were never treated. Without addressing the source the problem resets every 2-3 weeks.","Spray companies want more revenue","Mosquitoes build resistance to spray products quickly"],correct:1,explain:"Spray treats the symptom not the cause. As long as breeding sites exist producing adults the problem returns. Our approach reduces the breeding population over time so the need for re-treatment decreases rather than remaining constant."},
+    {q:"How should you describe the mosquito program to a customer who is skeptical about buckets versus spraying?",opts:["Admit that spraying is more proven and effective","Explain that spraying is whack-a-mole killing adults as they emerge while buckets shut down the factory that produces them, population drops over time instead of resetting weekly","Tell them to try both and compare","Avoid the comparison since it might make them choose a competitor"],correct:1,explain:"The factory vs delivery truck analogy works well. Spray blocks delivery trucks (kills adults). Buckets shut down the factory (stop larvae becoming adults). Shutting the factory is a permanent solution. Blocking trucks requires constant effort."},
+    {q:"What type of standing water is most attractive to female mosquitoes for egg-laying?",opts:["Fast-moving clean water like streams","Shallow warm shaded water that has been sitting for at least a week","Deep cold water like ponds","Treated chlorinated water like pools"],correct:1,explain:"Female mosquitoes specifically target shallow, warm, still water in shaded areas. They avoid deep cold water and treated water. This is why bucket stations placed in natural low spots and shaded areas are so effective, they match exactly what she is looking for."}
+  ]}
+};
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+let rep = JSON.parse(localStorage.getItem("sf_training") || '{"completed":{},"certified":false,"certDate":null,"repName":null,"score":{}}');
+let bookmarks = JSON.parse(localStorage.getItem("sf_bookmarks") || "[]");
+let fsLevel = parseInt(localStorage.getItem("sf_fs") || "1");
+let activeQuizMod = null;
+let quizAnswers = {};
+let currentQ = 0;
+let speechActive = false;
+let currentSIOLKey = "";
+let searchIndex = [];
+let currentView = "study";
+
+// ═══════════════════════════════════════════════
+// FONT SIZE
+// ═══════════════════════════════════════════════
+const FS_LEVELS = [13, 15, 17];
+function setFS(dir) {
+  fsLevel = Math.max(0, Math.min(2, fsLevel + dir));
+  document.documentElement.style.setProperty("--fs", FS_LEVELS[fsLevel] + "px");
+  localStorage.setItem("sf_fs", fsLevel);
+}
+
+// ═══════════════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════════════
+const VIDEO_URLS = {soil:"",grass:"",weeds:"",products:"",montana:"",seasons:"",water:"",mosquito:""};
+async function loadConfig() {
+  try {
+    const r = await fetch("/config.json?v=" + Date.now());
+    if (!r.ok) return;
+    const cfg = await r.json();
+    if (cfg.company?.name) {
+      document.getElementById("appWordmark").innerHTML = cfg.company.name + " <span>Training</span>";
+      document.title = cfg.company.name + " Training";
+      document.querySelectorAll(".cert-company").forEach(el => el.textContent = cfg.company.name);
+    }
+    if (cfg.training?.subtitle) document.getElementById("appSub").textContent = cfg.training.subtitle;
+    if (cfg.videos) Object.assign(VIDEO_URLS, cfg.videos);
+    renderVideos();
+  } catch(e) {}
+}
+function renderVideos() {
+  Object.entries(VIDEO_URLS).forEach(([key, url]) => {
+    const slot = document.getElementById("vid-" + key);
+    if (!slot || !url) return;
+    const embedUrl = url.replace("watch?v=","embed/").replace("youtu.be/","youtube.com/embed/");
+    slot.innerHTML = `<div class="video-wrap"><iframe src="${embedUrl}" allowfullscreen loading="lazy"></iframe></div>`;
+  });
+}
+
+// ═══════════════════════════════════════════════
+// MODULE LOCKING & PROGRESS
+// ═══════════════════════════════════════════════
+function isLocked(moduleId) {
+  const idx = MODULE_ORDER.indexOf(moduleId);
+  if (idx <= 0) return false;
+  return !rep.completed[MODULE_ORDER[idx - 1]];
+}
+
+function updateUI() {
+  const done = Object.keys(rep.completed).length;
+  const total = MODULE_ORDER.length;
+  document.getElementById("progFill").style.width = Math.round((done/total)*100) + "%";
+  document.getElementById("progLabel").textContent = done + " of " + total + " complete";
+  MODULE_ORDER.forEach(id => {
+    const tab = document.querySelector(`.tab[data-module="${id}"]`);
+    if (!tab) return;
+    const locked = isLocked(id);
+    const completed = !!rep.completed[id];
+    const name = id.charAt(0).toUpperCase() + id.slice(1);
+    tab.className = "tab" + (locked?" locked":"") + (completed?" done":"") + (tab.classList.contains("on")?" on":"");
+    tab.textContent = locked ? ("\uD83D\uDD12 " + name) : (completed ? ("\u2713 " + name) : name);
+    // Show/hide locked overlay
+    const lo = document.getElementById("lo-" + id);
+    if (lo) { if(locked) lo.classList.add("show"); else lo.classList.remove("show"); }
+  });
+  MODULE_ORDER.forEach(id => {
+    const btn = document.getElementById("qbtn-" + id);
+    if (!btn) return;
+    if (rep.completed[id]) { btn.textContent = "\u2713 Passed (" + (rep.score[id]||0) + "%)"; btn.classList.add("passed"); }
+    else { btn.textContent = "\uD83D\uDCDD Take Module Quiz"; btn.classList.remove("passed"); }
+  });
+  const certBtn = document.getElementById("certBtn");
+  if (rep.certified) certBtn.textContent = "\uD83C\uDFC6 Certified!";
+  else if (done === total) certBtn.textContent = "\uD83C\uDFC6 Claim Badge";
+  updateBmBadge();
+}
+
+function saveRep() { localStorage.setItem("sf_training", JSON.stringify(rep)); }
+
+// ═══════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════
+function handleTab(id, el) {
+  if (id !== "qref" && isLocked(id)) {
+    const prevId = MODULE_ORDER[MODULE_ORDER.indexOf(id) - 1];
+    showToast("\uD83D\uDD12","Module locked","Pass the " + MODULE_NAMES[prevId] + " quiz first.");
+    return;
+  }
+  closeSearch();
+  document.querySelectorAll(".panel,.search-panel,.bm-panel,.pstat-panel").forEach(p => p.classList.remove("on"));
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("on"));
+  document.getElementById("p-" + (id === "qref" ? "qref" : id)).classList.add("on");
+  el.classList.add("on");
   setTimeout(() => {
-    document.querySelectorAll('.analogy:not(.visible)').forEach((el, i) => {
-      setTimeout(() => el.classList.add('visible'), i * 80);
+    const panel = document.getElementById("p-" + (id === "qref" ? "qref" : id));
+    panel.querySelectorAll(".analogy:not(.visible)").forEach((a,i) => {
+      setTimeout(() => a.classList.add("visible"), i * 70);
     });
   }, 50);
 }
 
 function toggleCard(el) {
-  el.classList.toggle('expanded');
-  
-  // Animate analogies in when card expands
-  if(el.classList.contains('expanded')) {
-    const analogies = el.querySelectorAll('.analogy:not(.visible)');
-    analogies.forEach((an, i) => {
-      setTimeout(() => an.classList.add('visible'), i * 100);
-    });
+  el.classList.toggle("expanded");
+  if (el.classList.contains("expanded")) {
+    el.querySelectorAll(".analogy:not(.visible)").forEach((a,i) => setTimeout(() => a.classList.add("visible"), i*90));
   }
 }
 
-function openSIOL(key) {
-  document.getElementById('siolText').textContent = SIOL_COPY[key] || 'Content not found';
-  document.getElementById('siolOverlay').style.display = 'flex';
+// ═══════════════════════════════════════════════
+// BOTTOM NAV
+// ═══════════════════════════════════════════════
+function bnavSwitch(view) {
+  currentView = view;
+  document.querySelectorAll(".bnav-btn").forEach(b => b.classList.remove("on"));
+  document.getElementById("bn-" + view).classList.add("on");
+  if (view === "search") {
+    document.getElementById("searchBar").classList.add("visible");
+    document.getElementById("tabrow").style.display = "none";
+    document.querySelectorAll(".panel,.bm-panel,.pstat-panel").forEach(p => p.classList.remove("on"));
+    document.getElementById("searchPanel").classList.add("on");
+    if (!searchIndex.length) buildSearchIndex();
+    setTimeout(() => document.getElementById("searchInput").focus(), 100);
+  } else if (view === "saved") {
+    closeSearch();
+    document.querySelectorAll(".panel,.search-panel,.pstat-panel").forEach(p => p.classList.remove("on"));
+    document.getElementById("bmPanel").classList.add("on");
+    renderBookmarks();
+  } else if (view === "progress") {
+    closeSearch();
+    document.querySelectorAll(".panel,.search-panel,.bm-panel").forEach(p => p.classList.remove("on"));
+    document.getElementById("pstatPanel").classList.add("on");
+    renderProgress();
+  } else {
+    closeSearch();
+    document.querySelectorAll(".search-panel,.bm-panel,.pstat-panel").forEach(p => p.classList.remove("on"));
+    const activeTab = document.querySelector(".tab.on");
+    const moduleId = activeTab?.dataset.module || "soil";
+    document.getElementById("p-" + (moduleId === "qref" ? "qref" : moduleId)).classList.add("on");
+  }
 }
 
-function closeSIOL() {
-  document.getElementById('siolOverlay').style.display = 'none';
-}
-
-// Animate analogies on page load
-window.addEventListener('load', () => {
-  document.querySelectorAll('.analogy.visible').forEach(el => {
-    el.classList.remove('visible');
-    setTimeout(() => el.classList.add('visible'), 0);
+// ═══════════════════════════════════════════════
+// SEARCH
+// ═══════════════════════════════════════════════
+function buildSearchIndex() {
+  searchIndex = [];
+  document.querySelectorAll(".panel:not(#searchPanel):not(#bmPanel):not(#pstatPanel) .card").forEach((card, i) => {
+    const panelId = card.closest(".panel")?.id?.replace("p-","") || "";
+    const moduleName = MODULE_NAMES[panelId] || panelId;
+    const title = card.querySelector(".card-title")?.textContent?.trim() || "";
+    const body = (card.querySelector(".card-body")?.textContent || "") + " " + (card.querySelector(".analogy")?.textContent || "");
+    searchIndex.push({card, panelId, moduleName, title, body});
   });
+}
+
+function doSearch(query) {
+  const q = query.toLowerCase().trim();
+  const resultsEl = document.getElementById("searchResults");
+  if (!q) {
+    resultsEl.innerHTML = `<div class="sr-empty"><div class="sr-empty-icon">\uD83D\uDD0D</div><div>Type to search all modules</div></div>`;
+    return;
+  }
+  const results = searchIndex.filter(item =>
+    item.title.toLowerCase().includes(q) || item.body.toLowerCase().includes(q)
+  );
+  if (!results.length) {
+    resultsEl.innerHTML = `<div class="sr-empty"><div class="sr-empty-icon">\uD83E\uDD14</div><div>No results for "${query}"</div></div>`;
+    return;
+  }
+  const hl = (text, q) => {
+    if (!q) return text;
+    const re = new RegExp("(" + q.replace(/[.*+?^${}()|[\]\\]/g,"\\$&") + ")", "gi");
+    return text.replace(re, `<span class="sr-highlight">$1</span>`);
+  };
+  const preview = (body, q) => {
+    const idx = body.toLowerCase().indexOf(q);
+    const start = Math.max(0, idx - 40);
+    return body.slice(start, start + 120).trim() + "...";
+  };
+  resultsEl.innerHTML = results.map(r => `
+    <div class="sr-item" onclick="goToCard('${r.panelId}', '${r.title.replace(/'/g,"\\'")}')">
+      <div class="sr-module">${r.moduleName}</div>
+      <div class="sr-title">${hl(r.title, q)}</div>
+      <div class="sr-preview">${hl(preview(r.body, q), q)}</div>
+    </div>`).join("");
+}
+
+function goToCard(panelId, title) {
+  closeSearch();
+  bnavSwitch("study");
+  const tab = document.querySelector(`.tab[data-module="${panelId}"]`);
+  if (tab && !isLocked(panelId)) {
+    handleTab(panelId, tab);
+    setTimeout(() => {
+      const cards = document.querySelectorAll(`#p-${panelId} .card`);
+      cards.forEach(card => {
+        if (card.querySelector(".card-title")?.textContent?.trim() === title) {
+          card.classList.add("expanded");
+          card.scrollIntoView({behavior:"smooth", block:"center"});
+        }
+      });
+    }, 200);
+  }
+}
+
+function closeSearch() {
+  document.getElementById("searchBar").classList.remove("visible");
+  document.getElementById("tabrow").style.display = "";
+  document.getElementById("searchPanel").classList.remove("on");
+  document.getElementById("searchInput").value = "";
+}
+
+// ═══════════════════════════════════════════════
+// BOOKMARKS
+// ═══════════════════════════════════════════════
+function initBookmarkButtons() {
+  document.querySelectorAll(".panel:not(#searchPanel):not(#bmPanel):not(#pstatPanel) .card").forEach((card, i) => {
+    const panelId = card.closest(".panel")?.id?.replace("p-","") || "";
+    const title = card.querySelector(".card-title")?.textContent?.trim() || ("card-" + i);
+    const bmId = panelId + "-" + i;
+    card.dataset.bmId = bmId;
+    card.dataset.bmTitle = title;
+    card.dataset.bmModule = MODULE_NAMES[panelId] || panelId;
+    const headerRight = card.querySelector(".card-header-right");
+    if (!headerRight) return;
+    const btn = document.createElement("button");
+    btn.className = "bm-btn" + (bookmarks.includes(bmId) ? " saved" : "");
+    btn.textContent = bookmarks.includes(bmId) ? "\u2B50" : "\u2606";
+    btn.title = "Bookmark";
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      toggleBookmark(bmId, title, MODULE_NAMES[panelId] || panelId);
+      btn.className = "bm-btn" + (bookmarks.includes(bmId) ? " saved" : "");
+      btn.textContent = bookmarks.includes(bmId) ? "\u2B50" : "\u2606";
+    };
+    headerRight.insertBefore(btn, headerRight.firstChild);
+  });
+}
+
+function toggleBookmark(id, title, module) {
+  const idx = bookmarks.indexOf(id);
+  if (idx > -1) { bookmarks.splice(idx, 1); showToast("\u2606","Removed","Bookmark removed."); }
+  else { bookmarks.push(id); showToast("\u2B50","Saved!","Added to bookmarks."); }
+  localStorage.setItem("sf_bookmarks", JSON.stringify(bookmarks));
+  updateBmBadge();
+}
+
+function updateBmBadge() {
+  const badge = document.getElementById("bmBadge");
+  if (bookmarks.length > 0) { badge.style.display = "flex"; badge.textContent = bookmarks.length; }
+  else badge.style.display = "none";
+}
+
+function renderBookmarks() {
+  const list = document.getElementById("bmList");
+  if (!bookmarks.length) {
+    list.innerHTML = `<div class="bm-empty"><div class="bm-empty-icon">\u2606</div><div style="color:var(--t3);font-size:13px;">No saved cards yet.<br>Tap \u2606 on any card to save it.</div></div>`;
+    return;
+  }
+  let html = "";
+  bookmarks.forEach(bmId => {
+    const card = document.querySelector(`[data-bm-id="${bmId}"]`);
+    if (!card) return;
+    const title = card.dataset.bmTitle;
+    const module = card.dataset.bmModule;
+    const body = card.querySelector(".card-body")?.textContent?.slice(0,120) + "..." || "";
+    html += `<div class="sr-item" onclick="goToCard('${bmId.split('-')[0]}','${title.replace(/'/g,"\\'")}')">
+      <div class="sr-module">${module}</div>
+      <div class="sr-title">${title}</div>
+      <div class="sr-preview">${body}</div>
+    </div>`;
+  });
+  list.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════
+// PROGRESS PANEL
+// ═══════════════════════════════════════════════
+function renderProgress() {
+  const modHTML = MODULE_ORDER.map(id => {
+    const score = rep.score[id];
+    const locked = isLocked(id);
+    let cls = "pending", val = "Not started";
+    if (locked) { cls = "locked"; val = "Locked"; }
+    else if (score !== undefined) { cls = ""; val = score + "% \u2713"; }
+    return `<div class="pstat-row"><div class="pstat-module">${MODULE_NAMES[id]}</div><div class="pstat-score ${cls}">${val}</div></div>`;
+  }).join("");
+  document.getElementById("pstatModules").innerHTML = modHTML;
+  const done = Object.keys(rep.completed).length;
+  const scores = Object.values(rep.score);
+  const avg = scores.length ? Math.round(scores.reduce((a,b)=>a+b,0)/scores.length) : 0;
+  document.getElementById("pstatStats").innerHTML = `
+    <div class="pstat-stat"><div class="pstat-stat-val">${done}/8</div><div class="pstat-stat-label">Complete</div></div>
+    <div class="pstat-stat"><div class="pstat-stat-val">${avg}%</div><div class="pstat-stat-label">Avg Score</div></div>
+    <div class="pstat-stat"><div class="pstat-stat-val">${rep.certified ? "Yes" : "No"}</div><div class="pstat-stat-label">Certified</div></div>
+    <div class="pstat-stat"><div class="pstat-stat-val">${bookmarks.length}</div><div class="pstat-stat-label">Saved</div></div>`;
+}
+
+// ═══════════════════════════════════════════════
+// SIOL + SPEECH
+// ═══════════════════════════════════════════════
+function openSIOL(key) {
+  currentSIOLKey = key;
+  document.getElementById("siolText").textContent = SIOL_COPY[key] || "";
+  document.getElementById("siolOverlay").style.display = "flex";
+  document.getElementById("speakBtn").textContent = "\u25B6 Read Aloud";
+  document.getElementById("siolMic").classList.remove("speaking");
+}
+function closeSIOL() { stopSpeaking(); document.getElementById("siolOverlay").style.display = "none"; }
+function toggleSpeak() {
+  if (speechActive) { stopSpeaking(); return; }
+  if (!("speechSynthesis" in window)) { showToast("\u26A0\uFE0F","Not supported","Your browser does not support text-to-speech."); return; }
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(SIOL_COPY[currentSIOLKey] || "");
+  u.rate = 0.88; u.pitch = 1;
+  speechActive = true;
+  document.getElementById("speakBtn").textContent = "\u23F9 Stop";
+  document.getElementById("siolMic").classList.add("speaking");
+  u.onend = u.onerror = () => {
+    speechActive = false;
+    const btn = document.getElementById("speakBtn");
+    if (btn) btn.textContent = "\u25B6 Read Aloud";
+    const mic = document.getElementById("siolMic");
+    if (mic) mic.classList.remove("speaking");
+  };
+  window.speechSynthesis.speak(u);
+}
+function stopSpeaking() {
+  if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+  speechActive = false;
+  const btn = document.getElementById("speakBtn");
+  if (btn) btn.textContent = "\u25B6 Read Aloud";
+  document.getElementById("siolMic")?.classList.remove("speaking");
+}
+
+// ═══════════════════════════════════════════════
+// QUIZ
+// ═══════════════════════════════════════════════
+// Shuffle array in place (Fisher-Yates)
+function shuffleArr(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+let activeQuestions = []; // randomized subset for current attempt
+
+function openQuiz(moduleId) {
+  activeQuizMod = moduleId; quizAnswers = {}; currentQ = 0;
+  // Shuffle pool and pick 7 questions
+  const pool = QUIZZES[moduleId].questions.map((q, i) => ({...q}));
+  shuffleArr(pool);
+  const selected = pool.slice(0, 7);
+  // Shuffle answer options within each question
+  activeQuestions = selected.map(q => {
+    const opts = q.opts.map((text, i) => ({ text, isCorrect: i === q.correct }));
+    shuffleArr(opts);
+    return {
+      q: q.q,
+      opts: opts.map(o => o.text),
+      correct: opts.findIndex(o => o.isCorrect),
+      explain: q.explain
+    };
+  });
+  document.getElementById("quizOverlay").classList.add("open");
+  renderQuestion();
+}
+function renderQuestion() {
+  const quiz = QUIZZES[activeQuizMod];
+  const q = activeQuestions[currentQ];
+  let html = `<div class="qhdr"><div class="qhdr-title">${quiz.name}</div><div class="qhdr-sub">Q${currentQ+1} of ${activeQuestions.length} &bull; Need 80%+ to pass</div></div>
+    <div class="q-text">${q.q}</div><div class="q-opts">`;
+  q.opts.forEach((opt, i) => {
+    let cls = "";
+    if (quizAnswers[currentQ] !== undefined) {
+      if (i === q.correct) cls = "correct";
+      else if (i === quizAnswers[currentQ]) cls = "wrong";
+    }
+    html += `<button class="q-opt ${cls}" onclick="selectAnswer(${i})">${opt}</button>`;
+  });
+  html += `</div>`;
+  if (quizAnswers[currentQ] !== undefined) html += `<div class="q-explain show">${q.explain}</div>`;
+  html += `<div class="q-actions">
+    <button class="q-btn q-btn-secondary" onclick="closeQuiz()">Exit</button>
+    <button class="q-btn q-btn-primary" onclick="nextQuestion()" ${quizAnswers[currentQ]===undefined?"disabled":""}>
+      ${currentQ===quiz.questions.length-1?"Submit":"Next \u2192"}
+    </button></div>`;
+  document.getElementById("quizModal").innerHTML = html;
+}
+function selectAnswer(i) {
+  if (quizAnswers[currentQ] !== undefined) return;
+  quizAnswers[currentQ] = i; renderQuestion();
+}
+function nextQuestion() {
+  if (currentQ < QUIZZES[activeQuizMod].questions.length - 1) { currentQ++; renderQuestion(); }
+  else submitQuiz();
+}
+function submitQuiz() {
+  let correct = 0;
+  activeQuestions.forEach((q,i) => { if (quizAnswers[i] === q.correct) correct++; });
+  const score = Math.round((correct/activeQuestions.length)*100);
+  const passed = score >= 80;
+  if (passed && !rep.completed[activeQuizMod]) {
+    rep.completed[activeQuizMod] = true;
+    rep.score[activeQuizMod] = score;
+    saveRep(); updateUI();
+    if (score === 100 || passed) fireConfetti();
+  }
+  showResults(score, passed);
+}
+function showResults(score, passed) {
+  const allDone = Object.keys(rep.completed).length === MODULE_ORDER.length;
+  document.getElementById("quizModal").innerHTML = `
+    <div class="q-results">
+      <div class="q-result-icon">${passed?(allDone?"\uD83C\uDF93":"\uD83C\uDF89"):"\u26A0\uFE0F"}</div>
+      <div class="qhdr-title">${QUIZZES[activeQuizMod].name}</div>
+      <div class="q-result-score">${score}%</div>
+      <div class="q-result-msg ${passed?"":"fail"}">${passed?(allDone?"All 8 modules complete! Claim your certificate!":"Module passed! Next one unlocked."):"Score 80%+ to pass. Review the module and try again."}</div>
+      ${passed&&allDone?'<div style="padding:12px;background:rgba(107,142,35,0.1);border:1.5px solid var(--primary-light);border-radius:8px;margin-bottom:12px;font-size:13px;color:var(--primary-light);font-weight:700;">\uD83C\uDFC6 All modules complete! Claim your certificate.</div>':""}
+      <div class="q-actions">
+        <button class="q-btn q-btn-secondary" onclick="closeQuiz()">Close</button>
+        <button class="q-btn q-btn-primary" onclick="${passed?(allDone?"closeQuiz();showCertFlow()":"closeQuiz()"):"retryQuiz()"}">
+          ${passed?(allDone?"Claim Certificate":"Continue"):"Try Again"}
+        </button>
+      </div>
+    </div>`;
+}
+function retryQuiz() { openQuiz(activeQuizMod); }
+function closeQuiz() { document.getElementById("quizOverlay").classList.remove("open"); }
+
+// ═══════════════════════════════════════════════
+// CONFETTI
+// ═══════════════════════════════════════════════
+function fireConfetti() {
+  const colors = ["#6B8E23","#C9A876","#8BA946","#DFA876","#556B1A","#F4F1EE"];
+  const container = document.getElementById("confetti");
+  for (let i = 0; i < 50; i++) {
+    const el = document.createElement("div");
+    el.className = "cf";
+    const dur = (0.8 + Math.random() * 1.4).toFixed(2);
+    const delay = (Math.random() * 0.6).toFixed(2);
+    el.style.cssText = `left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};width:${6+Math.random()*6}px;height:${10+Math.random()*6}px;animation-duration:${dur}s;animation-delay:${delay}s;transform:rotate(${Math.random()*360}deg);`;
+    container.appendChild(el);
+    setTimeout(() => el.remove(), (parseFloat(dur)+parseFloat(delay)+0.2)*1000);
+  }
+}
+
+// ═══════════════════════════════════════════════
+// CERTIFICATION
+// ═══════════════════════════════════════════════
+function handleCertBtn() {
+  if (rep.certified) { showExistingCert(); return; }
+  const done = Object.keys(rep.completed).length;
+  if (done < MODULE_ORDER.length) { showToast("\uD83D\uDCDA","Keep going!",(MODULE_ORDER.length-done)+" modules left."); return; }
+  document.getElementById("nameOverlay").classList.add("open");
+}
+function showCertFlow() {
+  if (rep.certified) { showExistingCert(); return; }
+  document.getElementById("nameOverlay").classList.add("open");
+}
+function claimCert() {
+  const name = document.getElementById("repNameInput").value.trim();
+  if (!name) { document.getElementById("repNameInput").focus(); return; }
+  const certDate = new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});
+  rep.certified = true; rep.certDate = certDate; rep.repName = name;
+  saveRep(); updateUI();
+  document.getElementById("nameOverlay").classList.remove("open");
+  document.getElementById("certRepName").textContent = name;
+  document.getElementById("certDateEl").textContent = "Certified " + certDate;
+  document.getElementById("certOverlay").classList.add("open");
+  fireConfetti();
+}
+function showExistingCert() {
+  document.getElementById("certRepName").textContent = rep.repName || "Sales Representative";
+  document.getElementById("certDateEl").textContent = "Certified " + (rep.certDate || "");
+  document.getElementById("certOverlay").classList.add("open");
+}
+function closeCert() { document.getElementById("certOverlay").classList.remove("open"); }
+
+// ═══════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════
+function showToast(icon, title, sub) {
+  const wrap = document.getElementById("toastWrap");
+  const t = document.createElement("div");
+  t.className = "toast";
+  t.innerHTML = `<div class="toast-icon">${icon}</div><div><div class="toast-title">${title}</div><div class="toast-sub">${sub}</div></div>`;
+  wrap.appendChild(t);
+  setTimeout(() => t.remove(), 4000);
+}
+
+// ═══════════════════════════════════════════════
+// BOOT
+// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════
+// PRINT CERTIFICATE
+// ═══════════════════════════════════════════
+function printCert() {
+  const name    = (document.getElementById("certRepName") || {}).textContent || "";
+  const company = (document.getElementById("certCompany") || {}).textContent || "Weedman Lawn Care";
+  const issued  = (document.getElementById("certDateEl") || {}).textContent || "";
+
+  showToast("\uD83D\uDDA8","Tip","In the print dialog: More Settings, uncheck Headers and Footers.");
+
+  setTimeout(function() {
+    const popup = window.open("","_blank","width=1200,height=900,menubar=no,toolbar=no,location=no,status=no");
+    if (!popup) { showToast("\u26A0\uFE0F","Popup blocked","Allow popups for this page then try again."); return; }
+
+    const certHTML = `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Certificate - ${name.trim()}</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,700;1,400&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+<style>
+@page{size:11in 8.5in landscape;margin:0;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:11in;height:8.5in;background:white;display:flex;align-items:center;justify-content:center;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.cert{width:10in;height:7.5in;background:linear-gradient(160deg,#faf8f0 0%,#f0e8d0 50%,#faf8f0 100%);border:4px solid #9b8560;box-shadow:inset 0 0 0 8px #f0e8d0,inset 0 0 0 10px #9b8560;border-radius:4px;display:flex;align-items:center;justify-content:center;position:relative;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.corner{position:absolute;font-size:30px;color:#9b8560;opacity:.5;font-family:serif;}
+.corner.tl{top:18px;left:24px}.corner.tr{top:18px;right:24px}.corner.bl{bottom:18px;left:24px}.corner.br{bottom:18px;right:24px}
+.inner{border:1.5px solid rgba(155,133,96,.3);border-radius:3px;padding:28px 80px;text-align:center;width:9.2in;}
+.org{font-family:"Cinzel",serif;font-size:15px;font-weight:700;letter-spacing:.3em;color:#3a6010;margin-bottom:12px;text-transform:uppercase;}
+.seal{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#4a7010,#6B8E23,#8BA946);border:4px solid #3a6010;box-shadow:0 0 0 3px #f0e8d0,0 0 0 5px #9b8560;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:32px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.award{font-family:"Cinzel",serif;font-size:16px;font-weight:700;letter-spacing:.24em;color:#9b8560;margin-bottom:10px;text-transform:uppercase;}
+.div{height:1px;background:linear-gradient(90deg,transparent,#9b8560 30%,#9b8560 70%,transparent);margin:10px auto;width:85%;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.certs{font-family:"EB Garamond",Georgia,serif;font-size:15px;font-style:italic;color:#6b5840;letter-spacing:.03em;margin-bottom:8px;}
+.name{font-family:"EB Garamond",Georgia,serif;font-size:70px;font-weight:700;color:#1e3d08;letter-spacing:-1px;line-height:1;margin-bottom:5px;}
+.nline{height:2px;background:linear-gradient(90deg,transparent,#9b8560,transparent);width:360px;margin:0 auto 16px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.desc{font-family:Georgia,serif;font-size:13.5px;color:#5a4530;line-height:1.9;margin-bottom:14px;}
+.desc strong{font-weight:700;color:#1e3d08;font-size:15px;}
+.issued{font-family:"Cinzel",serif;font-size:12px;font-weight:700;color:#9b8560;letter-spacing:.16em;text-transform:uppercase;margin-bottom:22px;}
+.footer{display:flex;justify-content:space-around;padding-top:14px;border-top:1px solid rgba(155,133,96,.28);-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.sig{text-align:center;}
+.sline{height:1px;background:#9b8560;width:150px;margin:0 auto 5px;opacity:.5;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.slbl{font-family:"Cinzel",serif;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:#9b8560;}
+</style></head>
+<body>
+<div class="cert">
+  <div class="corner tl">&#10022;</div><div class="corner tr">&#10022;</div>
+  <div class="corner bl">&#10022;</div><div class="corner br">&#10022;</div>
+  <div class="inner">
+    <div class="org">${company.trim()}</div>
+    <div class="seal">&#127807;</div>
+    <div class="award">Certificate of Achievement</div>
+    <div class="div"></div>
+    <div class="certs">This certifies that</div>
+    <div class="name">${name.trim()}</div>
+    <div class="nline"></div>
+    <div class="desc">Has successfully completed all required modules of the<br>
+      <strong>Sales Representative Certification Program</strong><br>
+      demonstrating comprehensive knowledge of lawn science,<br>
+      products, and professional sales methodology.
+    </div>
+    <div class="issued">${issued.trim()}</div>
+    <div class="footer">
+      <div class="sig"><div class="sline"></div><div class="slbl">Training Director</div></div>
+      <div class="sig"><div class="sline"></div><div class="slbl">Date of Completion</div></div>
+    </div>
+  </div>
+</div>
+<script>window.addEventListener("load",function(){setTimeout(function(){window.print();},900);});<\/script>
+</body></html>`;
+
+    popup.document.write(certHTML);
+    popup.document.close();
+  }, 900);
+}
+
+window.addEventListener("load", () => {
+  document.documentElement.style.setProperty("--fs", FS_LEVELS[fsLevel] + "px");
+  loadConfig();
+  updateUI();
+  initBookmarkButtons();
+  buildSearchIndex();
+  setTimeout(() => {
+    document.querySelectorAll(".panel.on .analogy").forEach((a,i) => setTimeout(() => a.classList.add("visible"), i*70));
+  }, 100);
 });
 </script>
-
 </body>
 </html>

@@ -110,7 +110,7 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fon
 
 /* ── CALL SCREEN ── */
 #s-call{background:var(--bg);}
-.call-top{background:var(--s1);border-bottom:1px solid var(--bd);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.call-top{background:var(--s1);border-bottom:1px solid var(--bd);padding:14px 18px 14px 62px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
 .call-name{font-size:16px;font-weight:800;color:var(--t1);}
 .call-timer-wrap{display:flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--bd);border-radius:20px;padding:6px 14px;}
 .timer-dot{width:7px;height:7px;border-radius:50%;background:var(--green-l);box-shadow:0 0 6px var(--green);animation:blink 1s ease infinite;}
@@ -226,7 +226,7 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fon
 
 /* ── LEAD NAME INPUT ── */
 .lead-input-wrap{padding:0 24px;margin-bottom:10px;display:none;}
-.lead-name-row{display:flex;gap:8px;}
+.lead-name-row{display:flex;flex-direction:column;gap:8px;}
 .lead-input{flex:1;background:var(--s2);border:1.5px solid var(--bd2);border-radius:var(--rads);padding:14px;color:var(--t1);font-size:14px;font-family:var(--font);outline:none;text-align:center;}
 .lead-input:focus{border-color:var(--green);}
 .lead-input::placeholder{color:var(--t3);}
@@ -495,9 +495,9 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fon
 
   <div class="log-section">
     <span class="log-label">Lead name</span>
-    <div class="lead-name-row">
-      <input type="text" class="lead-input" id="logFirstName" placeholder="First name" maxlength="30" style="margin-bottom:0;text-align:left;padding:10px 12px;font-size:13px;">
-      <input type="text" class="lead-input" id="logLastName" placeholder="Last name" maxlength="30" style="margin-bottom:0;text-align:left;padding:10px 12px;font-size:13px;">
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <input type="text" class="lead-input" id="logFirstName" placeholder="First name" maxlength="30" style="width:100%;text-align:left;padding:10px 12px;font-size:13px;">
+      <input type="text" class="lead-input" id="logLastName" placeholder="Last name" maxlength="30" style="width:100%;text-align:left;padding:10px 12px;font-size:13px;">
     </div>
   </div>
 

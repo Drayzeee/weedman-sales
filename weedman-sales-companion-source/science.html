@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="SF Training">
 <meta name="theme-color" content="#1A1815">
@@ -22,7 +23,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--font);font-size:var(--fs);overflow:hidden;}
-.app{display:flex;flex-direction:column;height:100vh;height:100dvh;background:linear-gradient(135deg,var(--bg) 0%,#1F1C18 100%);}
+.app{display:flex;flex-direction:column;height:100vh;background:linear-gradient(135deg,var(--bg) 0%,#1F1C18 100%);}
 
 /* ── BACK BUTTON ── */
 .back-btn{
@@ -75,7 +76,7 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fon
 
 /* ── CONTENT ── */
 .content{flex:1;overflow:hidden;position:relative;}
-.panel{display:none;height:100%;overflow-y:auto;padding:16px 16px 80px;opacity:0;animation:fadeInPanel .35s ease-out forwards;}
+.panel{display:none;height:100%;overflow-y:auto;padding:16px 16px 100px;opacity:0;animation:fadeInPanel .35s ease-out forwards;}
 .panel.on{display:block;}
 @keyframes fadeInPanel{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
@@ -273,7 +274,7 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fon
 .cert-close-plain:hover{background:rgba(255,255,255,0.12);}
 
 /* ── BOTTOM NAV ── */
-.bnav{display:flex;background:var(--s1);border-top:2px solid var(--bd);flex-shrink:0;padding:6px 0 8px;}
+.bnav{display:flex;background:var(--s1);border-top:2px solid var(--bd);flex-shrink:0;padding:6px 0 8px;position:fixed;bottom:0;left:0;right:0;z-index:90;}
 .bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;background:none;border:none;padding:4px 0;transition:all .2s;font-family:var(--font);}
 .bnav-icon{font-size:20px;line-height:1;}
 .bnav-label{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;transition:color .2s;}
@@ -282,13 +283,13 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fon
 .bnav-btn-wrap{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;}
 
 /* ── BOOKMARKS PANEL ── */
-.bm-panel{display:none;height:100%;overflow-y:auto;padding:16px 16px 80px;}
+.bm-panel{display:none;height:100%;overflow-y:auto;padding:16px 16px 100px;}
 .bm-panel.on{display:block;}
 .bm-empty{text-align:center;padding:60px 20px;color:var(--t3);}
 .bm-empty-icon{font-size:40px;margin-bottom:12px;opacity:.3;}
 
 /* ── PROGRESS PANEL ── */
-.pstat-panel{display:none;height:100%;overflow-y:auto;padding:16px 16px 80px;}
+.pstat-panel{display:none;height:100%;overflow-y:auto;padding:16px 16px 100px;}
 .pstat-panel.on{display:block;}
 .pstat-card{background:var(--s2);border:1.5px solid var(--bd);border-radius:10px;padding:14px;margin-bottom:10px;}
 .pstat-card-title{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:var(--primary-light);margin-bottom:10px;}
@@ -784,7 +785,8 @@ function setFS(dir) {
 const VIDEO_URLS = {soil:"",grass:"",weeds:"",products:"",montana:"",seasons:"",water:"",mosquito:""};
 async function loadConfig() {
   try {
-    const r = await fetch("/config.json?v=" + Date.now());
+    const r = await fetch("/config.json?v=" + Date.now()).catch(() => null);
+    if (!r) return;
     if (!r.ok) return;
     const cfg = await r.json();
     if (cfg.company?.name) {
@@ -1335,6 +1337,15 @@ html,body{width:11in;height:8.5in;background:white;display:flex;align-items:cent
   }, 900);
 }
 
+// Fix mobile viewport height (100dvh is buggy on Android Chrome)
+function fixVH() {
+  const vh = window.innerHeight;
+  document.getElementById('app').style.height = vh + 'px';
+}
+window.addEventListener('resize', fixVH);
+window.addEventListener('orientationchange', () => setTimeout(fixVH, 200));
+fixVH();
+
 window.addEventListener("load", () => {
   document.documentElement.style.setProperty("--fs", FS_LEVELS[fsLevel] + "px");
   loadConfig();
@@ -1346,5 +1357,6 @@ window.addEventListener("load", () => {
   }, 100);
 });
 </script>
+<script src="gamification.js"></script>
 </body>
 </html>

@@ -321,15 +321,14 @@
       .gbar {
         background:var(--surface-1);
         border-bottom:1px solid var(--border);
-        padding:8px 16px;
+        padding:6px 10px;
         display:flex;
         align-items:center;
-        gap:10px;
+        gap:6px;
         flex-shrink:0;
-        overflow-x:auto;
-        scrollbar-width:none;
+        flex-wrap:wrap;
+        overflow-x:visible;
       }
-      .gbar::-webkit-scrollbar{display:none;}
       .gbar-stat {
         display:flex;
         align-items:center;
@@ -445,16 +444,13 @@
     const streakFire = g.streak >= 3 ? '🔥' : '📅';
     const dailyDone = hasDoneToday();
     bar.innerHTML = `
-      <div class="gbar-stat">⭐ <span>${g.xp.toLocaleString()}</span> XP</div>
-      <div class="gbar-divider"></div>
-      <div class="gbar-stat">${streakFire} <span>${g.streak}</span>d streak</div>
-      <div class="gbar-divider"></div>
-      <div class="gbar-stat">🎖️ <span>${g.achievements.length}</span>/${ACHIEVEMENTS.length}</div>
-      <div class="gbar-divider"></div>
+      <div class="gbar-stat">⭐<span>${g.xp.toLocaleString()}</span></div>
+      <div class="gbar-stat">${streakFire}<span>${g.streak}d</span></div>
+      <div class="gbar-stat">🎖️<span>${g.achievements.length}/${ACHIEVEMENTS.length}</span></div>
       <button class="gbar-btn ${dailyDone ? '' : 'hot'}" onclick="window.SFGamify.openDaily()">
-        ${dailyDone ? '✅ Daily Done' : '⚡ Daily Challenge'}
+        ${dailyDone ? '✅ Done' : '⚡ Daily'}
       </button>
-      <button class="gbar-btn" onclick="window.SFGamify.openLeaderboard()">🏅 Leaderboard</button>
+      <button class="gbar-btn" onclick="window.SFGamify.openLeaderboard()">🏅 Board</button>
       <button class="gbar-btn" onclick="window.SFGamify.openAchievements()">🎖️ Badges</button>
     `;
   }
